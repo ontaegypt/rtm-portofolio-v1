@@ -445,9 +445,25 @@ function initRouter() {
         targetModule = roleConf.defaultModule;
       }
 
+      const SUBMODULE_PARENTS = {
+        'article-form': 'berita',
+        'user-form': 'users',
+        'gallery-form': 'galeri',
+        'syllabus-form': 'akademik',
+        'campaign-form': 'donasi'
+      };
+      const checkModule = SUBMODULE_PARENTS[targetModule] || targetModule;
+
       // Check Role-Based Access Control (RBAC 403 Forbidden check)
-      if (!roleConf.allowedModules.includes(targetModule)) {
+      if (!roleConf.allowedModules.includes(checkModule)) {
         showToast(`Akses Ditolak (403): Role "${roleConf.name}" tidak berwenang mengelola modul ini. Hak akses dipatenkan.`, 'warning');
+        window.location.hash = `#admin-${roleConf.defaultModule}`;
+        return;
+      }
+
+      // Check Superadmin-only sub-pages
+      if ((targetModule === 'user-form' || targetModule === 'gallery-form') && currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
         window.location.hash = `#admin-${roleConf.defaultModule}`;
         return;
       }
@@ -548,6 +564,16 @@ export function navigateToAdmin(moduleName) {
     targetPanel.classList.add('active');
   }
 
+  // Submodule to parent mapping
+  const SUBMODULE_PARENTS = {
+    'article-form': 'berita',
+    'user-form': 'users',
+    'gallery-form': 'galeri',
+    'syllabus-form': 'akademik',
+    'campaign-form': 'donasi'
+  };
+  const activeNavModule = SUBMODULE_PARENTS[moduleName] || moduleName;
+
   // Update Breadcrumb Text
   const breadcrumbTitles = {
     overview: 'Ringkasan / Analytics',
@@ -556,7 +582,12 @@ export function navigateToAdmin(moduleName) {
     galeri: 'Kelola Galeri & Kunjungan',
     berita: 'Kelola Artikel / Berita',
     tampilan: 'Kelola Tampilan & Identitas',
-    users: 'Manajemen Pengguna & RBAC'
+    users: 'Manajemen Pengguna & RBAC',
+    'article-form': 'Kelola Artikel / Berita > Editor Form',
+    'user-form': 'Manajemen Pengguna > Form Pengguna',
+    'gallery-form': 'Kelola Galeri > Form Media Dokumentasi',
+    'syllabus-form': 'Kelola Akademik > Unggah Silabus',
+    'campaign-form': 'Modul Wakaf & Donasi > Form Program Campaign'
   };
   const breadcrumbEl = document.getElementById('topbarBreadcrumbActive');
   if (breadcrumbEl) {
@@ -566,7 +597,7 @@ export function navigateToAdmin(moduleName) {
   // Update Sidebar Navigation & Mobile App Bottom Nav Links
   document.querySelectorAll('.sidebar-menu-link, .mob-nav-item').forEach(link => {
     link.classList.remove('active');
-    if (link.getAttribute('data-admin-nav') === moduleName) {
+    if (link.getAttribute('data-admin-nav') === activeNavModule) {
       link.classList.add('active');
     }
   });
@@ -1692,11 +1723,78 @@ export function initPPDBModalEvents() {
     });
   }
 
+// Interactive Confirmation Modal Helper (Returns Promise<boolean>)
+function showInteractiveConfirm({
+  title = 'Konfirmasi Hapus Data',
+  message = 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini bersifat permanen dan tidak dapat dibatalkan.',
+  confirmText = 'Ya, Hapus Sekarang',
+  confirmBtnClass = 'btn-danger',
+  icon = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>'
+}) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('interactiveConfirmModal');
+    if (!modal) {
+      resolve(window.confirm(message.replace(/<[^>]+>/g, '')));
+      return;
+    }
+    const titleEl = document.getElementById('confirmModalTitle');
+    const msgEl = document.getElementById('confirmModalMessage');
+    const actionBtn = document.getElementById('confirmModalActionBtn');
+    const cancelBtn = document.getElementById('confirmModalCancelBtn');
+    const iconEl = modal.querySelector('.confirm-modal-icon-wrap');
+
+    if (titleEl) titleEl.textContent = title;
+    if (msgEl) msgEl.innerHTML = message;
+    if (actionBtn) {
+      actionBtn.textContent = confirmText;
+      actionBtn.style.background = confirmBtnClass === 'btn-danger' ? '#dc2626' : 'var(--primary-purple)';
+      actionBtn.style.borderColor = confirmBtnClass === 'btn-danger' ? '#dc2626' : 'var(--primary-purple)';
+    }
+    if (iconEl && icon) iconEl.innerHTML = icon;
+
+    const cleanup = () => {
+      modal.classList.remove('open');
+      actionBtn?.removeEventListener('click', onConfirm);
+      cancelBtn?.removeEventListener('click', onCancel);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+
+    const onConfirm = () => {
+      cleanup();
+      resolve(true);
+    };
+
+    const onCancel = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        cleanup();
+        resolve(false);
+      }
+    };
+
+    actionBtn?.addEventListener('click', onConfirm, { once: true });
+    cancelBtn?.addEventListener('click', onCancel, { once: true });
+    document.addEventListener('keydown', onKeyDown);
+
+    modal.classList.add('open');
+  });
+}
+
   const btnReject = document.getElementById('btnDossierReject');
   if (btnReject) {
     btnReject.addEventListener('click', async () => {
       if (!currentViewingLead) return;
-      if (!confirm(`Apakah Anda yakin ingin menolak pendaftaran santri ${currentViewingLead.studentName}?`)) return;
+      const confirmed = await showInteractiveConfirm({
+        title: 'Tolak Pendaftaran Santri',
+        message: `Apakah Anda yakin ingin menolak pendaftaran santri <strong>"${currentViewingLead.studentName}"</strong>?`,
+        confirmText: 'Ya, Tolak Pendaftaran',
+        icon: '⚠️'
+      });
+      if (!confirmed) return;
       const notes = document.getElementById('dossierNotesInput')?.value || '';
       try {
         await ppdbApi.updateStatus(currentViewingLead.id, 'rejected', notes);
@@ -1715,7 +1813,12 @@ export function initPPDBModalEvents() {
   if (btnDelete) {
     btnDelete.addEventListener('click', async () => {
       if (!currentViewingLead) return;
-      if (!confirm(`Hapus permanen data registrasi santri ${currentViewingLead.studentName}? Tindakan ini tidak dapat dibatalkan.`)) return;
+      const confirmed = await showInteractiveConfirm({
+        title: 'Hapus Berkas Pendaftaran',
+        message: `Hapus permanen data registrasi santri <strong>"${currentViewingLead.studentName}"</strong>? Tindakan ini tidak dapat dibatalkan.`,
+        confirmText: 'Ya, Hapus Registrasi'
+      });
+      if (!confirmed) return;
       try {
         await ppdbApi.delete(currentViewingLead.id);
         showToast('Data pendaftaran santri berhasil dihapus dari sistem.', 'info');
@@ -2406,7 +2509,12 @@ function renderAdminPPDBTable() {
       }
       const id = e.currentTarget.getAttribute('data-id');
       const lead = ppdbState.find(l => l.id === id);
-      if (!confirm(`Hapus permanen pendaftaran santri ${lead ? lead.studentName : id}? Tindakan ini tidak dapat dibatalkan.`)) return;
+      const confirmed = await showInteractiveConfirm({
+        title: 'Hapus Calon Santri',
+        message: `Hapus permanen berkas pendaftaran calon santri <strong>"${lead ? lead.studentName : id}"</strong>? Tindakan ini tidak dapat dibatalkan.`,
+        confirmText: 'Ya, Hapus Pendaftaran'
+      });
+      if (!confirmed) return;
       try {
         await ppdbApi.delete(id);
         showToast('Data pendaftaran santri berhasil dihapus.', 'info');
@@ -2628,7 +2736,12 @@ function renderAdminGaleri() {
         }
         const gId = e.currentTarget.getAttribute('data-id');
         const gItem = (galleriesState || []).find(item => String(item.id) === String(gId));
-        if (!confirm(`Hapus media galeri "${gItem ? gItem.title : 'ini'}" secara permanen?`)) return;
+        const confirmed = await showInteractiveConfirm({
+          title: 'Hapus Media Galeri',
+          message: `Hapus media dokumentasi <strong>"${gItem ? gItem.title : 'ini'}"</strong> secara permanen dari server?`,
+          confirmText: 'Ya, Hapus Media'
+        });
+        if (!confirmed) return;
         try {
           await galleriesApi.delete(gId);
           showToast('Media galeri berhasil dihapus dari sistem.', 'success');
@@ -2712,14 +2825,22 @@ function renderAdminBerita() {
   });
 
   tbody.querySelectorAll('.btn-delete-article').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       const currentUser = auth.getStoredUser() || usersState[0];
       if (currentUser.role !== 'superadmin') {
         showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
         return;
       }
       const id = e.currentTarget.getAttribute('data-id');
-      if (confirm('Apakah Anda yakin ingin menghapus artikel ini?')) {
+      const targetArticle = articlesState.find(a => a.id === id);
+      const artTitle = targetArticle ? targetArticle.title : 'artikel ini';
+      const confirmed = await showInteractiveConfirm({
+        title: 'Hapus Artikel Berita',
+        message: `Apakah Anda yakin ingin menghapus artikel <strong>"${artTitle}"</strong>? Data artikel akan dihapus secara permanen dari sistem publikasi yayasan.`,
+        confirmText: 'Ya, Hapus Artikel',
+        confirmBtnClass: 'btn-danger'
+      });
+      if (confirmed) {
         articlesState = articlesState.filter(a => a.id !== id);
         showToast('Artikel berhasil dihapus dari sistem.', 'success');
         renderAdminBerita();
@@ -2819,7 +2940,13 @@ function renderAdminUsers() {
         showToast('Akun Admin utama atau akun aktif tidak dapat dihapus.', 'warning');
         return;
       }
-      if (!confirm(`Hapus permanen akun pengguna "${targetUser.name}" (${targetUser.roleTitle || targetUser.role})?`)) return;
+      const confirmed = await showInteractiveConfirm({
+        title: 'Hapus Akun Pengguna',
+        message: `Apakah Anda yakin ingin menghapus akun <strong>"${targetUser.name}"</strong> (${targetUser.roleTitle || targetUser.role})? Akses masuk dan wewenang akun ini akan dicabut permanen.`,
+        confirmText: 'Ya, Hapus Pengguna',
+        confirmBtnClass: 'btn-danger'
+      });
+      if (!confirmed) return;
       try {
         await usersApi.delete(id);
         showToast(`Akun pengguna ${targetUser.name} berhasil dihapus.`, 'success');
@@ -2852,7 +2979,8 @@ function openEditUserModal(user) {
     passInput.required = false;
     passInput.placeholder = 'Kosongkan jika kata sandi tidak diubah...';
   }
-  userModal.classList.add('open');
+  if (userModal) userModal.classList.add('open');
+  window.location.hash = '#admin-user-form';
 }
 
 // 9. Receipt Verification Modal Handlers
@@ -2918,7 +3046,8 @@ function openCampaignModal(campaignId = null) {
     document.getElementById('campaignFormImage').value = '/assets/images/campus.jpg';
   }
 
-  modal.classList.add('open');
+  if (modal) modal.classList.add('open');
+  window.location.hash = '#admin-campaign-form';
 }
 
 // 11. Article Modal Handlers
@@ -2950,7 +3079,8 @@ function openArticleModal(articleId = null) {
     document.getElementById('articleFormPublishToggle').checked = true;
   }
 
-  modal.classList.add('open');
+  if (modal) modal.classList.add('open');
+  window.location.hash = '#admin-article-form';
 }
 
 // 12. Export CSV Functionality (PRD Section 5.2 - Live Backend Stream)
@@ -3202,12 +3332,19 @@ function initAdminUI() {
     btnCreateCamp.addEventListener('click', () => openCampaignModal());
   }
 
-  if (btnCloseCamp && campaignModal) {
-    btnCloseCamp.addEventListener('click', () => campaignModal.classList.remove('open'));
+  if (btnCloseCamp) {
+    btnCloseCamp.addEventListener('click', () => {
+      if (campaignModal) campaignModal.classList.remove('open');
+      window.location.hash = '#admin-donasi';
+    });
   }
 
-  if (btnCancelCamp && campaignModal) {
-    btnCancelCamp.addEventListener('click', () => campaignModal.classList.remove('open'));
+  if (btnCancelCamp) {
+    btnCancelCamp.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (campaignModal) campaignModal.classList.remove('open');
+      window.location.hash = '#admin-donasi';
+    });
   }
 
   if (campaignForm) {
@@ -3252,6 +3389,7 @@ function initAdminUI() {
         if (campaignModal) campaignModal.classList.remove('open');
         renderAdminDonasi();
         await renderAdminOverview();
+        window.location.hash = '#admin-donasi';
       } catch (err) {
         showToast(err.message, 'warning');
       }
@@ -3269,12 +3407,19 @@ function initAdminUI() {
     btnCreateArt.addEventListener('click', () => openArticleModal());
   }
 
-  if (btnCloseArt && articleModal) {
-    btnCloseArt.addEventListener('click', () => articleModal.classList.remove('open'));
+  if (btnCloseArt) {
+    btnCloseArt.addEventListener('click', () => {
+      if (articleModal) articleModal.classList.remove('open');
+      window.location.hash = '#admin-berita';
+    });
   }
 
-  if (btnCancelArt && articleModal) {
-    btnCancelArt.addEventListener('click', () => articleModal.classList.remove('open'));
+  if (btnCancelArt) {
+    btnCancelArt.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (articleModal) articleModal.classList.remove('open');
+      window.location.hash = '#admin-berita';
+    });
   }
 
   if (articleForm) {
@@ -3319,6 +3464,7 @@ function initAdminUI() {
         if (articleModal) articleModal.classList.remove('open');
         renderAdminBerita();
         renderNewsGrid();
+        window.location.hash = '#admin-berita';
       } catch (err) {
         showToast(err.message, 'warning');
       }
@@ -3332,22 +3478,33 @@ function initAdminUI() {
   const btnCancelSyllabus = document.getElementById('btnCancelSyllabus');
   const syllabusForm = document.getElementById('adminSyllabusForm');
 
-  if (btnUploadSyllabus && syllabusModal) {
-    btnUploadSyllabus.addEventListener('click', () => syllabusModal.classList.add('open'));
+  if (btnUploadSyllabus) {
+    btnUploadSyllabus.addEventListener('click', () => {
+      if (syllabusModal) syllabusModal.classList.add('open');
+      window.location.hash = '#admin-syllabus-form';
+    });
   }
-  if (btnCloseSyllabus && syllabusModal) {
-    btnCloseSyllabus.addEventListener('click', () => syllabusModal.classList.remove('open'));
+  if (btnCloseSyllabus) {
+    btnCloseSyllabus.addEventListener('click', () => {
+      if (syllabusModal) syllabusModal.classList.remove('open');
+      window.location.hash = '#admin-akademik';
+    });
   }
-  if (btnCancelSyllabus && syllabusModal) {
-    btnCancelSyllabus.addEventListener('click', () => syllabusModal.classList.remove('open'));
+  if (btnCancelSyllabus) {
+    btnCancelSyllabus.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (syllabusModal) syllabusModal.classList.remove('open');
+      window.location.hash = '#admin-akademik';
+    });
   }
-  if (syllabusForm && syllabusModal) {
+  if (syllabusForm) {
     syllabusForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const progId = document.getElementById('syllabusProgramSelect').value;
       const prog = programsState.find(p => p.id === progId);
       showToast(`Silabus Kurikulum Baru untuk ${prog ? prog.name : ''} berhasil diunggah & dipublikasikan.`, 'success');
-      syllabusModal.classList.remove('open');
+      if (syllabusModal) syllabusModal.classList.remove('open');
+      window.location.hash = '#admin-akademik';
     });
   }
 
@@ -3358,7 +3515,7 @@ function initAdminUI() {
   const btnCancelUser = document.getElementById('btnCancelUser');
   const userForm = document.getElementById('adminUserForm');
 
-  if (btnCreateUser && userModal) {
+  if (btnCreateUser) {
     btnCreateUser.addEventListener('click', () => {
       const currentUser = auth.getStoredUser() || usersState[0];
       if (currentUser.role !== 'superadmin') {
@@ -3376,16 +3533,24 @@ function initAdminUI() {
         passInput.placeholder = 'Min. 6 Karakter...';
       }
       if (userForm) userForm.reset();
-      userModal.classList.add('open');
+      if (userModal) userModal.classList.add('open');
+      window.location.hash = '#admin-user-form';
     });
   }
-  if (btnCloseUser && userModal) {
-    btnCloseUser.addEventListener('click', () => userModal.classList.remove('open'));
+  if (btnCloseUser) {
+    btnCloseUser.addEventListener('click', () => {
+      if (userModal) userModal.classList.remove('open');
+      window.location.hash = '#admin-users';
+    });
   }
-  if (btnCancelUser && userModal) {
-    btnCancelUser.addEventListener('click', () => userModal.classList.remove('open'));
+  if (btnCancelUser) {
+    btnCancelUser.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (userModal) userModal.classList.remove('open');
+      window.location.hash = '#admin-users';
+    });
   }
-  if (userForm && userModal) {
+  if (userForm) {
     userForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const currentUser = auth.getStoredUser() || usersState[0];
@@ -3433,6 +3598,7 @@ function initAdminUI() {
         if (userModal) userModal.classList.remove('open');
         await syncDatabaseState();
         renderAdminUsers();
+        window.location.hash = '#admin-users';
       } catch (err) {
         showToast(err.message, 'warning');
       }
@@ -3446,7 +3612,7 @@ function initAdminUI() {
   const btnCancelGallery = document.getElementById('btnCancelGallery');
   const adminGalleryForm = document.getElementById('adminGalleryForm');
 
-  if (btnAddGalleryMedia && galleryModal) {
+  if (btnAddGalleryMedia) {
     btnAddGalleryMedia.addEventListener('click', () => {
       const currentUser = auth.getStoredUser() || usersState[0];
       if (currentUser.role !== 'superadmin') {
@@ -3456,16 +3622,24 @@ function initAdminUI() {
       if (adminGalleryForm) adminGalleryForm.reset();
       const dateInput = document.getElementById('galleryFormDate');
       if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-      galleryModal.classList.add('open');
+      if (galleryModal) galleryModal.classList.add('open');
+      window.location.hash = '#admin-gallery-form';
     });
   }
 
-  if (btnCloseGalleryModal && galleryModal) {
-    btnCloseGalleryModal.addEventListener('click', () => galleryModal.classList.remove('open'));
+  if (btnCloseGalleryModal) {
+    btnCloseGalleryModal.addEventListener('click', () => {
+      if (galleryModal) galleryModal.classList.remove('open');
+      window.location.hash = '#admin-galeri';
+    });
   }
 
-  if (btnCancelGallery && galleryModal) {
-    btnCancelGallery.addEventListener('click', () => galleryModal.classList.remove('open'));
+  if (btnCancelGallery) {
+    btnCancelGallery.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (galleryModal) galleryModal.classList.remove('open');
+      window.location.hash = '#admin-galeri';
+    });
   }
 
   // Quick preset buttons for image URL
@@ -3479,7 +3653,7 @@ function initAdminUI() {
     });
   });
 
-  if (adminGalleryForm && galleryModal) {
+  if (adminGalleryForm) {
     adminGalleryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const currentUser = auth.getStoredUser() || usersState[0];
@@ -3510,10 +3684,11 @@ function initAdminUI() {
         });
         showToast(`Foto galeri "${title}" berhasil ditambahkan ke database!`, 'success');
         adminGalleryForm.reset();
-        galleryModal.classList.remove('open');
+        if (galleryModal) galleryModal.classList.remove('open');
         await syncDatabaseState();
         renderAdminGaleri();
         renderGalleryGrid();
+        window.location.hash = '#admin-galeri';
       } catch (err) {
         showToast('Gagal menambahkan galeri: ' + err.message, 'warning');
       }

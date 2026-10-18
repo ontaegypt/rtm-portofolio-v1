@@ -1,0 +1,2825 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rumah Tahfidz | Mutqin 30 Juz & Berakhlak Mulia</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="Website Resmi Rumah Tahfidz. Lembaga pendidikan Al-Qur'an terpadu jenjang SMP, SMA, Mahasantri, TPA, Ngaji Online, dan Halaqoh Ibu dengan bimbingan asatidz bersanad muttashil." />
+  <meta name="keywords"
+    content="rumah tahfidz, pesantren tahfidz, hafizh quran, smp tahfidz, sma tahfidz, mahasantri, ngaji bersanad, ppdb pesantren 2026, wakaf pesantren" />
+  <meta name="author" content="Yayasan Rumah Tahfidz Al-Hikmah" />
+  <meta name="theme-color" content="#191533" />
+  <link rel="canonical" href="http://localhost:3000/" />
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Rumah Tahfidz Madani - Islamic Boarding School Modern" />
+  <meta property="og:description"
+    content="Mencetak Generasi Qur'ani yang Mutqin 30 Juz, Berkarakter, dan Berwawasan Global bersama Asatidz Bersanad. PPDB 2026/2027 Dibuka." />
+  <meta property="og:image" content="/assets/images/logo-header-RTM.png" />
+  <meta property="og:url" content="http://localhost:3000/" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Rumah Tahfidz Madani - PPDB 2026/2027 Dibuka" />
+  <meta name="twitter:description" content="Pendaftaran santri baru SMP, SMA, Mahasantri Aly & TPA Al-Qur'an terpadu online." />
+  <meta name="twitter:image" content="/assets/images/logo-header-RTM.png" />
+
+  <!-- Schema.org EducationalOrganization Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "Rumah Tahfidz Madani",
+    "description": "Lembaga pendidikan Al-Qur'an terpadu jenjang SMP, SMA, Mahasantri Aly, TPA, dan Ngaji Online berbasis adab samawi dan asatidz bersanad muttashil.",
+    "url": "http://localhost:3000",
+    "logo": "http://localhost:3000/assets/images/logo-header-RTM.png",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Jl. Raya Tahfidz Madani No. 99",
+      "addressLocality": "Bogor",
+      "addressRegion": "Jawa Barat",
+      "postalCode": "16680",
+      "addressCountry": "ID"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+6281234567890",
+      "contactType": "admissions",
+      "areaServed": "ID",
+      "availableLanguage": ["Indonesian", "Arabic", "English"]
+    }
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/assets/images/favicon-RTM.png" />
+  <link rel="apple-touch-icon" href="/assets/images/favicon-RTM.png" />
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+    rel="stylesheet" />
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body>
+
+  <!-- ==========================================================================
+       SITE HEADER / NAVBAR (PRD Section 3 & 3.1)
+       ========================================================================== -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <!-- Brand Logo Header -->
+      <a href="#home" class="brand-logo" id="navLogo" aria-label="Beranda Rumah Tahfidz Madani">
+        <img src="/assets/images/logo-header-RTM.png" alt="Rumah Tahfidz Madani" class="brand-logo-img header-logo" />
+      </a>
+
+      <!-- Primary Desktop Menu -->
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="#home" class="nav-link active" data-view="home">Home</a>
+          </li>
+
+          <!-- Dropdown Akademik (Formal & Non-Formal) -->
+          <li class="nav-item has-dropdown">
+            <a href="#akademik" class="nav-link" data-view="akademik">
+              <span>Akademik</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </a>
+            <div class="nav-dropdown">
+              <div class="dropdown-section-title">Pendidikan Formal</div>
+              <a href="#akademik-smp" class="dropdown-link">
+                <span>SMP Tahfidz</span>
+                <span class="badge-tag">15 Juz</span>
+              </a>
+              <a href="#akademik-sma" class="dropdown-link">
+                <span>SMA Tahfidz Sains</span>
+                <span class="badge-tag">30 Juz</span>
+              </a>
+              <a href="#akademik-mahasantri" class="dropdown-link">
+                <span>Mahasantri Aly</span>
+                <span class="badge-tag">Qira'at</span>
+              </a>
+
+              <div class="dropdown-divider"></div>
+
+              <div class="dropdown-section-title">Pendidikan Non-Formal</div>
+              <a href="#akademik-tpa" class="dropdown-link">
+                <span>TPA Al-Qur'an Anak</span>
+                <span class="badge-tag">Sore</span>
+              </a>
+              <a href="#akademik-online" class="dropdown-link">
+                <span>Ngaji Online Global</span>
+                <span class="badge-tag">Zoom</span>
+              </a>
+              <a href="#akademik-halaqoh-ibu" class="dropdown-link">
+                <span>Halaqoh Ibu & Muslimah</span>
+                <span class="badge-tag">Ummahat</span>
+              </a>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a href="#visit" class="nav-link" data-view="visit">Visit & Galeri</a>
+          </li>
+          <li class="nav-item">
+            <a href="#about" class="nav-link" data-view="about">About</a>
+          </li>
+          <li class="nav-item">
+            <a href="#news" class="nav-link" data-view="news">News & Artikel</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Right Action Buttons (Branch Kanan Navbar) -->
+      <div class="nav-actions">
+        <!-- 0. PPDB Button (Penerimaan Santri Baru) -->
+        <button class="btn btn-primary btn-sm btn-ppdb-trigger" id="btnNavbarPPDB" style="padding: 0.5rem 1.15rem; font-size: 0.85rem; font-weight: 700; border-radius: 9999px;">
+          🎓 Daftar PPDB
+        </button>
+
+        <!-- 1. [Icon + Donasi] (Primary CTA Button - Status Coming Soon) -->
+        <button class="btn btn-donate btn-donate-trigger" id="btnNavbarDonasi" title="Wakaf & Donasi Terpadu">
+          <span class="btn-icon-leading">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              <path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08v0c.82.82 2.13.85 3 .07l2.07-1.9" />
+            </svg>
+          </span>
+          <span>Donasi</span>
+          <span class="badge-pill-soon">Soon</span>
+        </button>
+
+        <!-- 2. [Icon + Masuk] (Secondary Outline Button - LMS Portal Projection) -->
+        <button class="btn btn-login-lms btn-lms-trigger" id="btnNavbarLogin" title="Portal Santri & LMS">
+          <span class="btn-icon-leading">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" y1="12" x2="3" y2="12" />
+            </svg>
+          </span>
+          <span>Login</span>
+        </button>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Buka Menu Navigasi">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <div style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); margin-bottom: 0.75rem;">
+      <img src="/assets/images/logo-header-RTM.png" alt="Rumah Tahfidz Madani" class="brand-logo-img"
+        style="height: 48px; width: auto;" />
+    </div>
+    <ul class="mobile-nav-list">
+      <li><a href="#home" class="mobile-nav-link">Home</a></li>
+      <li>
+        <span class="mobile-nav-link" style="color: var(--primary-700);">Program Akademik</span>
+        <div class="mobile-nav-sublinks">
+          <a href="#akademik-smp" class="mobile-sublink">🏛️ SMP Tahfidz (15 Juz)</a>
+          <a href="#akademik-sma" class="mobile-sublink">🏛️ SMA Tahfidz Sains (30 Juz)</a>
+          <a href="#akademik-mahasantri" class="mobile-sublink">🏛️ Mahasantri Aly (Qira'at)</a>
+          <a href="#akademik-tpa" class="mobile-sublink">📖 TPA Anak (Kelas Sore)</a>
+          <a href="#akademik-online" class="mobile-sublink">📖 Ngaji Online Bersanad</a>
+          <a href="#akademik-halaqoh-ibu" class="mobile-sublink">📖 Halaqoh Ibu & Muslimah</a>
+        </div>
+      </li>
+      <li><a href="#visit" class="mobile-nav-link">Visit & Galeri</a></li>
+      <li><a href="#about" class="mobile-nav-link">Tentang Kami</a></li>
+      <li><a href="#news" class="mobile-nav-link">Artikel & Berita</a></li>
+    </ul>
+
+    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+      <button class="btn btn-donate btn-donate-trigger" style="width: 100%;">
+        💖 Wakaf & Donasi (Coming Soon)
+      </button>
+      <button class="btn btn-login-lms btn-lms-trigger" style="width: 100%;">
+        🎓 Portal Akademik & LMS
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MAIN CONTENT CONTAINER (5 Page Views according to PRD Sprint 1)
+       ========================================================================== -->
+  <main id="mainApp">
+
+    <!-- ========================================================================
+         VIEW 1: HOMEPAGE (PRD Section 4.1)
+         ======================================================================== -->
+    <div id="view-home" class="page-view active">
+      <!-- 1. Hero Section (Brand Positioning) -->
+      <section class="hero-section">
+        <div class="container">
+          <div class="hero-grid">
+            <div class="hero-content">
+              <div class="badge-tag-pill">
+                <span class="badge-pulse"></span>
+                <span>Penerimaan Santri Baru (PPDB) TA 2026/2027 Dibuka</span>
+              </div>
+              <h1 class="hero-title">
+                Mencetak Generasi Qur'ani <span class="text-highlight">Mutqin 30 Juz</span> & Berakhlak Mulia
+              </h1>
+              <p class="hero-subtitle">
+                Pondok Pesantren & Rumah Tahfidz modern berbasis adab samawi, dibimbing langsung oleh asatidz bersanad
+                muttashil dengan perpaduan sains dan kurikulum formal terakreditasi A.
+              </p>
+
+              <div class="hero-actions">
+                <a href="#ppdb" class="btn btn-primary btn-ppdb-trigger">
+                  🎓 Daftar PPDB Sekarang
+                </a>
+                <a href="#akademik" class="btn btn-secondary" onclick="window.location.hash='akademik'">
+                  Pelajari Program
+                </a>
+              </div>
+
+              <!-- Quick Highlights Counter Bar -->
+              <div class="hero-stats-bar">
+                <div class="stat-item">
+                  <span class="stat-number">850+</span>
+                  <span class="stat-label">Santri Aktif</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">42</span>
+                  <span class="stat-label">Asatidz Bersanad</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">1.280+</span>
+                  <span class="stat-label">Alumni Mutqin</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">A</span>
+                  <span class="stat-label">Akreditasi Unggul</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hero Media Visual Frame -->
+            <div class="hero-media-wrapper">
+              <div class="hero-image-card">
+                <img src="/assets/images/hero-santri.jpg" alt="Santri menghafal Al-Qur'an di Masjid Al-Muhajirin" />
+              </div>
+              <div class="hero-floating-card">
+                <div class="floating-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="floating-text-title">Metode Sabaq & Sabqi</div>
+                  <div class="floating-text-desc">Muraja'ah terukur & hafalan melekat kuat</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Section Keunggulan & Mengapa Memilih Kami (Why Choose Us) -->
+      <section class="why-us-section">
+        <div class="container">
+          <!-- Sambutan Singkat Mudir / Pimpinan Lembaga -->
+          <div class="mudir-greeting-card">
+            <div class="mudir-photo-col">
+              <img src="/assets/images/mudir.jpg" alt="KH. Dr. Muhammad Zaki Al-Hafizh, M.A." />
+            </div>
+            <div class="mudir-content-col">
+              <span class="mudir-badge">✨ Sambutan Mudir Pondok Pesantren</span>
+              <h2 class="mudir-headline">Membangun Fondasi Akhlak Sejak Dini Melalui Kalamullah</h2>
+              <blockquote class="mudir-quote">
+                "Menghafal Al-Qur'an bukan sekadar mengingat lafaz demi lafaz, melainkan menanamkan nilai-nilai samawi
+                ke dalam sanubari, sehingga setiap tarikan nafas dan tindakan santri senantiasa memancarkan kemuliaan
+                adab dan keluhuran akhlak."
+              </blockquote>
+              <div class="mudir-signature">
+                <div class="mudir-name">KH. Dr. Muhammad Zaki Al-Hafizh, M.A.</div>
+                <div class="mudir-role">Pimpinan & Pengasuh Rumah Tahfidz</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5 Pilar USP -->
+          <div class="section-header">
+            <span class="section-tag">Keunggulan Lembaga</span>
+            <h3 class="section-title">Mengapa Memilih Rumah Tahfidz?</h3>
+            <p class="section-description">
+              5 Pilar keunggulan unik yang menjamin kualitas hafalan mutqin dan perkembangan karakter santri secara
+              menyeluruh.
+            </p>
+          </div>
+
+          <div class="pillars-grid">
+            <div class="pillar-card">
+              <div class="pillar-icon-box">📖</div>
+              <h4 class="pillar-title">Metode Tahfidz Mutqin</h4>
+              <p class="pillar-desc">Sistem Sabaq, Sabqi, dan Manzil dengan jadwal muraja'ah terstruktur sehingga
+                hafalan tidak mudah hilang.</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon-box">📜</div>
+              <h4 class="pillar-title">Asatidz Bersanad 30 Juz</h4>
+              <p class="pillar-desc">Dibimbing langsung pengajar lulusan Al-Azhar & Timur Tengah dengan sanad muttashil
+                riwayat Hafsh 'an 'Ashim.</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon-box">🌱</div>
+              <h4 class="pillar-title">Integrasi Adab & Akhlak</h4>
+              <p class="pillar-desc">Menjadikan adab di atas ilmu melalui pembiasaan ibadah sunnah, adab harian, dan
+                keteladanan para asatidz.</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon-box">🏛️</div>
+              <h4 class="pillar-title">Kurikulum Terpadu</h4>
+              <p class="pillar-desc">Harmonisasi kurikulum tahfidz dengan pendidikan formal Kemendikbud, sains modern,
+                dan bilingual skill.</p>
+            </div>
+            <div class="pillar-card">
+              <div class="pillar-icon-box">🏡</div>
+              <h4 class="pillar-title">Lingkungan Asri & Kondusif</h4>
+              <p class="pillar-desc">Kampus seluas 4 hektar di kawasan sejuk perbukitan Dago yang tenang dan bebas dari
+                hiruk-pikuk polusi.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Section Program Akademik (Katalog Program Singkat) -->
+      <section class="academic-catalog-section">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-tag">Katalog Program</span>
+            <h3 class="section-title">Program Pendidikan Pilihan</h3>
+            <p class="section-description">Pilihan jenjang pendidikan formal berbasis asrama maupun program non-formal
+              fleksibel untuk masyarakat luas.</p>
+          </div>
+
+          <!-- Filter Tabs Formal vs Non-Formal -->
+          <div class="catalog-tabs">
+            <button class="catalog-tab-btn active" data-category="all">Semua Program (6)</button>
+            <button class="catalog-tab-btn" data-category="formal">🏛️ Pendidikan Formal</button>
+            <button class="catalog-tab-btn" data-category="non_formal">📖 Non-Formal & Umum</button>
+          </div>
+
+          <!-- Cards Grid Container -->
+          <div class="program-cards-grid" id="homeProgramCardsContainer">
+            <!-- Rendered dynamically by JavaScript -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Section Prestasi & Testimoni (Social Proof) -->
+      <section class="social-proof-section">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-tag">Jejak Prestasi</span>
+            <h3 class="section-title">Capaian Gemilang Santri Rumah Tahfidz</h3>
+            <p class="section-description">Bukti komitmen pembinaan melahirkan generasi berprestasi di kancah nasional
+              maupun internasional.</p>
+          </div>
+
+          <!-- Achievements Grid -->
+          <div class="achievements-grid">
+            <div class="achievement-card">
+              <div class="achievement-medal">🏆</div>
+              <h4 class="achievement-title">Juara 1 MHQ Nasional 30 Juz</h4>
+              <p class="achievement-desc">Musabaqah Hifdzil Qur'an tingkat nasional Kementerian Agama RI Tahun 2025.</p>
+            </div>
+            <div class="achievement-card">
+              <div class="achievement-medal">🎓</div>
+              <h4 class="achievement-title">100% Lulusan Diterima PTN / Beasiswa Luar Negeri</h4>
+              <p class="achievement-desc">Alumni tersebar di Al-Azhar Kairo, Universitas Islam Madinah, ITB, UI, dan
+                Unpad.</p>
+            </div>
+            <div class="achievement-card">
+              <div class="achievement-medal">📜</div>
+              <h4 class="achievement-title">640+ Santri Meraih Syahadah Sanad</h4>
+              <p class="achievement-desc">Penerima sanad muttashil Qira'at Hafsh 'an 'Ashim jalur Asy-Syathibiyyah.</p>
+            </div>
+          </div>
+
+          <!-- Testimonial Cards -->
+          <div class="section-header" style="margin-bottom: 2.5rem;">
+            <span class="section-tag">Testimoni Wali & Alumni</span>
+            <h3 class="section-title">Kisah Nyata Transformasi Santri</h3>
+          </div>
+
+          <div class="testimonials-grid">
+            <div class="testimonial-card">
+              <div class="quote-stars">★★★★★</div>
+              <p class="testimonial-text">"Alhamdulillah, perubahan karakter anak saya sangat nyata. Bukan hanya hafal
+                15 juz dengan bacaan merdu, adabnya kepada orang tua dan kemandirian hidupnya luar biasa santun."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">BS</div>
+                <div>
+                  <div class="author-info-name">Drs. H. Bambang Sugiarto, M.Si.</div>
+                  <div class="author-info-role">Wali Santri SMP Tahfidz (Kelas IX)</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card">
+              <div class="quote-stars">★★★★★</div>
+              <p class="testimonial-text">"Bekal hafalan 30 juz mutqin dan bahasa Arab aktif dari SMA Rumah Tahfidz
+                membuat
+                saya sangat percaya diri saat mengikuti seleksi Kemenag hingga kuliah di Al-Azhar Kairo saat ini."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">AF</div>
+                <div>
+                  <div class="author-info-name">Ahmad Fadhil, Lc.</div>
+                  <div class="author-info-role">Alumni SMA Tahfidz - Mahasiswa Univ. Al-Azhar Mesir</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card">
+              <div class="quote-stars">★★★★★</div>
+              <p class="testimonial-text">"Di usia hampir 50 tahun saya akhirnya bisa membaca Al-Qur'an dengan tartil
+                lewat Halaqoh Ibu. Ustadzahnya sangat sabar dan teman-temannya saling merangkul dalam kebaikan."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">FH</div>
+                <div>
+                  <div class="author-info-name">Ibu Hj. Faridah Hanum</div>
+                  <div class="author-info-role">Peserta Halaqoh Muslimah Angkatan IV</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Section Informasi Pendaftaran PPDB -->
+      <section class="ppdb-section">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-tag">PPDB TA 2026/2027</span>
+            <h3 class="section-title">Alur & Informasi Pendaftaran Santri Baru</h3>
+            <p class="section-description">Tahapan seleksi transparan untuk menyambut calon santri penghafal Al-Qur'an.
+            </p>
+          </div>
+
+          <!-- Infografis 5 Tahap Seleksi -->
+          <div class="ppdb-flow-timeline">
+            <div class="ppdb-step-card">
+              <span class="step-num-badge">1</span>
+              <h5 class="step-card-title">Registrasi Online</h5>
+              <p class="step-card-desc">Pengisian formulir web & upload KK serta Akta.</p>
+            </div>
+            <div class="ppdb-step-card">
+              <span class="step-num-badge">2</span>
+              <h5 class="step-card-title">Tes Baca Al-Qur'an</h5>
+              <p class="step-card-desc">Ujian observasi makhraj & tes daya serap hafalan.</p>
+            </div>
+            <div class="ppdb-step-card">
+              <span class="step-num-badge">3</span>
+              <h5 class="step-card-title">Wawancara Orang Tua</h5>
+              <p class="step-card-desc">Penyamaan visi pendidikan keluarga dan pesantren.</p>
+            </div>
+            <div class="ppdb-step-card">
+              <span class="step-num-badge">4</span>
+              <h5 class="step-card-title">Pengumuman Hasil</h5>
+              <p class="step-card-desc">Penerbitan surat kelulusan via portal resmi & WA.</p>
+            </div>
+            <div class="ppdb-step-card">
+              <span class="step-num-badge">5</span>
+              <h5 class="step-card-title">Daftar Ulang</h5>
+              <p class="step-card-desc">Pengukuran seragam & orientasi Khutbatul 'Arsy.</p>
+            </div>
+          </div>
+
+          <!-- Transparansi Biaya & Gelombang Pendaftaran -->
+          <div class="ppdb-info-grid">
+            <div>
+              <h4 class="ppdb-column-title">📅 Jadwal & Gelombang Penerimaan</h4>
+
+              <div class="wave-card active-wave">
+                <div>
+                  <div class="wave-name">Gelombang 1 (Prioritas Asrama)</div>
+                  <div class="wave-meta">Periode: 1 Oktober - 28 Desember 2026</div>
+                  <div class="wave-meta">Tes Seleksi: Ahad, 3 Januari 2027</div>
+                </div>
+                <span class="wave-badge-open">Kouta Terbatas</span>
+              </div>
+
+              <div class="wave-card">
+                <div>
+                  <div class="wave-name">Gelombang 2 (Reguler)</div>
+                  <div class="wave-meta">Periode: 2 Januari - 15 Maret 2027</div>
+                  <div class="wave-meta">Tes Seleksi: Ahad, 20 Maret 2027</div>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">Segera Dibuka</span>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="ppdb-column-title">💰 Transparansi Investasi Pendidikan</h4>
+              <div class="fee-item-row">
+                <span class="fee-name">Biaya Pendaftaran Formulir & Tes</span>
+                <span class="fee-value">Rp 350.000</span>
+              </div>
+              <div class="fee-item-row">
+                <span class="fee-name">Uang Pangkal / Fasilitas Awal (SMP)</span>
+                <span class="fee-value">Rp 16.500.000</span>
+              </div>
+              <div class="fee-item-row">
+                <span class="fee-name">SPP Bulanan (Boarding Penuh + Makan + Laundry)</span>
+                <span class="fee-value">Rp 1.850.000 / bln</span>
+              </div>
+              <div class="fee-item-row">
+                <span class="fee-name">Program Mahasantri Aly</span>
+                <span class="fee-value" style="color: var(--mint-500);">Beasiswa Penuh 100%</span>
+              </div>
+            </div>
+
+            <div class="ppdb-cta-box">
+              <button class="btn btn-primary btn-ppdb-trigger">
+                Pilih Program & Isi Formulir PPDB
+              </button>
+              <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-secondary">
+                Konsultasi via WhatsApp Center PPDB
+              </a>
+            </div>
+          </div>
+
+          <!-- Callout Wakaf & Donasi Banner (Status: Coming Soon Preview) -->
+          <div class="donasi-callout-banner">
+            <div class="donasi-callout-text">
+              <h3>Berinvestasi Abadi Melalui Wakaf Pembangunan Asrama Santri</h3>
+              <p>Salurkan infaq dan wakaf terbaik Anda untuk pembangunan sarana air bersih, ranjang santri tahfidz
+                yatim, dan perluasan masjid pesantren.</p>
+            </div>
+            <button class="btn btn-primary btn-donate-trigger"
+              style="background: var(--accent-gold-400); color: var(--primary-950);">
+              💖 Salurkan Wakaf / Donasi
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================
+         VIEW 2: AKADEMIK PAGE (PRD Section 4.2 - 10 Blocks Detail View)
+         ======================================================================== -->
+    <div id="view-akademik" class="page-view">
+      <div class="akademik-header-banner">
+        <div class="container">
+          <span class="badge-tag-pill" style="background: rgba(255,255,255,0.15); color: #fff; margin-bottom: 0.75rem;">
+            Struktur Akademik Rumah Tahfidz
+          </span>
+          <h1>Katalog Program & Silabus Lengkap</h1>
+          <p>Eksplorasi mendalam 6 program unggulan formal dan non-formal dengan silabus, alur belajar, jadwal, rincian
+            biaya, serta formulir pendaftaran langsung.</p>
+        </div>
+      </div>
+
+      <!-- Sticky Sub-Program Selector Bar -->
+      <div class="program-selector-bar">
+        <div class="container">
+          <div class="selector-scroll-wrap" id="academicProgramSelector">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 10 Comprehensive Detail Blocks for Active Program -->
+      <div id="akademikProgramContent">
+        <!-- Injected dynamically by renderAkademikView() in main.js -->
+      </div>
+    </div>
+
+    <!-- ========================================================================
+         VIEW 3: VISIT / GALERI & KUNJUNGAN (PRD Section 4.4)
+         ======================================================================== -->
+    <div id="view-visit" class="page-view">
+      <div class="akademik-header-banner">
+        <div class="container">
+          <span class="badge-tag-pill" style="background: rgba(255,255,255,0.15); color: #fff; margin-bottom: 0.75rem;">
+            Dokumentasi & Visitasi
+          </span>
+          <h1>Kunjungan Lembaga & Galeri Kampus</h1>
+          <p>Saksikan atmosfer kehidupan santri, sarana prasarana modern, dan ajukan permohonan kunjungan langsung ke
+            kampus kami.</p>
+        </div>
+      </div>
+
+      <div class="container" style="padding-top: 4rem;">
+        <!-- Filter Bar -->
+        <div class="section-header">
+          <span class="section-tag">Galeri Foto & Video</span>
+          <h3 class="section-title">Dokumentasi Kegiatan & Fasilitas</h3>
+          <p class="section-description">Klik pada gambar untuk memperbesar tampilan dalam mode resolusi tinggi
+            (Lightbox).</p>
+        </div>
+
+        <div class="gallery-filter-bar">
+          <button class="filter-pill-btn active" data-filter="all">Semua Dokumentasi</button>
+          <button class="filter-pill-btn" data-filter="gedung">Fasilitas & Gedung</button>
+          <button class="filter-pill-btn" data-filter="kegiatan_santri">Kegiatan Santri</button>
+          <button class="filter-pill-btn" data-filter="event">Event & Wisuda</button>
+          <button class="filter-pill-btn" data-filter="ekstrakurikuler">Ekstrakurikuler</button>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid" id="galleryGridContainer">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Fasilitas & Sarana Prasarana -->
+        <div class="section-header">
+          <span class="section-tag">Fasilitas Pesantren</span>
+          <h3 class="section-title">Sarana Penunjang Pendidikan Holistik</h3>
+          <p class="section-description">Didesain untuk kenyamanan ibadah, ketenangan menghafal, dan keselamatan santri.
+          </p>
+        </div>
+
+        <div class="facilities-grid">
+          <div class="facility-card">
+            <div class="facility-icon-circle">🕌</div>
+            <div>
+              <h4 class="facility-name">Masjid Jamie 3 Lantai</h4>
+              <span class="facility-spec">Kapasitas 1.500 Jama'ah</span>
+            </div>
+            <p class="facility-desc">Pusat peribadahan dan halaqoh tahfidz dengan arsitektur megah berpendingin udara
+              dan karpet tebal.</p>
+          </div>
+
+          <div class="facility-card">
+            <div class="facility-icon-circle">🛏️</div>
+            <div>
+              <h4 class="facility-name">Asrama Ber-AC & Asri</h4>
+              <span class="facility-spec">Ranjang Kayu Ergonomis</span>
+            </div>
+            <p class="facility-desc">Kamar tidur bersih dengan sirkulasi udara optimal, lemari pribadi, dan pengawasan
+              musyrif 24 jam.</p>
+          </div>
+
+          <div class="facility-card">
+            <div class="facility-icon-circle">📚</div>
+            <div>
+              <h4 class="facility-name">Maktabah & Perpustakaan</h4>
+              <span class="facility-spec">5.000+ Koleksi Kitab Turots</span>
+            </div>
+            <p class="facility-desc">Koleksi manuskrip qira'at, ensiklopedia hadits, serta literatur sains dan teknologi
+              modern.</p>
+          </div>
+
+          <div class="facility-card">
+            <div class="facility-icon-circle">💻</div>
+            <div>
+              <h4 class="facility-name">Lab Multimedia & Bahasa</h4>
+              <span class="facility-spec">40 Unit PC High-Spec</span>
+            </div>
+            <p class="facility-desc">Fasilitas audio-visual interaktif untuk pembelajaran bilingual (Arab-Inggris) dan
+              materi IT santri.</p>
+          </div>
+
+          <div class="facility-card">
+            <div class="facility-icon-circle">🏹</div>
+            <div>
+              <h4 class="facility-name">Lapangan Sunnah Panahan</h4>
+              <span class="facility-spec">Futsal, Basket & Archery</span>
+            </div>
+            <p class="facility-desc">Sarana kebugaran jasmani santri di ruang terbuka hijau dengan latar perbukitan yang
+              sejuk.</p>
+          </div>
+
+          <div class="facility-card">
+            <div class="facility-icon-circle">🩺</div>
+            <div>
+              <h4 class="facility-name">Poskestren Santri Sehat</h4>
+              <span class="facility-spec">Tenaga Medis Siaga 24 Jam</span>
+            </div>
+            <p class="facility-desc">Layanan pertolongan pertama, obat-obatan herbal dan medis modern yang diawasi oleh
+              dokter mitra.</p>
+          </div>
+        </div>
+
+        <!-- Formulir Kunjungan / Reservasi Tur & Peta -->
+        <div class="tour-reservation-grid">
+          <div>
+            <div class="section-header" style="text-align: left; align-items: flex-start; margin-bottom: 2rem;">
+              <span class="section-tag">Reservasi Tur</span>
+              <h3 class="section-title">Jadwalkan Kunjungan Fisik</h3>
+              <p class="section-description">Bagi rombongan wali santri, sekolah, atau majelis ta'lim yang ingin melihat
+                langsung kampus Rumah Tahfidz.</p>
+            </div>
+
+            <form id="tourReservationForm">
+              <div class="form-group">
+                <label class="form-label">Nama Penanggung Jawab Rombongan *</label>
+                <input type="text" name="tourName" class="form-input" placeholder="Contoh: Ust. Burhanudin" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Nama Instansi / Lembaga / Majelis *</label>
+                <input type="text" name="tourOrg" class="form-input" placeholder="Contoh: Majelis Ta'lim Al-Huda"
+                  required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Nomor WhatsApp Aktif *</label>
+                <input type="tel" name="tourPhone" class="form-input" placeholder="Contoh: 081298765432" required />
+              </div>
+
+              <div class="form-grid-2col">
+                <div class="form-group">
+                  <label class="form-label">Tanggal Rencana Kunjungan *</label>
+                  <input type="date" name="tourDate" class="form-input" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Estimasi Jumlah Peserta *</label>
+                  <input type="number" name="tourCount" class="form-input" placeholder="Misal: 15 Orang" min="1"
+                    required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Tujuan Kunjungan *</label>
+                <select name="tourGoal" class="form-select" required>
+                  <option value="Survey Calon Santri">Survey Calon Santri Baru</option>
+                  <option value="Studi Banding Tahfidz">Studi Banding Kurikulum Tahfidz</option>
+                  <option value="Silaturahmi Wakaf">Silaturahmi & Penyaluran Wakaf</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                Ajukan Jadwal Kunjungan
+              </button>
+            </form>
+          </div>
+
+          <!-- Petunjuk Peta & Rute -->
+          <div class="map-wrapper">
+            <div class="map-placeholder-box">
+              <div style="font-size: 3rem;">📍</div>
+              <h4 style="color: var(--primary-950); font-weight: 800;">Lokasi Kampus Rumah Tahfidz</h4>
+              <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Jl. Peradaban Qur'ani No. 99, Ciburial, Dago Atas, Bandung, Jawa Barat 40198
+              </p>
+              <a href="https://maps.google.com" target="_blank" class="btn btn-secondary" style="margin-top: 1rem;">
+                Buka di Google Maps
+              </a>
+            </div>
+            <div class="route-info-box">
+              <h5 style="font-size: 0.95rem; font-weight: 800; color: var(--primary-900); margin-bottom: 0.5rem;">
+                🚗 Petunjuk Rute Transportasi:
+              </h5>
+              <p style="font-size: 0.85rem; color: var(--text-body); line-height: 1.6;">
+                Dari Gerbang Tol Pasteur: Ambil arah Dago / Terminal Dago, lanjutkan 3.5 km ke arah Ciburial. Kampus
+                berada di kanan jalan dengan gapura hijau berarsitektur timur tengah.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================
+         VIEW 4: ABOUT / TENTANG KAMI (PRD Section 4.5)
+         ======================================================================== -->
+    <div id="view-about" class="page-view">
+      <div class="akademik-header-banner">
+        <div class="container">
+          <span class="badge-tag-pill" style="background: rgba(255,255,255,0.15); color: #fff; margin-bottom: 0.75rem;">
+            Profil Lembaga
+          </span>
+          <h1>Tentang Rumah Tahfidz</h1>
+          <p>Mengenal sejarah panjang, visi mulia, dewan asatidz pembina, dan legalitas resmi pondok pesantren kami.</p>
+        </div>
+      </div>
+
+      <div class="container" style="padding-top: 4rem;">
+        <!-- Sejarah & Visi Misi -->
+        <div class="about-intro-grid">
+          <div>
+            <span class="section-tag">Sejarah & Khidmah</span>
+            <h2 style="font-size: 2.2rem; color: var(--primary-950); margin: 0.75rem 0 1.25rem;">
+              Berawal dari 12 Santri Menuju Ribuan Penghafal Al-Qur'an
+            </h2>
+            <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-body); margin-bottom: 1.25rem;">
+              Didirikan pada tahun 2012 oleh KH. Dr. Muhammad Zaki Al-Hafizh, Rumah Tahfidz bermula dari
+              halaqoh sederhana di serambi masjid dengan tekad membebaskan anak-anak dari buta aksara Al-Qur'an.
+            </p>
+            <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-body);">
+              Kini dengan izin Allah, Rumah Tahfidz telah berkembang menjadi kawasan pendidikan pesantren seluas 4
+              hektar
+              yang menaungi pendidikan formal SMP dan SMA, Ma'had Aly takhassus, serta program dakwah masyarakat luas
+              dengan akreditasi A Unggul.
+            </p>
+          </div>
+          <div>
+            <div
+              style="background: var(--bg-surface); border-radius: var(--radius-xl); padding: 2.5rem; border: 1px solid var(--border-card); box-shadow: var(--shadow-md);">
+              <h4 style="font-size: 1.35rem; color: var(--primary-900); margin-bottom: 1rem;">🎯 Visi & Misi Lembaga
+              </h4>
+              <p style="font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem;">
+                <strong>Visi:</strong> Menjadi pusat peradaban Al-Qur'an terkemuka di Asia Tenggara yang melahirkan
+                generasi penghafal Al-Qur'an mutqin, berakhlak mulia, berwawasan ilmiah, dan mandiri.
+              </p>
+              <p style="font-size: 0.95rem; font-weight: 700; color: var(--primary-900); margin-bottom: 0.5rem;">Misi
+                Utama:</p>
+              <ul style="padding-left: 1.25rem; font-size: 0.9rem; line-height: 1.7; color: var(--text-body);">
+                <li>Menyelenggarakan pembelajaran Al-Qur'an bersanad muttashil.</li>
+                <li>Mengintegrasikan kurikulum agama dan kurikulum sains nasional.</li>
+                <li>Membiasakan penanaman adab dan kemandirian santri 24 jam.</li>
+                <li>Mengembangkan dakwah qur'ani dan filantropi wakaf produktif.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Nilai Inti (Core Values) -->
+        <div class="section-header">
+          <span class="section-tag">Nilai-Nilai Luhur</span>
+          <h3 class="section-title">5 Core Values Pesantren</h3>
+          <p class="section-description">Prinsip kepribadian yang tertanam dalam jiwa setiap santri, asatidz, dan
+            pengurus.</p>
+        </div>
+
+        <div class="core-values-grid">
+          <div class="core-value-card">
+            <span class="core-arabic-word">الإخلاص</span>
+            <h5 class="core-value-title">1. Ikhlas</h5>
+            <p class="core-value-desc">Menjadikan seluruh lelah belajar semata-mata mencari ridho Allah Subhanahu Wa
+              Ta'ala.</p>
+          </div>
+          <div class="core-value-card">
+            <span class="core-arabic-word">الإتقان</span>
+            <h5 class="core-value-title">2. Mutqin</h5>
+            <p class="core-value-desc">Kualitas hafalan yang kokoh, tajwid yang presisi, dan komitmen muraja'ah
+              sepanjang hayat.</p>
+          </div>
+          <div class="core-value-card">
+            <span class="core-arabic-word">الأدب</span>
+            <h5 class="core-value-title">3. Beradab</h5>
+            <p class="core-value-desc">Menomorsatukan adab dan akhlak mulia sebelum ilmu pengetahuan.</p>
+          </div>
+          <div class="core-value-card">
+            <span class="core-arabic-word">التفوق</span>
+            <h5 class="core-value-title">4. Unggul</h5>
+            <p class="core-value-desc">Berjiwa pembelajar gigih, berprestasi sains, dan berwawasan global.</p>
+          </div>
+          <div class="core-value-card">
+            <span class="core-arabic-word">الاستقلال</span>
+            <h5 class="core-value-title">5. Mandiri</h5>
+            <p class="core-value-desc">Tangguh menghadapi tantangan, berjiwa entrepreneur, dan siap bermanfaat bagi
+              ummat.</p>
+          </div>
+        </div>
+
+        <!-- Profil Pimpinan & Dewan Pembina -->
+        <div class="section-header">
+          <span class="section-tag">Dewan Asatidz</span>
+          <h3 class="section-title">Pimpinan & Dewan Syariah</h3>
+          <p class="section-description">Para ulama dan pendidik yang mendedikasikan hidupnya untuk membimbing para
+            huffadz.</p>
+        </div>
+
+        <div class="leadership-grid">
+          <div class="leader-card">
+            <div class="leader-photo-box">
+              <img src="/assets/images/mudir.jpg" alt="KH. Dr. Muhammad Zaki Al-Hafizh, M.A." />
+            </div>
+            <div class="leader-body">
+              <h4 class="leader-name">KH. Dr. Muhammad Zaki Al-Hafizh, M.A.</h4>
+              <span class="leader-role">Pimpinan & Pengasuh Pondok</span>
+              <span class="leader-sanad">Sanad Hafsh 'an 'Ashim & Qira'at 'Asyrah</span>
+              <p class="leader-bio">Doktor Tafsir Universitas Al-Azhar Kairo. Berpengalaman 20+ tahun mendidik generasi
+                penghafal Al-Qur'an.</p>
+            </div>
+          </div>
+
+          <div class="leader-card">
+            <div class="leader-photo-box">
+              <img src="/assets/images/halaqoh.jpg" alt="Ustadz H. Ahmad Syakir, Lc., M.Ag." />
+            </div>
+            <div class="leader-body">
+              <h4 class="leader-name">Ustadz H. Ahmad Syakir, Lc., M.Ag.</h4>
+              <span class="leader-role">Kepala Bidang Akademik & Kurikulum</span>
+              <span class="leader-sanad">Sanad Matan Al-Jazariyah & Tuhfah</span>
+              <p class="leader-bio">Alumni Universitas Islam Madinah. Mengembangkan integrasi kurikulum sains dan
+                tahfidz mutqin.</p>
+            </div>
+          </div>
+
+          <div class="leader-card">
+            <div class="leader-photo-box">
+              <img src="/assets/images/hero-santri.jpg" alt="Ustadzah Hj. Maryam Nabila, S.Th.I." />
+            </div>
+            <div class="leader-body">
+              <h4 class="leader-name">Ustadzah Hj. Maryam Nabila, S.Th.I.</h4>
+              <span class="leader-role">Pengasuh Santriwati & Pembina Ummahat</span>
+              <span class="leader-sanad">Hafizhah 30 Juz Mutqin IIQ Jakarta</span>
+              <p class="leader-bio">Pakar parenting nabawiyah dan penggerak utama gerakan membaca tartil para muslimah.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legalitas Resmi & Akreditasi -->
+        <div class="section-header">
+          <span class="section-tag">Kepastian Hukum & Izin</span>
+          <h3 class="section-title">Legalitas & Akreditasi Resmi</h3>
+          <p class="section-description">Terdaftar secara sah dan diakui penuh oleh kementerian terkait di Republik
+            Indonesia.</p>
+        </div>
+
+        <div class="legal-badges-grid">
+          <div class="legal-card">
+            <span class="legal-institution">Kementerian Agama RI</span>
+            <span class="legal-number">Kd.10.04/PP.00.7/3492/2018</span>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Izin Operasional Pondok Pesantren & Lembaga
+              Pendidikan Al-Qur'an</p>
+          </div>
+
+          <div class="legal-card">
+            <span class="legal-institution">Kemendikbudristek</span>
+            <span class="legal-number">NPSN: 69982341 (Akreditasi A)</span>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Ijazah Negara Formal SMP & SMA Terakreditasi Unggul
+            </p>
+          </div>
+
+          <div class="legal-card">
+            <span class="legal-institution">Badan Wakaf Indonesia (BWI)</span>
+            <span class="legal-number">SK Nazhir No. 3.3.00281/2021</span>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Lembaga Pengelola Wakaf Uang & Tanah Wakaf Resmi
+              Nasional</p>
+          </div>
+
+          <div class="legal-card">
+            <span class="legal-institution">Kemenkumham RI</span>
+            <span class="legal-number">AHU-0014289.AH.01.04.2016</span>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Pengesahan Akta Yayasan Cahaya Hati Bening</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================
+         VIEW 5: NEWS / ARTIKEL & BERITA (PRD Section 4.6)
+         ======================================================================== -->
+    <div id="view-news" class="page-view">
+      <div class="akademik-header-banner">
+        <div class="container">
+          <span class="badge-tag-pill" style="background: rgba(255,255,255,0.15); color: #fff; margin-bottom: 0.75rem;">
+            Pusat Informasi
+          </span>
+          <h1>Kabar Santri & Artikel Edukasi</h1>
+          <p>Kumpulan berita kegiatan pesantren, pengumuman seleksi PPDB, kisah prestasi santri, dan artikel parenting
+            qur'ani.</p>
+        </div>
+      </div>
+
+      <div class="container" style="padding-top: 3.5rem;">
+        <!-- Search and Filter Bar -->
+        <div class="news-filter-bar">
+          <div class="news-search-box">
+            <span class="search-icon-inside">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <input type="text" id="newsSearchInput" class="news-search-input"
+              placeholder="Cari artikel atau berita..." />
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="filter-pill-btn news-category-pill active" data-category="all">Semua Kategori</button>
+            <button class="filter-pill-btn news-category-pill" data-category="Prestasi">Prestasi & Event</button>
+            <button class="filter-pill-btn news-category-pill" data-category="PPDB">Info PPDB</button>
+            <button class="filter-pill-btn news-category-pill" data-category="Parenting">Parenting Qur'ani</button>
+            <button class="filter-pill-btn news-category-pill" data-category="Keislaman">Artikel Keislaman</button>
+          </div>
+        </div>
+
+        <!-- News Cards Grid -->
+        <div class="news-grid" id="newsGridContainer">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================
+         VIEW 6: ADMIN LOGIN (/admin/login) (PRD Section 5.1)
+         ======================================================================== -->
+    <div id="view-admin-login" class="page-view admin-login-page">
+      <div class="admin-login-wrapper">
+        <div class="admin-login-card">
+          <div class="admin-login-header">
+            <a href="#home" class="admin-login-back-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              <span>Kembali ke Website Utama</span>
+            </a>
+            <div class="admin-login-brand">
+              <img src="/assets/images/logo-header-RTM.png" alt="Rumah Tahfidz" class="admin-login-logo" />
+            </div>
+            <div class="admin-badge-portal">Portal Administrasi & Backoffice</div>
+            <h2>Masuk ke Sistem Manajemen</h2>
+            <p>Silakan masuk dengan kredensial staf terdaftar untuk mengelola modul portal Rumah Tahfidz.</p>
+          </div>
+
+          <!-- Rate Limiting / Brute-force Warning Alert -->
+          <div id="loginAlertBox" class="admin-login-alert" style="display: none;"></div>
+
+          <form id="adminLoginForm" class="admin-login-form">
+            <div class="form-group">
+              <label for="loginEmail" class="form-label">Email Staf / Administrator</label>
+              <div class="input-with-icon">
+                <span class="input-icon">✉️</span>
+                <input type="email" id="loginEmail" class="form-input" placeholder="admin@rumahtahfidz.sch.id" required autocomplete="email" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="loginPassword" class="form-label">Kata Sandi</label>
+                <span style="font-size: 0.76rem; color: var(--text-light);">Min. 6 Karakter</span>
+              </div>
+              <div class="input-with-icon">
+                <span class="input-icon">🔒</span>
+                <input type="password" id="loginPassword" class="form-input" placeholder="Masukkan kata sandi..." required autocomplete="current-password" />
+                <button type="button" id="togglePasswordBtn" class="password-toggle-btn" aria-label="Lihat kata sandi">👁️</button>
+              </div>
+            </div>
+
+            <div class="admin-login-options">
+              <label class="checkbox-label">
+                <input type="checkbox" id="rememberMeCheckbox" checked />
+                <span>Ingat Sesi Saya</span>
+              </label>
+              <a href="https://wa.me/6281234567890?text=Halo%20Admin%20IT,%20saya%20memerlukan%20bantuan%20reset%20kata%20sandi%20portal%20admin." target="_blank" class="forgot-link">Lupa Password?</a>
+            </div>
+
+            <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-block btn-lg" style="margin-top: 0.5rem;">
+              <span>Masuk ke Dashboard</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </form>
+
+          <!-- Quick 1-Click Role Testing Cards -->
+          <div class="demo-accounts-box">
+            <div class="demo-accounts-title">
+              <span>⚡ Klik untuk Isi Cepat Akun Demo (Sprint 2):</span>
+            </div>
+            <div class="demo-accounts-grid">
+              <button type="button" class="demo-role-pill superadmin-pill" data-email="admin@rumahtahfidz.sch.id" data-pass="admin123" data-role="superadmin">
+                <strong>👑 Super Admin (Full Access 7 Modul)</strong>
+                <small>admin@rumahtahfidz.sch.id / admin123</small>
+              </button>
+              <button type="button" class="demo-role-pill editor-pill" data-email="editor@rumahtahfidz.sch.id" data-pass="editor123" data-role="editor">
+                <strong>✍️ Content Editor (Artikel, Akademik, Galeri)</strong>
+                <small>editor@rumahtahfidz.sch.id / editor123</small>
+              </button>
+              <button type="button" class="demo-role-pill finance-pill" data-email="finance@rumahtahfidz.sch.id" data-pass="finance123" data-role="finance">
+                <strong>💰 Finance / Bendahara (Wakaf, Donasi & Verifikasi Transfer)</strong>
+                <small>finance@rumahtahfidz.sch.id / finance123</small>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================
+         VIEW 7: ADMIN DASHBOARD BACKOFFICE (/admin) (PRD Section 5 & 6)
+         ======================================================================== -->
+    <div id="view-admin" class="page-view admin-dashboard-page">
+      <div class="admin-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar" id="adminSidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-brand">
+              <img src="/assets/images/logo-header-RTM.png" alt="Rumah Tahfidz" class="sidebar-brand-img" />
+              <div class="sidebar-brand-text">
+                <span class="brand-title">RTM Backoffice</span>
+                <span class="brand-badge"><span class="pulse-dot"></span> Online</span>
+              </div>
+            </div>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Tutup Menu">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+
+          <!-- User Profile Card in Sidebar -->
+          <div class="sidebar-user-card">
+            <div class="user-avatar" id="sidebarUserAvatar">MZ</div>
+            <div class="user-info">
+              <div class="user-name" id="sidebarUserName">Dr. Muhammad Zaki</div>
+              <div class="user-role-badge superadmin" id="sidebarUserRole">Super Admin</div>
+            </div>
+          </div>
+
+          <!-- Sidebar Nav Links -->
+          <nav class="sidebar-nav">
+            <div class="nav-group-title">MENU UTAMA</div>
+            <ul class="sidebar-menu-list">
+              <li class="sidebar-menu-item" data-module="overview">
+                <a href="#admin-overview" class="sidebar-menu-link active" data-admin-nav="overview">
+                  <span class="menu-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </span>
+                  <span class="menu-label">Ringkasan / Analytics</span>
+                </a>
+              </li>
+              <li class="sidebar-menu-item" data-module="akademik">
+                <a href="#admin-akademik" class="sidebar-menu-link" data-admin-nav="akademik">
+                  <span class="menu-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                  </span>
+                  <span class="menu-label">Kelola Akademik</span>
+                  <span class="menu-pill-count">6 Program</span>
+                </a>
+              </li>
+              <li class="sidebar-menu-item" data-module="donasi">
+                <a href="#admin-donasi" class="sidebar-menu-link" data-admin-nav="donasi">
+                  <span class="menu-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  </span>
+                  <span class="menu-label">Modul Wakaf & Donasi</span>
+                  <span class="menu-badge-alert" id="sidebarPendingDonationBadge">2 Struk</span>
+                </a>
+              </li>
+              <li class="sidebar-menu-item" data-module="galeri">
+                <a href="#admin-galeri" class="sidebar-menu-link" data-admin-nav="galeri">
+                  <span class="menu-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect width="14" height="12" x="1" y="6" rx="2" ry="2"/></svg>
+                  </span>
+                  <span class="menu-label">Kelola Galeri & Kunjungan</span>
+                  <span class="menu-pill-count" id="sidebarVisitCount">1 Baru</span>
+                </a>
+              </li>
+              <li class="sidebar-menu-item" data-module="berita">
+                <a href="#admin-berita" class="sidebar-menu-link" data-admin-nav="berita">
+                  <span class="menu-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  </span>
+                  <span class="menu-label">Kelola Artikel / Berita</span>
+                  <span class="menu-pill-count">6 Rilis</span>
+                </a>
+              </li>
+            </ul>
+
+            <div class="nav-group-title" style="margin-top: 1.5rem;">PENGATURAN SISTEM</div>
+            <ul class="sidebar-menu-list">
+              <li class="sidebar-menu-item" data-module="tampilan">
+                <a href="#admin-tampilan" class="sidebar-menu-link" data-admin-nav="tampilan">
+                  <span class="menu-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  </span>
+                  <span class="menu-label">Kelola Tampilan</span>
+                </a>
+              </li>
+              <li class="sidebar-menu-item" data-module="users">
+                <a href="#admin-users" class="sidebar-menu-link" data-admin-nav="users">
+                  <span class="menu-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </span>
+                  <span class="menu-label">Manajemen Pengguna</span>
+                  <span class="role-req-badge">Superadmin</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+
+          <div class="sidebar-footer">
+            <a href="#home" class="sidebar-footer-link" title="Buka Website Publik">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              <span>Ke Web Publik</span>
+            </a>
+            <button id="adminLogoutBtn" class="sidebar-logout-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span>Keluar (Logout)</span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- Admin Main Content Wrapper -->
+        <div class="admin-main-wrapper">
+          <!-- Topbar -->
+          <header class="admin-topbar">
+            <div class="topbar-left">
+              <button class="topbar-toggle-btn" id="adminSidebarToggleBtn" aria-label="Buka Menu">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+              </button>
+              <div class="topbar-breadcrumb">
+                <span class="crumb-root">Portal Admin</span>
+                <span class="crumb-separator">/</span>
+                <span class="crumb-active" id="topbarBreadcrumbActive">Ringkasan / Analytics</span>
+              </div>
+            </div>
+
+            <div class="topbar-right">
+              <!-- Quick Role Switcher for live demos -->
+              <div class="quick-role-switcher" title="Ganti Role Cepat untuk Demo">
+                <span class="switcher-label">Mode Role:</span>
+                <select id="quickRoleSelect" class="quick-role-select">
+                  <option value="superadmin">👑 Super Admin</option>
+                  <option value="editor">✍️ Content Editor</option>
+                  <option value="finance">💰 Finance / Bendahara</option>
+                </select>
+              </div>
+
+              <!-- Notification Bell with Dropdown -->
+              <div class="topbar-notif-box">
+                <button class="topbar-icon-btn" id="notifBellBtn" aria-label="Notifikasi">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  <span class="notif-badge-dot" id="notifBadgeDot"></span>
+                </button>
+                <div class="notif-dropdown" id="notifDropdown" style="display: none;">
+                  <div class="notif-header">
+                    <strong>Pemberitahuan Staf</strong>
+                    <span class="badge-count" id="notifDropdownCount">3 Baru</span>
+                  </div>
+                  <ul class="notif-list" id="notifListContainer">
+                    <!-- Populated by JS -->
+                  </ul>
+                </div>
+              </div>
+
+              <a href="#home" class="btn btn-secondary btn-sm topbar-web-btn" target="_blank">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                <span>Lihat Web</span>
+              </a>
+
+              <div class="topbar-profile-pill">
+                <div class="topbar-avatar" id="topbarAvatar">MZ</div>
+                <div class="topbar-user-meta">
+                  <span class="topbar-name" id="topbarUserName">Dr. Muhammad Zaki</span>
+                  <span class="topbar-role" id="topbarUserRole">Superadmin</span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <!-- Main Content Panels -->
+          <main class="admin-content-area" id="adminContentArea">
+            <!-- 403 Forbidden Access Denied Alert -->
+            <div id="admin403Banner" class="admin-403-banner" style="display: none;">
+              <div class="banner-icon">🚫</div>
+              <div style="flex-grow: 1;">
+                <h4>Akses Terbatas (403 Forbidden)</h4>
+                <p id="admin403Message">Role Anda tidak memiliki izin untuk mengelola modul ini.</p>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btnBackToAllowed">Kembali ke Modul Berwenang</button>
+            </div>
+
+            <!-- ================================================================
+                 PANEL 1: RINGKASAN / ANALYTICS (PRD Section 5.1 & 5)
+                 ================================================================ -->
+            <div id="admin-panel-overview" class="admin-panel active">
+              <div class="panel-header">
+                <div>
+                  <h2>Ringkasan Eksekutif & Analytics</h2>
+                  <p>Monitoring menyeluruh aktivitas akademik, capaian donasi wakaf, dan pendaftaran santri.</p>
+                </div>
+                <div class="panel-header-actions">
+                  <button class="btn btn-secondary btn-sm" id="btnRefreshOverview">🔄 Muat Ulang Data</button>
+                  <button class="btn btn-primary btn-sm" id="btnQuickExportCSV">📥 Unduh Rekap Transaksi</button>
+                </div>
+              </div>
+
+              <!-- KPI Metrics Grid -->
+              <div class="admin-kpi-grid">
+                <div class="admin-stat-card">
+                  <div class="stat-card-info">
+                    <span class="stat-card-label">Total Donasi Diterima</span>
+                    <span class="stat-card-val" id="kpiTotalDonasi">Rp 494.050.000</span>
+                    <span class="stat-card-sub">▲ +18.4% bulan ini</span>
+                  </div>
+                  <div class="stat-card-icon stat-purple">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  </div>
+                </div>
+
+                <div class="admin-stat-card">
+                  <div class="stat-card-info">
+                    <span class="stat-card-label">Pendaftar Santri PPDB</span>
+                    <span class="stat-card-val" id="kpiTotalPPDB">38 Santri</span>
+                    <span class="stat-card-sub" style="color: #2563eb;">● Gelombang 1 Dibuka</span>
+                  </div>
+                  <div class="stat-card-icon stat-blue">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                  </div>
+                </div>
+
+                <div class="admin-stat-card">
+                  <div class="stat-card-info">
+                    <span class="stat-card-label">Campaign Wakaf Aktif</span>
+                    <span class="stat-card-val" id="kpiActiveCampaigns">3 Program</span>
+                    <span class="stat-card-sub" style="color: #059669;">● 1 Campaign Sukses</span>
+                  </div>
+                  <div class="stat-card-icon stat-emerald">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </div>
+                </div>
+
+                <div class="admin-stat-card">
+                  <div class="stat-card-info">
+                    <span class="stat-card-label">Struk Donasi Pending</span>
+                    <span class="stat-card-val" id="kpiPendingReceipts">2 Transaksi</span>
+                    <span class="stat-card-sub" style="color: #d97706;">⚠️ Perlu Verifikasi Bank</span>
+                  </div>
+                  <div class="stat-card-icon stat-gold">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Two Column Activity Tables -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 1.5rem;">
+                <!-- Pending Donations Table -->
+                <div class="admin-card">
+                  <div class="admin-card-header">
+                    <span class="admin-card-title">
+                      <span>💳 Verifikasi Transfer Manual Menunggu Tindakan</span>
+                    </span>
+                    <a href="#admin-donasi" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Buka Semua</a>
+                  </div>
+                  <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Donatur</th>
+                          <th>Program</th>
+                          <th>Nominal</th>
+                          <th>Status</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="overviewPendingDonationsTable">
+                        <!-- Populated by JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Recent PPDB Registrations -->
+                <div class="admin-card">
+                  <div class="admin-card-header">
+                    <span class="admin-card-title">
+                      <span>🎓 Pendaftar PPDB Calon Santri Terbaru</span>
+                    </span>
+                    <a href="#admin-akademik" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Kelola PPDB</a>
+                  </div>
+                  <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Nama Santri</th>
+                          <th>Jenjang</th>
+                          <th>Wali Santri</th>
+                          <th>Tanggal</th>
+                          <th>Status</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="overviewPPDBTable">
+                        <!-- Populated by JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================================================================
+                 PANEL 2: KELOLA AKADEMIK & SILABUS (PRD Section 5.4)
+                 ================================================================ -->
+            <div id="admin-panel-akademik" class="admin-panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Kelola Akademik & Status PPDB</h2>
+                  <p>Atur saklar buka/tutup pendaftaran gelombang santri baru dan silabus kurikulum per jenjang.</p>
+                </div>
+                <div class="panel-header-actions">
+                  <button class="btn btn-primary btn-sm" id="btnUploadSyllabus">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Unggah Silabus PDF Baru</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Programs Table with Toggle Switches -->
+              <div class="admin-card">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">📚 Katalog 6 Program & Saklar Penerimaan Santri</span>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Perubahan saklar langsung aktif secara real-time</span>
+                </div>
+                <div class="admin-table-wrapper">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Program Pendidikan</th>
+                        <th>Kategori</th>
+                        <th>Target Hafalan</th>
+                        <th>Durasi</th>
+                        <th>Status PPDB</th>
+                        <th>Silabus PDF</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminProgramsTableBody">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- PPDB Leads Management Table -->
+              <div class="admin-card" style="margin-top: 1.5rem;">
+                <div class="admin-card-header">
+                  <div>
+                    <span class="admin-card-title">📝 Daftar Pendaftar PPDB Online 2026/2027</span>
+                    <span class="badge-tag-pill" id="adminPPDBCountBadge" style="margin-left: 0.5rem; background: rgba(129,28,229,0.1); color: var(--primary-600); font-size: 0.75rem;">
+                      0 Pendaftar
+                    </span>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" id="btnExportPPDB">
+                    📥 Unduh Data Santri (CSV)
+                  </button>
+                </div>
+
+                <!-- Table Search & Filters Toolbar -->
+                <div class="admin-table-toolbar" style="display: flex; flex-wrap: wrap; gap: 0.75rem; padding: 0.85rem 1.25rem; background: var(--bg-surface-soft); border-bottom: 1px solid var(--border-subtle); align-items: center; justify-content: space-between;">
+                  <div style="display: flex; gap: 0.5rem; align-items: center; flex: 1; min-width: 260px;">
+                    <span style="font-size: 1rem; color: var(--text-muted);">🔍</span>
+                    <input type="text" id="filterPPDBSearch" class="form-input" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;" placeholder="Cari nama santri, wali, nomor WA, ID..." />
+                  </div>
+                  <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <select id="filterPPDBProgram" class="form-input" style="padding: 0.45rem 0.75rem; font-size: 0.85rem; width: auto;">
+                      <option value="all">Semua Jenjang Program</option>
+                      <option value="smp">SMP Tahfidz</option>
+                      <option value="sma">SMA Tahfidz</option>
+                      <option value="mahasantri">Mahasantri Aly</option>
+                      <option value="tpa">TPA Al-Qur'an</option>
+                      <option value="online">Ngaji Online</option>
+                      <option value="halaqoh-ibu">Halaqoh Ibu</option>
+                    </select>
+                    <select id="filterPPDBStatus" class="form-input" style="padding: 0.45rem 0.75rem; font-size: 0.85rem; width: auto;">
+                      <option value="all">Semua Status Seleksi</option>
+                      <option value="pending">Menunggu</option>
+                      <option value="verified">Terverifikasi</option>
+                      <option value="accepted">Diterima</option>
+                      <option value="rejected">Ditolak</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="admin-table-wrapper">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>No. Reg</th>
+                        <th>Nama Calon Santri</th>
+                        <th>Pilihan Program</th>
+                        <th>Orang Tua / Wali</th>
+                        <th>Nomor WhatsApp</th>
+                        <th>Tanggal Daftar</th>
+                        <th>Status Seleksi</th>
+                        <th>Tindakan</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminPPDBTableBody">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================================================================
+                 PANEL 3: MODUL WAKAF & DONASI (PRD Section 5.2)
+                 ================================================================ -->
+            <div id="admin-panel-donasi" class="admin-panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Modul Wakaf & Donasi (CMS Finansial)</h2>
+                  <p>Pengelolaan program campaign, verifikasi bukti transfer donatur, dan pembukuan akuntabel.</p>
+                </div>
+                <div class="panel-header-actions">
+                  <button class="btn btn-secondary btn-sm" id="btnExportDonationCSV">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Ekspor CSV Laporan</span>
+                  </button>
+                  <button class="btn btn-primary btn-sm" id="btnCreateCampaign">
+                    <span>+ Buat Campaign Baru</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Campaign Management Grid -->
+              <div class="admin-card">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">🎯 Daftar Program Campaign Wakaf & Infaq</span>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);" id="campaignsCountBadge">4 Program Terdaftar</span>
+                </div>
+                <div class="admin-campaign-grid" id="adminCampaignsGrid">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- Transactions Table with Receipt Verification -->
+              <div class="admin-card" style="margin-top: 1.5rem;">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">📑 Rekap Transaksi Donatur & Verifikasi Struk Transfer</span>
+                </div>
+
+                <!-- Filter Toolbar -->
+                <div class="admin-toolbar">
+                  <input type="text" id="donationSearchInput" class="admin-search-input" placeholder="Cari invoice / nama donatur..." />
+                  <div style="display: flex; gap: 0.5rem;">
+                    <button class="filter-pill-btn donation-filter-btn active" data-status="all">Semua</button>
+                    <button class="filter-pill-btn donation-filter-btn" data-status="pending">Menunggu Verifikasi (2)</button>
+                    <button class="filter-pill-btn donation-filter-btn" data-status="success">Sukses Terverifikasi</button>
+                  </div>
+                </div>
+
+                <div class="admin-table-wrapper">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>No. Invoice</th>
+                        <th>Donatur</th>
+                        <th>Program Wakaf</th>
+                        <th>Nominal</th>
+                        <th>Metode Bayar</th>
+                        <th>Tanggal Transaksi</th>
+                        <th>Status</th>
+                        <th>Aksi Verifikasi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminDonationTableBody">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================================================================
+                 PANEL 4: KELOLA GALERI & KUNJUNGAN (PRD Section 5.5)
+                 ================================================================ -->
+            <div id="admin-panel-galeri" class="admin-panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Kelola Galeri Media & Log Kunjungan</h2>
+                  <p>Manajemen album foto kegiatan santri dan konfirmasi permohonan kunjungan rombongan tamu.</p>
+                </div>
+                <div class="panel-header-actions">
+                  <button class="btn btn-primary btn-sm" id="btnAddGalleryMedia">+ Tambah Media Galeri</button>
+                </div>
+              </div>
+
+              <!-- Log Reservasi Kunjungan Tamu -->
+              <div class="admin-card">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">🏛️ Permohonan Reservasi Kunjungan Tur Kampus</span>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Konfirmasi jadwal survey majelis ta'lim dan calon wali santri</span>
+                </div>
+                <div class="admin-table-wrapper">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Rombongan / Instansi</th>
+                        <th>Penanggung Jawab</th>
+                        <th>No. WhatsApp</th>
+                        <th>Rencana Tanggal</th>
+                        <th>Peserta</th>
+                        <th>Maksud & Tujuan</th>
+                        <th>Status</th>
+                        <th>Aksi Konfirmasi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminVisitTableBody">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Media Albums Overview -->
+              <div class="admin-card" style="margin-top: 1.5rem;">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">🖼️ Koleksi Media Dokumentasi Terpublikasi (12 Foto)</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;" id="adminMediaMiniGrid">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- ================================================================
+                 PANEL 5: KELOLA ARTIKEL / BERITA (PRD Section 5.6)
+                 ================================================================ -->
+            <div id="admin-panel-berita" class="admin-panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Kelola Artikel & Berita (CMS Blog)</h2>
+                  <p>Tulis artikel baru, kelola publikasi berita pesantren, dan optimasi SEO judul meta.</p>
+                </div>
+                <div class="panel-header-actions">
+                  <button class="btn btn-primary btn-sm" id="btnCreateArticle">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span>+ Tulis Artikel Baru</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="admin-card">
+                <div class="admin-toolbar">
+                  <input type="text" id="adminArticleSearchInput" class="admin-search-input" placeholder="Cari artikel berita..." />
+                  <div style="font-size: 0.82rem; color: var(--text-muted);" id="adminArticleCountBadge">
+                    6 Berita Terdaftar
+                  </div>
+                </div>
+
+                <div class="admin-table-wrapper">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Thumbnail</th>
+                        <th>Judul Berita & Slug</th>
+                        <th>Kategori</th>
+                        <th>Penulis</th>
+                        <th>Tanggal Rilis</th>
+                        <th>Status Publikasi</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminArticlesTableBody">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================================================================
+                 PANEL 6: KELOLA TAMPILAN & IDENTITAS (PRD Section 5.3)
+                 ================================================================ -->
+            <div id="admin-panel-tampilan" class="admin-panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Kelola Tampilan & Identitas Lembaga</h2>
+                  <p>Pengaturan identitas yayasan, pimpinan mudir, nomor layanan WhatsApp, dan nomor rekening resmi.</p>
+                </div>
+                <div class="panel-header-actions">
+                  <button class="btn btn-primary btn-sm" id="btnSaveAppearanceSettings">💾 Simpan Perubahan Identitas</button>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 1.5rem;">
+                <!-- Identity Card -->
+                <div class="admin-card">
+                  <div class="admin-card-header">
+                    <span class="admin-card-title">🏢 Identitas Yayasan & Lembaga</span>
+                  </div>
+                  <form id="formAppearanceIdentity" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label">Nama Lembaga Lengkap</label>
+                      <input type="text" id="settingInstitutionName" class="form-input" value="Rumah Tahfidz Al-Qur'an & Pesantren Modern" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Nama Ringkas (Header & Footer)</label>
+                      <input type="text" id="settingShortName" class="form-input" value="Rumah Tahfidz" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Tagline Lembaga</label>
+                      <textarea id="settingTagline" class="form-input" rows="2">Mencetak Generasi Qur'ani yang Mutqin, Berkarakter, dan Berwawasan Global</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Nama Mudir / Pengasuh Pesantren</label>
+                      <input type="text" id="settingMudir" class="form-input" value="KH. Dr. Muhammad Zaki Al-Hafizh, M.A." />
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Contact & Bank Card -->
+                <div class="admin-card">
+                  <div class="admin-card-header">
+                    <span class="admin-card-title">📞 Kontak Resmi & Rekening Bank</span>
+                  </div>
+                  <form id="formAppearanceContact" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label">WhatsApp Center PPDB</label>
+                      <input type="text" id="settingWhatsappPPDB" class="form-input" value="6281234567890" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">WhatsApp Khusus Konfirmasi Donasi</label>
+                      <input type="text" id="settingWhatsappDonasi" class="form-input" value="6281298765432" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Email Lembaga</label>
+                      <input type="email" id="settingEmail" class="form-input" value="info@rumahtahfidz.sch.id" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Alamat Kampus Utama</label>
+                      <input type="text" id="settingAddress" class="form-input" value="Jl. Peradaban Qur'ani No. 99, Ciburial, Dago Atas, Bandung, Jawa Barat 40198" />
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================================================================
+                 PANEL 7: MANAJEMEN PENGGUNA & RBAC (PRD Section 5 & 6)
+                 ================================================================ -->
+            <div id="admin-panel-users" class="admin-panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Manajemen Pengguna & Hak Akses (RBAC)</h2>
+                  <p>Daftar akun administrator dengan aturan pembagian wewenang peran (Superadmin, Content Editor, Finance).</p>
+                </div>
+                <div class="panel-header-actions">
+                  <button class="btn btn-primary btn-sm" id="btnCreateUser">+ Tambah Pengguna Baru</button>
+                </div>
+              </div>
+
+              <!-- Users List Table -->
+              <div class="admin-card">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">👥 Pengguna Terdaftar dalam Sistem</span>
+                </div>
+                <div class="admin-table-wrapper">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Staf / Pengguna</th>
+                        <th>Email Login</th>
+                        <th>Peran (Role)</th>
+                        <th>Cakupan Akses</th>
+                        <th>Login Terakhir</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminUsersTableBody">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- RBAC Role Matrix Guide -->
+              <div class="admin-card" style="margin-top: 1.5rem; background: #faf8fe;">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">🛡️ Matriks Wewenang & Hak Akses (PRD Section 5.1 B)</span>
+                </div>
+                <div class="admin-table-wrapper">
+                  <table class="admin-table" style="font-size: 0.84rem;">
+                    <thead>
+                      <tr>
+                        <th>Peran / Role</th>
+                        <th>Default Landing Route</th>
+                        <th>Modul Diizinkan (Allowed)</th>
+                        <th>Modul Terlarang (403 Forbidden)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong style="color: var(--primary-600);">👑 Super Admin</strong></td>
+                        <td><code>#admin-overview</code></td>
+                        <td>Akses Penuh (Full Access) ke 7 Modul Sistem</td>
+                        <td><span style="color: #059669;">Tidak ada batasan</span></td>
+                      </tr>
+                      <tr>
+                        <td><strong style="color: #7c3aed;">✍️ Content Editor</strong></td>
+                        <td><code>#admin-berita</code></td>
+                        <td>Artikel/Berita, Akademik/Silabus, Galeri/Kunjungan</td>
+                        <td><span style="color: #dc2626;">Wakaf & Donasi, Manajemen Akun Pengguna</span></td>
+                      </tr>
+                      <tr>
+                        <td><strong style="color: #b45309;">💰 Finance / Bendahara</strong></td>
+                        <td><code>#admin-donasi</code></td>
+                        <td>Modul Wakaf & Donasi, Verifikasi Bank, Ekspor CSV</td>
+                        <td><span style="color: #dc2626;">Artikel Berita, Akademik, Manajemen Pengguna</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </main>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================================================
+       SITE FOOTER (PRD Line 91-93)
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top-grid">
+        <!-- Col 1: Brand Info -->
+        <div class="footer-col-brand">
+          <div class="brand-logo footer-brand-logo">
+            <img src="/assets/images/logo-footer-RTM.png" alt="Rumah Tahfidz Madani"
+              class="brand-logo-img footer-logo" />
+          </div>
+          <p class="footer-desc">
+            Lembaga pendidikan Islam modern terpadu pencetak penghafal Al-Qur'an mutqin 30 juz, berakhlak mulia,
+            berwawasan ilmiah, dan berdaya saing global.
+          </p>
+          <div class="footer-social-links">
+            <a href="https://instagram.com" target="_blank" class="social-icon-btn" title="Instagram">IG</a>
+            <a href="https://youtube.com" target="_blank" class="social-icon-btn" title="YouTube">YT</a>
+            <a href="https://facebook.com" target="_blank" class="social-icon-btn" title="Facebook">FB</a>
+            <a href="https://tiktok.com" target="_blank" class="social-icon-btn" title="TikTok">TK</a>
+          </div>
+        </div>
+
+        <!-- Col 2: Program Akademik -->
+        <div>
+          <h4 class="footer-col-title">Program Pendidikan</h4>
+          <ul class="footer-links-list">
+            <li><a href="#akademik-smp">SMP Tahfidz Al-Qur'an</a></li>
+            <li><a href="#akademik-sma">SMA Tahfidz Sains</a></li>
+            <li><a href="#akademik-mahasantri">Mahasantri Aly Qira'at</a></li>
+            <li><a href="#akademik-tpa">TPA Al-Qur'an Anak</a></li>
+            <li><a href="#akademik-online">Ngaji Online Bersanad</a></li>
+            <li><a href="#akademik-halaqoh-ibu">Halaqoh Ibu & Muslimah</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Navigasi & Info -->
+        <div>
+          <h4 class="footer-col-title">Informasi & Kontak</h4>
+          <ul class="footer-links-list">
+            <li><a href="#about">Tentang Lembaga & Visi</a></li>
+            <li><a href="#visit">Galeri & Fasilitas Gedung</a></li>
+            <li><a href="#visit">Reservasi Kunjungan Tur</a></li>
+            <li><a href="#news">Kabar Berita & Artikel</a></li>
+            <li><a href="https://wa.me/6281234567890" target="_blank">WhatsApp Center PPDB</a></li>
+            <li><a href="#home">Kebijakan Privasi</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Wakaf & Rekening Resmi -->
+        <div>
+          <h4 class="footer-col-title">Rekening Infaq & Wakaf</h4>
+          <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
+            Yayasan Cahaya Hati Bening terdaftar resmi sebagai Nazhir Wakaf BWI:
+          </p>
+          <div class="footer-bank-badge">
+            <div class="footer-bank-name">Bank Syariah Indonesia (BSI)</div>
+            <div class="footer-bank-num">7123 4567 89</div>
+            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">a.n. Yayasan Cahaya Hati Bening</div>
+          </div>
+          <button class="btn btn-donate btn-donate-trigger" style="width: 100%; font-size: 0.85rem; padding: 0.6rem;">
+            💖 Salurkan Sedekah & Wakaf
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="footer-bottom-bar">
+        <div>
+          © 2026 Rumah Tahfidz Al-Qur'an. Hak Cipta Dilindungi Undang-Undang.
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <span>Izin Kemenag RI No. Kd.10.04/PP.00.7/3492/2018 • NPSN: 69982341 (Akreditasi A)</span>
+          <a href="#admin-login" style="color: var(--secondary-yellow); text-decoration: underline; font-size: 0.82rem; font-weight: 600;">🔐 Masuk Portal Admin</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       MODAL 1: WAKAF & DONASI ONLINE (PRD Section 3.1 & 4.3 - Status Coming Soon)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="donasiModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <button class="modal-close-btn" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div class="modal-icon-header">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+          <path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08v0c.82.82 2.13.85 3 .07l2.07-1.9" />
+        </svg>
+      </div>
+
+      <div style="text-align: center;">
+        <span class="modal-badge-coming-soon">✨ Segera Hadir / Coming Soon</span>
+        <h3 class="modal-title-center">Portal Wakaf & Donasi Digital Terpadu</h3>
+      </div>
+
+      <p class="modal-desc-center">
+        Jazakumullah Khairan Katsiran. Portal donasi online otomatis terintegrasi (QRIS instan, Virtual Account, dan
+        sertifikat wakaf digital) saat ini sedang dalam tahap finalisasi keamanan transaksi.
+      </p>
+
+      <!-- Solusi Donasi Alternatif (Manual Transfer) -->
+      <div class="bank-transfer-box">
+        <div class="bank-info-header">
+          <span style="font-weight: 700; font-size: 0.85rem; color: var(--primary-900);">Bank Syariah Indonesia
+            (BSI)</span>
+          <span
+            style="font-size: 0.75rem; background: var(--mint-100); color: var(--mint-500); font-weight: 700; padding: 0.15rem 0.5rem; border-radius: var(--radius-full);">Rekening
+            Resmi</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="bank-acc-big">7123 4567 89</div>
+          <button class="btn-copy-acc" id="btnCopyBSI">Salin Nomor</button>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;">
+          Atas Nama: <strong>Yayasan Cahaya Hati Bening</strong> (Kode Bank: 451)
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem;">
+        <button class="btn btn-primary" id="btnWAConfirm" style="width: 100%; background: #15803D;">
+          💬 Konfirmasi Donasi via WhatsApp
+        </button>
+      </div>
+
+      <!-- Waitlist Lead Capture -->
+      <div class="waitlist-form-box">
+        <p
+          style="font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; text-align: center;">
+          Dapatkan Notifikasi Pertama Saat Portal Donasi Digital Rilis:
+        </p>
+        <form id="donasiWaitlistForm" style="display: flex; gap: 0.5rem;">
+          <input type="text" placeholder="Masukkan Nomor WhatsApp / Email..." class="form-input" style="flex-grow: 1;"
+            required />
+          <button type="submit" class="btn btn-secondary" style="padding: 0.75rem 1.25rem; white-space: nowrap;">
+            Ingatkan Saya
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 2: LMS PORTAL MASUK (PRD Section 3.1 & Line 42-48 - Status Coming Soon)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="lmsModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <button class="modal-close-btn" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div class="modal-icon-header lms-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+          <path d="M6 12v5c3 3 9 3 12 0v-5" />
+        </svg>
+      </div>
+
+      <div style="text-align: center;">
+        <span class="modal-badge-coming-soon" style="background: var(--primary-100); color: var(--primary-800);">
+          🎓 Portal Pendidikan Segera Hadir
+        </span>
+        <h3 class="modal-title-center">Portal Akademik & LMS Rumah Tahfidz</h3>
+      </div>
+
+      <p class="modal-desc-center">
+        Gerbang masuk autentikasi santri, wali santri, dan asatidz sedang disiapkan untuk menunjang monitoring hafalan
+        dan pembelajaran digital:
+      </p>
+
+      <div
+        style="background: var(--bg-surface-soft); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid var(--border-subtle);">
+        <ul
+          style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.88rem; color: var(--text-dark);">
+          <li>✨ <strong>E-Mutaba'ah Harian:</strong> Pantau rekap setoran ayat & muraja'ah santri secara real-time.</li>
+          <li>📊 <strong>E-Rapor Tahfidz & Formal:</strong> Unduh nilai ujian dan catatan evaluasi adab santri.</li>
+          <li>📚 <strong>Digital Maktabah:</strong> Akses materi audio murottal, slide tajwid, dan rekaman kajian
+            asatidz.</li>
+        </ul>
+      </div>
+
+      <!-- LMS Waitlist Form -->
+      <form id="lmsWaitlistForm" style="display: flex; gap: 0.5rem;">
+        <input type="email" placeholder="Masukkan email wali santri..." class="form-input" style="flex-grow: 1;"
+          required />
+        <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+          Kabar Saya Saat Rilis
+        </button>
+      </form>
+
+      <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border-subtle); text-align: center; font-size: 0.85rem;">
+        <span style="color: var(--text-muted);">Khusus Asatidz & Staf Manajemen:</span>
+        <a href="#admin-login" style="color: var(--primary-600); font-weight: 600; margin-left: 0.35rem; text-decoration: underline;" onclick="document.getElementById('lmsModal').classList.remove('open');">
+          🔐 Masuk ke Portal Administrasi Backoffice
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 3: GALLERY LIGHTBOX
+       ========================================================================== -->
+  <div class="modal-backdrop" id="lightboxModal" role="dialog" aria-modal="true">
+    <div class="modal-card lightbox-modal">
+      <button class="modal-close-btn" aria-label="Tutup Gambar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div class="lightbox-image-box">
+        <img id="lightboxImg" src="" alt="Dokumentasi Galeri Rumah Tahfidz" />
+      </div>
+      <p class="lightbox-caption-text" id="lightboxCaption"></p>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 4: ARTICLE READER MODAL (News Rich View)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="articleReaderModal" role="dialog" aria-modal="true">
+    <div class="modal-card article-reader-modal">
+      <button class="modal-close-btn" aria-label="Tutup Artikel">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div style="margin-bottom: 1.5rem;">
+        <h2 id="articleModalTitle" style="font-size: 1.75rem; color: var(--primary-950); margin-bottom: 0.5rem;"></h2>
+        <div id="articleModalMeta" style="font-size: 0.85rem; color: var(--text-muted);"></div>
+      </div>
+
+      <div style="border-radius: var(--radius-lg); overflow: hidden; height: 320px; margin-bottom: 1.5rem;">
+        <img id="articleModalImg" src="" alt="Thumbnail Berita" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+
+      <div class="article-reader-content" id="articleModalBody"></div>
+
+      <div id="articleModalTags" style="margin-top: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+
+      <div
+        style="display: flex; gap: 0.75rem; margin-top: 2rem; border-top: 1px solid var(--border-subtle); padding-top: 1.25rem;">
+        <button class="btn btn-secondary" id="btnShareArticleWA">
+          <span>📲 Bagikan ke WhatsApp</span>
+        </button>
+        <button class="btn btn-secondary" id="btnCopyArticleLink">
+          <span>🔗 Salin Tautan</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN MODAL 1: BUKTI TRANSFER & APPROVAL VERIFIKASI (PRD Section 5.2)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="adminReceiptModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 780px;">
+      <button class="modal-close-btn" id="btnCloseReceiptModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div style="margin-bottom: 1.25rem;">
+        <span class="badge-tag-pill" style="background: rgba(129, 28, 229, 0.1); color: var(--primary-600); margin-bottom: 0.4rem;">
+          Verifikasi Manual Keuangan
+        </span>
+        <h3 style="font-size: 1.4rem; color: var(--midnight-blue); margin-top: 0.2rem;">
+          Pemeriksaan Bukti Struk Transfer Bank
+        </h3>
+      </div>
+
+      <div class="receipt-modal-grid">
+        <!-- Receipt Image Preview -->
+        <div>
+          <div class="receipt-image-frame">
+            <img id="adminReceiptImg" src="/assets/images/dormitory.jpg" alt="Bukti Transfer Donasi" />
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 0.5rem;">
+            Struk diunggah langsung oleh donatur melalui formulir konfirmasi.
+          </div>
+        </div>
+
+        <!-- Receipt Metadata & Approval Controls -->
+        <div>
+          <div class="receipt-details-list">
+            <div class="receipt-detail-item">
+              <span class="label">Nomor Invoice</span>
+              <strong id="receiptModalInvoice">INV-202610-003</strong>
+            </div>
+            <div class="receipt-detail-item">
+              <span class="label">Nama Donatur</span>
+              <strong id="receiptModalDonor">Dra. Hj. Siti Aminah</strong>
+            </div>
+            <div class="receipt-detail-item">
+              <span class="label">Program Wakaf</span>
+              <span id="receiptModalCampaign" style="font-weight: 600; color: var(--primary-800);">Wakaf Pembebasan Lahan & Perluasan Asrama</span>
+            </div>
+            <div class="receipt-detail-item">
+              <span class="label">Nominal Transfer</span>
+              <strong id="receiptModalAmount" style="font-size: 1.25rem; color: #059669;">Rp 10.000.000</strong>
+            </div>
+            <div class="receipt-detail-item">
+              <span class="label">Metode Pembayaran</span>
+              <span id="receiptModalMethod">Transfer Manual (BSI - 7123 4567 89)</span>
+            </div>
+            <div class="receipt-detail-item">
+              <span class="label">Waktu Transaksi</span>
+              <span id="receiptModalTime">14 Okt 2026, 14:10 WIB</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1.5rem;">
+            <button class="btn btn-primary" id="btnApproveReceiptAction" style="background: #10b981; border-color: #10b981;">
+              ✅ Setujui & Verifikasi Dana Masuk
+            </button>
+            <button class="btn btn-secondary" id="btnRejectReceiptAction" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+              ❌ Tolak Transaksi (Tidak Valid)
+            </button>
+            <a id="btnSendWAReceipt" href="#" target="_blank" class="btn btn-secondary" style="font-size: 0.84rem; text-align: center;">
+              💬 Kirim Kwitansi via WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN MODAL 2: CAMPAIGN CRUD (PRD Section 5.2)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="adminCampaignModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 640px;">
+      <button class="modal-close-btn" id="btnCloseCampaignModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div style="margin-bottom: 1.25rem;">
+        <span class="badge-tag-pill" style="background: rgba(129, 28, 229, 0.1); color: var(--primary-600); margin-bottom: 0.4rem;">
+          Modul Finansial
+        </span>
+        <h3 id="adminCampaignModalTitle" style="font-size: 1.4rem; color: var(--midnight-blue); margin-top: 0.2rem;">
+          Buat Program Campaign Wakaf Baru
+        </h3>
+      </div>
+
+      <form id="adminCampaignForm" style="display: flex; flex-direction: column; gap: 1rem;">
+        <input type="hidden" id="campaignFormId" value="" />
+        
+        <div class="form-group">
+          <label class="form-label">Judul Program Campaign</label>
+          <input type="text" id="campaignFormTitle" class="form-input" placeholder="e.g. Wakaf Sarana Laboratorium Komputer Santri" required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Tipe Program</label>
+            <select id="campaignFormType" class="form-input">
+              <option value="wakaf">Wakaf Produktif / Sarana</option>
+              <option value="infaq">Infaq & Kafalah</option>
+              <option value="sedekah">Sedekah Jariyah</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kategori</label>
+            <input type="text" id="campaignFormCategory" class="form-input" placeholder="e.g. Sarana Pendidikan" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Target Nominal (Rp)</label>
+            <input type="number" id="campaignFormTarget" class="form-input" placeholder="100000000" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Batas Waktu / Periode</label>
+            <input type="text" id="campaignFormDeadline" class="form-input" placeholder="31 Desember 2026 atau Terbuka" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">URL Foto Cover</label>
+          <input type="text" id="campaignFormImage" class="form-input" value="/assets/images/campus.jpg" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Deskripsi Lengkap Program</label>
+          <textarea id="campaignFormDesc" class="form-input" rows="3" placeholder="Jelaskan urgensi dan peruntukan dana program..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Status Program</label>
+          <select id="campaignFormStatus" class="form-input">
+            <option value="active">Aktif (Published)</option>
+            <option value="draft">Draft (Simpan Saja)</option>
+            <option value="completed">Selesai (Completed)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" id="btnCancelCampaign">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Program</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN MODAL 3: ARTICLE EDITOR (PRD Section 5.6)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="adminArticleModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 720px;">
+      <button class="modal-close-btn" id="btnCloseArticleModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div style="margin-bottom: 1.25rem;">
+        <span class="badge-tag-pill" style="background: rgba(129, 28, 229, 0.1); color: var(--primary-600); margin-bottom: 0.4rem;">
+          CMS Konten Blog
+        </span>
+        <h3 id="adminArticleModalTitle" style="font-size: 1.4rem; color: var(--midnight-blue); margin-top: 0.2rem;">
+          Tulis Berita / Artikel Baru
+        </h3>
+      </div>
+
+      <form id="adminArticleForm" style="display: flex; flex-direction: column; gap: 1rem;">
+        <input type="hidden" id="articleFormId" value="" />
+
+        <div class="form-group">
+          <label class="form-label">Judul Artikel / Berita</label>
+          <input type="text" id="articleFormTitle" class="form-input" placeholder="Masukkan judul menarik..." required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Kategori</label>
+            <select id="articleFormCategory" class="form-input">
+              <option value="Prestasi">Prestasi & Event</option>
+              <option value="PPDB">Info PPDB</option>
+              <option value="Parenting">Parenting Qur'ani</option>
+              <option value="Keislaman">Artikel Keislaman</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Penulis (Author)</label>
+            <input type="text" id="articleFormAuthor" class="form-input" value="Humas Rumah Tahfidz" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ringkasan Singkat (Excerpt)</label>
+          <textarea id="articleFormExcerpt" class="form-input" rows="2" placeholder="Cuplikan 1-2 kalimat pengantar berita..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Isi Konten Artikel Lengkap</label>
+          <textarea id="articleFormBody" class="form-input" rows="5" placeholder="Tuliskan isi berita selengkapnya..." required></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Foto Thumbnail URL</label>
+            <input type="text" id="articleFormImage" class="form-input" value="/assets/images/wisuda.jpg" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tagar (Pisahkan Koma)</label>
+            <input type="text" id="articleFormTags" class="form-input" value="#tahfidz, #prestasi, #santri" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="switch-label">
+            <div class="switch-toggle">
+              <input type="checkbox" id="articleFormPublishToggle" checked />
+              <span class="switch-slider"></span>
+            </div>
+            <span class="switch-text">Langsung Terbitkan ke Halaman Berita Publik</span>
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" id="btnCancelArticle">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Artikel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN MODAL 4: SYLLABUS UPLOADER (PRD Section 5.4)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="adminSyllabusModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 540px;">
+      <button class="modal-close-btn" id="btnCloseSyllabusModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div style="margin-bottom: 1.25rem;">
+        <span class="badge-tag-pill" style="background: rgba(129, 28, 229, 0.1); color: var(--primary-600); margin-bottom: 0.4rem;">
+          Kurikulum & Akademik
+        </span>
+        <h3 style="font-size: 1.4rem; color: var(--midnight-blue); margin-top: 0.2rem;">
+          Unggah File Silabus & Kurikulum PDF
+        </h3>
+      </div>
+
+      <form id="adminSyllabusForm" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="form-group">
+          <label class="form-label">Pilih Program Pendidikan</label>
+          <select id="syllabusProgramSelect" class="form-input">
+            <option value="smp">SMP Tahfidz Al-Qur'an (15 Juz)</option>
+            <option value="sma">SMA Tahfidz Sains (30 Juz)</option>
+            <option value="mahasantri">Mahasantri Aly Qira'at</option>
+            <option value="tpa">TPA Al-Qur'an Anak</option>
+            <option value="online">Ngaji Online Bersanad</option>
+            <option value="halaqoh-ibu">Halaqoh Ibu & Muslimah</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tahun Akademik</label>
+          <input type="text" class="form-input" value="2026/2027 (Kurikulum Merdeka + Tahfidz Bersanad)" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">File Dokumen PDF Kurikulum</label>
+          <div style="border: 2px dashed rgba(129, 28, 229, 0.25); border-radius: var(--radius-lg); padding: 1.5rem; text-align: center; background: #faf8fe;">
+            <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">📄</div>
+            <p style="font-size: 0.85rem; color: var(--text-dark); font-weight: 600; margin-bottom: 0.25rem;">
+              Silabus-Kurikulum-Tahfidz-2026.pdf
+            </p>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Format PDF resmi maksimal 10MB</span>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" id="btnCancelSyllabus">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan & Publikasikan Silabus</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN MODAL 5: USER CREATION MODAL (PRD Section 5 & 6)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="adminUserModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 540px;">
+      <button class="modal-close-btn" id="btnCloseUserModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div style="margin-bottom: 1.25rem;">
+        <span class="badge-tag-pill" style="background: rgba(129, 28, 229, 0.1); color: var(--primary-600); margin-bottom: 0.4rem;">
+          Manajemen Hak Akses (RBAC)
+        </span>
+        <h3 style="font-size: 1.4rem; color: var(--midnight-blue); margin-top: 0.2rem;">
+          Tambah Pengguna / Staf Baru
+        </h3>
+      </div>
+
+      <form id="adminUserForm" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="form-group">
+          <label class="form-label">Nama Lengkap & Gelar</label>
+          <input type="text" id="userFormName" class="form-input" placeholder="e.g. Ustadz Fadhlurrahman, S.Pd.I." required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email Resmi Lembaga</label>
+          <input type="email" id="userFormEmail" class="form-input" placeholder="nama@rumahtahfidz.sch.id" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Kata Sandi Awal</label>
+          <input type="password" id="userFormPassword" class="form-input" placeholder="Min. 6 Karakter..." required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Peran (Role Akses Modul)</label>
+          <select id="userFormRole" class="form-input" required>
+            <option value="superadmin">Super Admin (Akses Penuh 7 Modul)</option>
+            <option value="editor">Content Editor (Artikel, Akademik, Galeri)</option>
+            <option value="finance">Finance / Bendahara (Wakaf, Donasi, Verifikasi Bank)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" id="btnCancelUser">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Pengguna</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       PUBLIC MODAL: PPDB REGISTRATION WIZARD (PRD Section 4.1 & 4.2)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="ppdbModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 680px;">
+      <button class="modal-close-btn" id="btnClosePPDBModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div class="ppdb-modal-header" style="margin-bottom: 1.25rem;">
+        <span class="badge-tag-pill" style="background: rgba(129, 28, 229, 0.12); color: var(--primary-600); margin-bottom: 0.35rem;">
+          Penerimaan Santri Baru (PPDB) TA 2026/2027
+        </span>
+        <h3 style="font-size: 1.45rem; color: var(--midnight-blue); margin-top: 0.15rem;">
+          Formulir Registrasi Calon Santri Online
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">
+          Lengkapi data calon santri dan orang tua/wali untuk verifikasi berkas dan jadwal tes lisan talaqqi.
+        </p>
+      </div>
+
+      <!-- Wizard Steps Indicator -->
+      <div class="ppdb-steps-nav">
+        <div class="step-indicator active" id="stepIndicator1" data-step="1">
+          <span class="step-num">1</span>
+          <span class="step-label">Program & Batch</span>
+        </div>
+        <div class="step-indicator-line"></div>
+        <div class="step-indicator" id="stepIndicator2" data-step="2">
+          <span class="step-num">2</span>
+          <span class="step-label">Data Santri & Wali</span>
+        </div>
+        <div class="step-indicator-line"></div>
+        <div class="step-indicator" id="stepIndicator3" data-step="3">
+          <span class="step-num">3</span>
+          <span class="step-label">Komitmen & Bayar</span>
+        </div>
+      </div>
+
+      <form id="modalPPDBForm" class="ppdb-wizard-form">
+        <!-- Step 1: Program & Batch Selection -->
+        <div class="wizard-step active" id="wizardStep1">
+          <div class="form-group" style="margin-bottom: 1.1rem;">
+            <label class="form-label">Pilih Jenjang / Program Pendidikan *</label>
+            <select id="modalProgramId" name="program_id" class="form-input" required>
+              <option value="smp">SMP Tahfidz Al-Qur'an (Formal - 15 Juz)</option>
+              <option value="sma">SMA Tahfidz Sains Terpadu (Formal - 30 Juz)</option>
+              <option value="mahasantri">Mahasantri Aly Qira'at (Takhassus Bersanad)</option>
+              <option value="tpa">TPA Al-Qur'an Anak (Non-Formal)</option>
+              <option value="online">Ngaji Online Global (Zoom Talaqqi)</option>
+              <option value="halaqoh-ibu">Halaqoh Ibu & Muslimah</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.1rem;">
+            <label class="form-label">Pilihan Gelombang / Batch Pendaftaran *</label>
+            <select id="modalBatchId" name="batch_id" class="form-input" required>
+              <option value="Gelombang 1 - TA 2026/2027">Gelombang 1 - TA 2026/2027 (Prioritas Beasiswa & Kamar)</option>
+              <option value="Gelombang 2 - TA 2026/2027">Gelombang 2 - TA 2026/2027 (Reguler)</option>
+            </select>
+          </div>
+
+          <div class="program-quick-preview" id="modalProgramPreview">
+            <div class="pqp-icon" style="font-size: 2rem;">🏛️</div>
+            <div class="pqp-details">
+              <h5 id="pqpTitle" style="margin: 0 0 0.25rem; font-size: 1rem; color: var(--midnight-blue);">SMP Tahfidz Al-Qur'an</h5>
+              <p id="pqpDesc" style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">Boarding School 3 Tahun dengan target 15 juz mutqin, ijazah formal Kemendikbud & Kemenag.</p>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-primary" id="btnNextToStep2">
+              Lanjut ke Data Santri ➔
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Data Santri & Wali -->
+        <div class="wizard-step" id="wizardStep2" style="display: none;">
+          <div class="form-grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Nama Lengkap Santri *</label>
+              <input type="text" id="modalFullName" name="full_name" class="form-input" placeholder="Contoh: Muhammad Azzam" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Jenis Kelamin *</label>
+              <select id="modalGender" name="gender" class="form-input" required>
+                <option value="Laki-laki">Laki-laki (Ikhwan)</option>
+                <option value="Perempuan">Perempuan (Akhwat)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tanggal Lahir Santri *</label>
+              <input type="date" id="modalBirthDate" name="birth_date" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nama Orang Tua / Wali *</label>
+              <input type="text" id="modalParentName" name="parent_name" class="form-input" placeholder="Contoh: H. Joko Purnomo" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nomor WhatsApp Aktif Wali *</label>
+              <input type="tel" id="modalPhone" name="phone_whatsapp" class="form-input" placeholder="081234567890" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Aktif *</label>
+              <input type="email" id="modalEmail" name="email" class="form-input" placeholder="wali.santri@gmail.com" required />
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary" id="btnBackToStep1">
+              ⬅ Kembali
+            </button>
+            <button type="button" class="btn btn-primary" id="btnNextToStep3">
+              Lanjut ke Pembayaran ➔
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Pembayaran & Motivasi -->
+        <div class="wizard-step" id="wizardStep3" style="display: none;">
+          <div class="form-group" style="margin-bottom: 1.1rem;">
+            <label class="form-label">Rencana Metode Pembayaran Biaya *</label>
+            <select id="modalPaymentMethod" name="payment_method" class="form-input" required>
+              <option value="Transfer Bank BSI">Transfer Bank Syariah Indonesia (BSI)</option>
+              <option value="Virtual Account">Virtual Account Otomatis</option>
+              <option value="Cicilan Syariah Bertahap">Cicilan Syariah Bertahap (3x Termin)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.1rem;">
+            <label class="form-label">Dari mana mengetahui info pendaftaran? *</label>
+            <select id="modalInfoSource" name="info_source" class="form-input" required>
+              <option value="Website Resmi">Pencarian Website / Google</option>
+              <option value="Instagram Resmi">Instagram @rumahtahfidzmadani</option>
+              <option value="Rekomendasi Alumni">Rekomendasi Alumni / Teman / Keluarga</option>
+              <option value="Brosur / Spanduk">Brosur / Spanduk</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Motivasi & Target Hafalan Calon Santri *</label>
+            <textarea id="modalMotivation" name="motivation" class="form-textarea" rows="3" placeholder="Ceritakan motivasi calon santri dalam menghafal Al-Qur'an dan menuntut ilmu syar'i..." required></textarea>
+          </div>
+
+          <div style="background: var(--yellow-lite); border: 1px solid var(--secondary-yellow); border-radius: var(--radius-md); padding: 0.85rem; font-size: 0.82rem; color: var(--midnight-blue); margin-bottom: 1.25rem;">
+            <strong>💡 Catatan:</strong> Setelah pendaftaran dikirimkan, Anda akan mendapatkan Nomor Registrasi resmi dan tautan langsung untuk konfirmasi ke WhatsApp Center PPDB.
+          </div>
+
+          <div style="display: flex; justify-content: space-between;">
+            <button type="button" class="btn btn-secondary" id="btnBackToStep2">
+              ⬅ Kembali
+            </button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitModalPPDB">
+              <span class="btn-text">Kirim Pendaftaran Santri Baru</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       PUBLIC MODAL: PPDB REGISTRATION RECEIPT / CONFIRMATION (PRD Section 4.2)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="ppdbSuccessModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 620px;">
+      <button class="modal-close-btn" id="btnCloseSuccessPPDB" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div class="receipt-card-wrapper" id="ppdbPrintArea">
+        <div style="text-align: center; margin-bottom: 1.25rem;">
+          <div style="width: 58px; height: 58px; border-radius: 50%; background: #dcfce7; color: #15803d; font-size: 1.85rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">
+            ✓
+          </div>
+          <span class="badge-tag-pill" style="background: rgba(16, 185, 129, 0.15); color: #047857; margin-bottom: 0.35rem;">
+            Pendaftaran Berhasil Dikirim
+          </span>
+          <h3 style="font-size: 1.4rem; color: var(--midnight-blue); margin-top: 0.2rem;">
+            Bukti Pendaftaran Santri Baru (PPDB)
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Rumah Tahfidz Madani • Islamic Boarding School Modern TA 2026/2027
+          </p>
+        </div>
+
+        <div class="receipt-code-box">
+          <span class="rc-label">NOMOR REGISTRASI RESMI</span>
+          <span class="rc-number" id="receiptRegNumber">REG-2026-8941</span>
+          <span class="status-pill status-pending" id="receiptStatus">Menunggu Verifikasi</span>
+        </div>
+
+        <div class="receipt-data-table">
+          <div class="rd-row">
+            <span class="rd-key">Nama Calon Santri:</span>
+            <span class="rd-val" id="receiptStudentName">-</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-key">Jenis Kelamin:</span>
+            <span class="rd-val" id="receiptGender">-</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-key">Program Pilihan:</span>
+            <span class="rd-val" id="receiptProgramName">-</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-key">Gelombang / Batch:</span>
+            <span class="rd-val" id="receiptBatch">-</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-key">Nama Orang Tua / Wali:</span>
+            <span class="rd-val" id="receiptParentName">-</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-key">Nomor WhatsApp:</span>
+            <span class="rd-val" id="receiptPhone">-</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-key">Metode Pembayaran:</span>
+            <span class="rd-val" id="receiptPayment">-</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-key">Waktu Pendaftaran:</span>
+            <span class="rd-val" id="receiptDate">-</span>
+          </div>
+        </div>
+
+        <div class="receipt-notice-box">
+          <h6 style="margin: 0; font-weight: 700;">📌 Langkah Selanjutnya:</h6>
+          <ol style="margin: 0.4rem 0 0 1.2rem; font-size: 0.82rem; color: var(--midnight-blue); line-height: 1.5;">
+            <li>Simpan atau cetak nomor registrasi ini sebagai bukti pendaftaran resmi.</li>
+            <li>Klik tombol hijau di bawah untuk konfirmasi otomatis ke WhatsApp Center PPDB.</li>
+            <li>Panitia akan memandu verifikasi berkas dan jadwal tes lisan (talaqqi Al-Qur'an).</li>
+          </ol>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.25rem;">
+        <a href="#" target="_blank" class="btn btn-primary" id="btnConfirmWhatsappPPDB" style="background: #25D366; border-color: #25D366; color: #fff; text-decoration: none; justify-content: center; font-weight: 700; padding: 0.85rem 1.5rem;">
+          <span style="font-size: 1.2rem; margin-right: 0.35rem;">💬</span> Konfirmasi via WhatsApp Center PPDB
+        </a>
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" class="btn btn-secondary" id="btnPrintPPDBReceipt" style="flex: 1;">
+            🖨️ Cetak Bukti Pendaftaran
+          </button>
+          <button type="button" class="btn btn-secondary" id="btnCloseSuccessPPDBBtn" style="flex: 1;">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN MODAL 6: PPDB CANDIDATE DOSSIER MODAL (PRD Section 5.4 & 6)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="adminPPDBDetailModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 740px;">
+      <button class="modal-close-btn" id="btnClosePPDBDetail" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+        <div>
+          <span class="badge-tag-pill" style="background: rgba(129, 28, 229, 0.1); color: var(--primary-600); margin-bottom: 0.3rem;">
+            Dossier Calon Santri PPDB
+          </span>
+          <h3 style="font-size: 1.4rem; color: var(--midnight-blue); margin-top: 0.15rem;" id="dossierStudentName">
+            Muhammad Azzam Fatih
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0 0;">
+            ID: <code id="dossierRegId" style="font-weight: 700; color: var(--primary-700);">REG-2026-001</code> • Terdaftar: <span id="dossierDate">-</span>
+          </p>
+        </div>
+        <span class="status-pill status-pending" id="dossierStatusPill" style="font-size: 0.85rem; padding: 0.4rem 0.9rem;">
+          Menunggu
+        </span>
+      </div>
+
+      <!-- 2 Column Dossier Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; background: var(--bg-surface-soft); padding: 1.25rem; border-radius: var(--radius-lg); margin-bottom: 1.25rem;">
+        <div>
+          <h5 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary-700); margin-bottom: 0.5rem;">
+            👤 Biodata Calon Santri
+          </h5>
+          <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>Jenis Kelamin:</strong> <span id="dossierGender">-</span></p>
+          <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>Tanggal Lahir:</strong> <span id="dossierBirthDate">-</span></p>
+          <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>Program Pilihan:</strong> <span id="dossierProgram">-</span></p>
+          <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>Gelombang / Batch:</strong> <span id="dossierBatch">-</span></p>
+        </div>
+        <div>
+          <h5 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary-700); margin-bottom: 0.5rem;">
+            👨‍👩‍👧 Kontak Orang Tua / Wali
+          </h5>
+          <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>Nama Orang Tua:</strong> <span id="dossierParentName">-</span></p>
+          <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>WhatsApp:</strong> <a href="#" id="dossierPhoneLink" target="_blank" style="color: #059669; font-weight: 600;">💬 <span id="dossierPhone">-</span></a></p>
+          <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>Email:</strong> <span id="dossierEmail">-</span></p>
+          <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>Rencana Pembayaran:</strong> <span id="dossierPayment">-</span></p>
+          <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>Sumber Info:</strong> <span id="dossierSource">-</span></p>
+        </div>
+      </div>
+
+      <!-- Motivation Box -->
+      <div style="margin-bottom: 1.25rem;">
+        <label class="form-label">Motivasi & Target Calon Santri:</label>
+        <div id="dossierMotivation" style="font-size: 0.88rem; background: var(--bg-surface); border: 1px solid var(--border-card); padding: 0.85rem; border-radius: var(--radius-md); color: var(--text-dark); line-height: 1.5;">
+          -
+        </div>
+      </div>
+
+      <!-- Admin Notes -->
+      <div style="margin-bottom: 1.25rem;">
+        <label class="form-label">Catatan Panitia PPDB / Hasil Observasi & Tes Lisan:</label>
+        <textarea id="dossierNotesInput" class="form-textarea" rows="3" placeholder="Tuliskan catatan internal: hasil tes baca Al-Qur'an, tajwid, adab, rekomendasi asrama..."></textarea>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-secondary btn-sm" id="btnDossierDelete" style="color: #dc2626;" title="Hapus Data Santri">
+            🗑️ Hapus
+          </button>
+          <a href="#" target="_blank" class="btn btn-secondary btn-sm" id="btnDossierChatWA" style="color: #059669;" title="Chat WhatsApp Wali">
+            💬 Chat Wali
+          </a>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary btn-sm" id="btnDossierSaveNotes">
+            💾 Simpan Catatan
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnDossierVerify" style="color: #2563eb; border-color: #2563eb;">
+            🔍 Verifikasi Berkas
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" id="btnDossierAccept" style="background: #059669; border-color: #059669;">
+            ✓ Terima Santri
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnDossierReject" style="color: #dc2626; border-color: #dc2626;">
+            ✕ Tolak
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+
+  <!-- Main Application Script (ES Module) -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

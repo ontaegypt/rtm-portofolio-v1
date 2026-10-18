@@ -69,8 +69,8 @@
     rel="stylesheet" />
 
   <!-- Main Stylesheet -->
-  <script type="module" crossorigin src="/assets/index-sMOSuqUi.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-Cjx4h6BS.css">
+  <script type="module" crossorigin src="/assets/index-DdaKcEXh.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CTnmU9Ot.css">
 </head>
 
 <body>
@@ -1270,8 +1270,10 @@
               <div class="cockpit-content-wrap">
                 <!-- 1. Top Greeting Header -->
                 <div class="cockpit-top-header">
-                  <div>
-                    <h1 class="cockpit-page-title">Dashboard</h1>
+                  <div class="cockpit-header-text">
+                    <h1 class="cockpit-page-title">
+                      <span>Dashboard</span> <strong class="cockpit-accent-word">Operasional</strong>
+                    </h1>
                     <p class="cockpit-page-sub">Monitoring menyeluruh aktivitas santri, capaian wakaf donasi, dan PPDB.</p>
                   </div>
                   <div class="cockpit-top-actions">
@@ -1280,72 +1282,87 @@
                   </div>
                 </div>
 
-                <!-- 2. Warm Camel Welcome Hero Banner (Reference Style) -->
+                <!-- 2. Warm Camel / Deep Teal Welcome Hero Banner (Reference Style) -->
                 <div class="cockpit-welcome-banner">
                   <div class="cockpit-banner-text">
                     <h2 class="cockpit-banner-title">Welcome back, <span id="welcomeUserName">Dr. Muhammad Zaki</span>!</h2>
                     <p class="cockpit-banner-subtitle">Sistem operasional, verifikasi infaq wakaf, dan penerimaan santri baru berjalan optimal.</p>
                     <div class="cockpit-banner-actions">
-                      <a href="#admin-akademik" class="cockpit-pill-btn">Kelola PPDB Santri</a>
                       <a href="#admin-donasi" class="cockpit-pill-btn">Verifikasi Donasi</a>
+                      <a href="#admin-akademik" class="cockpit-pill-btn cockpit-pill-secondary">Data PPDB</a>
                     </div>
                   </div>
                   <div class="cockpit-banner-avatar-wrap">
                     <div class="cockpit-avatar-ring">
+                      <div class="cockpit-ring-arc">
+                        <span class="cockpit-ring-percent">85%</span>
+                      </div>
                       <img src="/assets/images/mudir.jpg" alt="Mudir RTM" class="cockpit-avatar-img" />
                     </div>
                   </div>
                 </div>
 
-                <!-- 3. The 4 Real KPI Stat Cards Row (Reference Stat Card Design) -->
-                <div class="cockpit-stat-row">
-                  <!-- KPI 1: Total Donasi -->
-                  <div class="cockpit-stat-card">
+                <!-- Section Title for Mobile Bento Cards -->
+                <div class="cockpit-section-row">
+                  <h3 class="cockpit-section-heading">Ringkasan Metrik</h3>
+                  <span class="cockpit-section-date">Hari Ini</span>
+                </div>
+
+                <!-- 3. The 4 Real KPI Stat Cards Row (Bento Grid Style from Reference) -->
+                <div class="cockpit-stat-row bento-stat-grid">
+                  <!-- KPI 1: Total Donasi (White Card) -->
+                  <div class="cockpit-stat-card bento-card-white">
                     <div class="cockpit-stat-iconbox">
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
                     </div>
-                    <div>
+                    <div class="cockpit-card-content">
+                      <div class="cockpit-stat-lbl">Total Wakaf</div>
                       <div class="cockpit-stat-num" id="kpiTotalDonasi">Rp 494.050.000</div>
-                      <div class="cockpit-stat-lbl">Total Donasi Diterima</div>
                       <div class="cockpit-stat-sub">▲ +18.4% bulan ini</div>
                     </div>
                   </div>
 
-                  <!-- KPI 2: Pendaftar Santri PPDB -->
-                  <div class="cockpit-stat-card">
+                  <!-- KPI 2: Pendaftar Santri PPDB (Peach Card) -->
+                  <div class="cockpit-stat-card bento-card-peach">
                     <div class="cockpit-stat-iconbox">
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     </div>
-                    <div>
+                    <div class="cockpit-card-content">
+                      <div class="cockpit-stat-lbl">Pendaftar PPDB</div>
                       <div class="cockpit-stat-num" id="kpiTotalPPDB">38 Santri</div>
-                      <div class="cockpit-stat-lbl">Pendaftar Santri PPDB</div>
-                      <div class="cockpit-stat-sub" style="color: #2563eb;">● Gelombang 1 Dibuka</div>
+                      <div class="cockpit-stat-sub" style="color: #2563eb;">● Gel. 1 Dibuka</div>
                     </div>
                   </div>
 
-                  <!-- KPI 3: Campaign Wakaf Aktif -->
-                  <div class="cockpit-stat-card">
+                  <!-- KPI 3: Campaign Wakaf Aktif (Peach Card) -->
+                  <div class="cockpit-stat-card bento-card-peach">
                     <div class="cockpit-stat-iconbox">
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     </div>
-                    <div>
+                    <div class="cockpit-card-content">
+                      <div class="cockpit-stat-lbl">Campaign Wakaf</div>
                       <div class="cockpit-stat-num" id="kpiActiveCampaigns">3 Program</div>
-                      <div class="cockpit-stat-lbl">Campaign Wakaf Aktif</div>
-                      <div class="cockpit-stat-sub" style="color: #059669;">● 1 Campaign Sukses</div>
+                      <div class="cockpit-stat-sub" style="color: #059669;">● 1 Sukses</div>
                     </div>
                   </div>
 
-                  <!-- KPI 4: Struk Donasi Pending -->
-                  <div class="cockpit-stat-card">
+                  <!-- KPI 4: Struk Donasi Pending (Teal Card with White Text & Amber Link) -->
+                  <div class="cockpit-stat-card bento-card-teal">
                     <div class="cockpit-stat-iconbox">
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
-                    <div>
+                    <div class="cockpit-card-content">
+                      <div class="cockpit-stat-lbl">Struk Pending</div>
                       <div class="cockpit-stat-num" id="kpiPendingReceipts">2 Transaksi</div>
-                      <div class="cockpit-stat-lbl">Struk Donasi Pending</div>
-                      <div class="cockpit-stat-sub" style="color: #d97706;">● Perlu Verifikasi Bank</div>
+                      <div class="cockpit-stat-sub" style="color: #f5a623;">Perlu Verifikasi &rarr;</div>
                     </div>
                   </div>
+                </div>
+
+                <!-- Section Title for Verification & Tables -->
+                <div class="cockpit-section-row" style="margin-top: 0.5rem;">
+                  <h3 class="cockpit-section-heading">Tindakan & Verifikasi Menunggu</h3>
+                  <a href="#admin-donasi" class="cockpit-section-link">Buka Semua &rarr;</a>
                 </div>
 
                 <!-- 4. Tables Row (Pending Donations & Recent PPDB) -->
@@ -1817,7 +1834,28 @@
             </div>
 
           </main>
-        </div>
+        <!-- Floating Mobile App Bottom Navigation Bar (Matching Reference Design) -->
+        <nav class="mobile-app-bottom-nav" id="mobileAppBottomNav" aria-label="Navigasi Cepat Mobile">
+          <a href="#admin-overview" class="mob-nav-item active" data-admin-nav="overview" aria-label="Dashboard">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+            <span class="mob-nav-dot"></span>
+          </a>
+          <a href="#admin-akademik" class="mob-nav-item" data-admin-nav="akademik" aria-label="Akademik & PPDB">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span class="mob-nav-dot"></span>
+          </a>
+          <button type="button" class="mob-nav-fab" id="mobQuickActionFab" aria-label="Daftar PPDB Baru">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14383b" stroke-width="2.6"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <a href="#admin-donasi" class="mob-nav-item" data-admin-nav="donasi" aria-label="Donasi & Wakaf">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <span class="mob-nav-dot"></span>
+          </a>
+          <a href="#admin-users" class="mob-nav-item" data-admin-nav="users" aria-label="Manajemen Pengguna">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="mob-nav-dot"></span>
+          </a>
+        </nav>
       </div>
     </div>
 

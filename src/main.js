@@ -543,8 +543,8 @@ export function navigateToAdmin(moduleName) {
     breadcrumbEl.textContent = breadcrumbTitles[moduleName] || 'Dashboard Admin';
   }
 
-  // Update Sidebar Navigation Links & Lock Indicators
-  document.querySelectorAll('.sidebar-menu-link').forEach(link => {
+  // Update Sidebar Navigation & Mobile App Bottom Nav Links
+  document.querySelectorAll('.sidebar-menu-link, .mob-nav-item').forEach(link => {
     link.classList.remove('active');
     if (link.getAttribute('data-admin-nav') === moduleName) {
       link.classList.add('active');
@@ -2998,6 +2998,24 @@ function initAdminUI() {
           closeAdminSidebar();
         }
       });
+    });
+  }
+
+  // Floating Mobile App Bottom Navigation Bar Handlers
+  document.querySelectorAll('.mob-nav-item').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const navTarget = link.getAttribute('data-admin-nav');
+      if (navTarget) {
+        window.location.hash = `#admin-${navTarget}`;
+      }
+    });
+  });
+
+  const mobQuickActionFab = document.getElementById('mobQuickActionFab');
+  if (mobQuickActionFab) {
+    mobQuickActionFab.addEventListener('click', () => {
+      openPPDBModal();
     });
   }
 

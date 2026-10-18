@@ -2962,20 +2962,42 @@ function initAdminUI() {
     });
   }
 
-  // E. Mobile Sidebar Toggle
+  // E. Mobile Sidebar Toggle & Backdrop
   const sidebarToggleBtn = document.getElementById('adminSidebarToggleBtn');
   const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
   const sidebar = document.getElementById('adminSidebar');
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
 
-  if (sidebarToggleBtn && sidebar) {
-    sidebarToggleBtn.addEventListener('click', () => {
-      sidebar.classList.add('open');
-    });
+  function openAdminSidebar() {
+    if (sidebar) sidebar.classList.add('open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
   }
 
-  if (sidebarCloseBtn && sidebar) {
-    sidebarCloseBtn.addEventListener('click', () => {
-      sidebar.classList.remove('open');
+  function closeAdminSidebar() {
+    if (sidebar) sidebar.classList.remove('open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+  }
+
+  if (sidebarToggleBtn) {
+    sidebarToggleBtn.addEventListener('click', openAdminSidebar);
+  }
+
+  if (sidebarCloseBtn) {
+    sidebarCloseBtn.addEventListener('click', closeAdminSidebar);
+  }
+
+  if (sidebarBackdrop) {
+    sidebarBackdrop.addEventListener('click', closeAdminSidebar);
+  }
+
+  // Auto-close sidebar on mobile/iPad when any navigation item is clicked
+  if (sidebar) {
+    sidebar.querySelectorAll('.sidebar-menu-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) {
+          closeAdminSidebar();
+        }
+      });
     });
   }
 

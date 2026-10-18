@@ -2842,6 +2842,24 @@ body.auth-mode {
   /* taste-skill-ignore */ box-shadow: 0 25px 60px rgba(25, 21, 51, 0.22);
 }
 
+/* Sidebar Backdrop Overlay on Mobile & Tablet */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+}
+
+.sidebar-backdrop.active {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* Sidebar Navigation */
 .admin-sidebar {
   width: 240px;
@@ -4048,29 +4066,369 @@ input:checked + .switch-slider:before {
   color: var(--midnight-blue);
   font-size: 0.95rem;
 }
-/* Responsive Admin Layout */
-@media (max-width: 992px) {
-  .admin-sidebar {
-    transform: translateX(-100%);
+/* ==========================================================================
+   RESPONSIVE ADMIN & COCKPIT LAYOUT (iPad, Tablets, Mobile Devices)
+   ========================================================================== */
+
+/* 1. Tablet & iPad Breakpoint (<= 1024px) */
+@media (max-width: 1024px) {
+  .admin-dashboard-page {
+    padding: 0.75rem;
+    min-height: 100dvh;
   }
+
+  .admin-layout {
+    border-radius: 20px;
+    min-height: calc(100dvh - 1.5rem);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    max-width: 85vw;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    /* taste-skill-ignore */ box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  }
+
   .admin-sidebar.open {
     transform: translateX(0);
   }
-  .admin-sidebar.open .sidebar-close-btn {
-    display: block;
+
+  .admin-sidebar .sidebar-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    cursor: pointer;
+    border: none;
   }
+
   .admin-main-wrapper {
     margin-left: 0;
     width: 100%;
+    min-width: 0;
+    border-radius: 20px;
   }
+
   .topbar-toggle-btn {
-    display: block;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #faf4eb;
+    color: #16191c;
+    border: none;
+    cursor: pointer;
   }
+
+  .cockpit-content-wrap {
+    padding: 1.5rem 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .cockpit-welcome-banner {
+    padding: 1.5rem 1.75rem;
+    border-radius: 18px;
+  }
+
+  .cockpit-stat-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .cockpit-tables-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
   .admin-content-area {
-    padding: 1.5rem 1rem 3rem;
+    padding: 1.5rem 1.25rem 3rem;
   }
+
   .receipt-modal-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* 2. Mobile Breakpoint (<= 768px) */
+@media (max-width: 768px) {
+  .admin-dashboard-page {
+    padding: 0;
+    min-height: 100dvh;
+  }
+
+  .admin-layout {
+    border-radius: 0;
+    min-height: 100dvh;
+  }
+
+  .admin-main-wrapper {
+    border-radius: 0;
+  }
+
+  .admin-topbar {
+    height: 58px;
+    padding: 0 0.85rem;
+  }
+
+  .crumb-root,
+  .crumb-separator {
+    display: none;
+  }
+
+  .crumb-active {
+    font-size: 0.82rem;
+    max-width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar-role-label {
+    display: none;
+  }
+
+  .topbar-role-badge-box {
+    padding: 0.2rem 0.4rem;
+  }
+
+  .topbar-web-btn {
+    display: none;
+  }
+
+  .topbar-profile-pill {
+    padding: 0.2rem 0.5rem;
+    gap: 0.4rem;
+  }
+
+  .topbar-user-meta .topbar-role {
+    display: none;
+  }
+
+  .cockpit-content-wrap {
+    padding: 1.15rem 0.85rem;
+    gap: 1.15rem;
+  }
+
+  .cockpit-top-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .cockpit-page-title {
+    font-size: 1.5rem;
+  }
+
+  .cockpit-page-sub {
+    font-size: 0.82rem;
+  }
+
+  .cockpit-top-actions {
+    width: 100%;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .cockpit-top-actions button {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .cockpit-welcome-banner {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    padding: 1.25rem 1rem;
+    gap: 1rem;
+    border-radius: 16px;
+  }
+
+  .cockpit-banner-text {
+    max-width: 100%;
+  }
+
+  .cockpit-banner-title {
+    font-size: 1.25rem;
+  }
+
+  .cockpit-banner-subtitle {
+    font-size: 0.82rem;
+    margin-bottom: 0.85rem;
+    line-height: 1.45;
+  }
+
+  .cockpit-banner-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .cockpit-pill-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    padding: 0.55rem;
+    font-size: 0.82rem;
+  }
+
+  .cockpit-banner-avatar-wrap {
+    align-self: flex-start;
+  }
+
+  .cockpit-avatar-ring {
+    width: 68px;
+    height: 68px;
+  }
+
+  .cockpit-stat-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .cockpit-stat-card {
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    gap: 0.75rem;
+  }
+
+  .cockpit-stat-iconbox {
+    width: 40px;
+    height: 40px;
+  }
+
+  .cockpit-stat-num {
+    font-size: 1.25rem;
+  }
+
+  .cockpit-tables-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .admin-card {
+    padding: 1rem 0.85rem;
+    border-radius: 14px;
+    margin-bottom: 0.85rem;
+  }
+
+  .admin-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .admin-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table {
+    min-width: 520px;
+    font-size: 0.82rem;
+  }
+
+  /* Admin Login Page Mobile */
+  .admin-login-page {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .admin-login-card {
+    padding: 1.75rem 1.25rem;
+    border-radius: 18px;
+  }
+
+  .admin-login-header h2 {
+    font-size: 1.35rem;
+  }
+
+  .admin-login-header p {
+    font-size: 0.82rem;
+  }
+
+  .admin-login-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  /* Admin Module Panels & Toolbars Mobile */
+  .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .panel-header-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .panel-header-actions .btn {
+    flex: 1 1 auto;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .admin-toolbar-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .admin-search-box {
+    width: 100%;
+  }
+
+  .admin-filter-group {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-filter-group select {
+    flex: 1 1 140px;
+  }
+}
+
+/* 3. Small Mobile Devices (<= 480px) */
+@media (max-width: 480px) {
+  .cockpit-stat-num {
+    font-size: 1.15rem;
+  }
+
+  .topbar-name {
+    max-width: 75px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar-right {
+    gap: 0.5rem;
+  }
+
+  .notif-dropdown {
+    width: 290px;
+    right: -50px;
   }
 }
 /* ==========================================================================

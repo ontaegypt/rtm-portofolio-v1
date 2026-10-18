@@ -1023,7 +1023,9 @@
             <div class="form-group">
               <label for="loginEmail" class="form-label">Email Staf / Administrator</label>
               <div class="input-with-icon">
-                <span class="input-icon">️</span>
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
                 <input type="email" id="loginEmail" class="form-input" placeholder="admin@rumahtahfidz.sch.id" required autocomplete="email" />
               </div>
             </div>
@@ -1031,12 +1033,16 @@
             <div class="form-group">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <label for="loginPassword" class="form-label">Kata Sandi</label>
-                <span style="font-size: 0.76rem; color: var(--text-light);">Min. 6 Karakter</span>
+                <span style="font-size: 0.8rem; color: #8a9099;">Min. 6 Karakter</span>
               </div>
               <div class="input-with-icon">
-                <span class="input-icon"></span>
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
                 <input type="password" id="loginPassword" class="form-input" placeholder="Masukkan kata sandi..." required autocomplete="current-password" />
-                <button type="button" id="togglePasswordBtn" class="password-toggle-btn" aria-label="Lihat kata sandi">️</button>
+                <button type="button" id="togglePasswordBtn" class="password-toggle-btn" aria-label="Lihat kata sandi">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
               </div>
             </div>
 
@@ -1054,27 +1060,7 @@
             </button>
           </form>
 
-          <!-- Quick 1-Click Role Testing Cards -->
-          <div class="demo-accounts-box">
-            <div class="demo-accounts-title">
-              <span>Klik untuk Isi Cepat Akun Demo (Sprint 2):</span>
-            </div>
-            <div class="demo-accounts-grid">
-              <button type="button" class="demo-role-pill superadmin-pill" data-email="admin@rumahtahfidz.sch.id" data-pass="admin123" data-role="superadmin">
-                <strong>Super Admin (Full Access 7 Modul)</strong>
-                <small>admin@rumahtahfidz.sch.id / admin123</small>
-              </button>
-              <button type="button" class="demo-role-pill editor-pill" data-email="editor@rumahtahfidz.sch.id" data-pass="editor123" data-role="editor">
-                <strong>Content Editor (Artikel, Akademik, Galeri)</strong>
-                <small>editor@rumahtahfidz.sch.id / editor123</small>
-              </button>
-              <button type="button" class="demo-role-pill finance-pill" data-email="finance@rumahtahfidz.sch.id" data-pass="finance123" data-role="finance">
-                <strong>Finance / Bendahara (Wakaf, Donasi & Verifikasi Transfer)</strong>
-                <small>finance@rumahtahfidz.sch.id / finance123</small>
-              </button>
-            </div>
           </div>
-        </div>
       </div>
     </div>
 
@@ -1087,10 +1073,12 @@
         <aside class="admin-sidebar" id="adminSidebar">
           <div class="sidebar-header">
             <div class="sidebar-brand">
-              <img src="/assets/images/logo-header-RTM.png" alt="Rumah Tahfidz" class="sidebar-brand-img" />
+              <div class="sidebar-brand-emblem">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d4a373" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              </div>
               <div class="sidebar-brand-text">
-                <span class="brand-title">RTM Backoffice</span>
-                <span class="brand-badge"><span class="pulse-dot"></span> Online</span>
+                <span class="brand-title">RTM</span>
+                <span class="brand-sub">Madani Boarding</span>
               </div>
             </div>
             <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Tutup Menu">
@@ -1179,6 +1167,17 @@
             </ul>
           </nav>
 
+          <div class="sidebar-theme-toggle">
+            <button type="button" class="theme-toggle-btn active" id="themeLightBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
+              <span>Light</span>
+            </button>
+            <button type="button" class="theme-toggle-btn" id="themeDarkBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              <span>Dark</span>
+            </button>
+          </div>
+
           <div class="sidebar-footer">
             <a href="#home" class="sidebar-footer-link" title="Buka Website Publik">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -1186,7 +1185,7 @@
             </a>
             <button id="adminLogoutBtn" class="sidebar-logout-btn">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-              <span>Keluar (Logout)</span>
+              <span>Keluar</span>
             </button>
           </div>
         </aside>
@@ -1263,117 +1262,249 @@
             <!-- ================================================================
                  PANEL 1: RINGKASAN / ANALYTICS (PRD Section 5.1 & 5)
                  ================================================================ -->
-            <div id="admin-panel-overview" class="admin-panel active">
-              <div class="panel-header">
-                <div>
-                  <h2>Ringkasan Eksekutif & Analytics</h2>
-                  <p>Monitoring menyeluruh aktivitas akademik, capaian donasi wakaf, dan pendaftaran santri.</p>
-                </div>
-                <div class="panel-header-actions">
-                  <button class="btn btn-secondary btn-sm" id="btnRefreshOverview">Muat Ulang Data</button>
-                  <button class="btn btn-primary btn-sm" id="btnQuickExportCSV">Unduh Rekap Transaksi</button>
-                </div>
-              </div>
+            <div id="admin-panel-overview" class="admin-panel active" data-ui>
+              <div class="cockpit-grid">
+                <!-- Left Cockpit Main Area -->
+                <div class="cockpit-main-column">
+                  <!-- 1. Top Greeting Header -->
+                  <div class="cockpit-top-header">
+                    <h1 class="cockpit-page-title">Dashboard</h1>
+                    <div class="cockpit-top-actions">
+                      <button class="btn btn-secondary btn-sm" id="btnRefreshOverview" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">Muat Ulang</button>
+                      <button class="btn btn-primary btn-sm" id="btnQuickExportCSV" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #c39860; border: none;">Unduh Rekap</button>
+                    </div>
+                  </div>
 
-              <!-- KPI Metrics Grid -->
-              <div class="admin-kpi-grid">
-                <div class="admin-stat-card">
-                  <div class="stat-card-info">
-                    <span class="stat-card-label">Total Donasi Diterima</span>
-                    <span class="stat-card-val" id="kpiTotalDonasi">Rp 494.050.000</span>
-                    <span class="stat-card-sub">▲ +18.4% bulan ini</span>
+                  <!-- 2. Warm Camel Welcome Hero Banner (Matching Reference Image) -->
+                  <div class="cockpit-welcome-banner">
+                    <div class="cockpit-banner-text">
+                      <h2 class="cockpit-banner-title">Welcome back, <span id="welcomeUserName">Dr. Muhammad Zaki</span>!</h2>
+                      <p class="cockpit-banner-subtitle">Sistem operasional dan penerimaan santri baru berjalan optimal. Periksa verifikasi berkas PPDB dan infaq wakaf hari ini.</p>
+                      <div class="cockpit-banner-actions">
+                        <a href="#admin-ppdb" class="cockpit-pill-btn">Data PPDB Santri</a>
+                        <a href="#admin-donasi" class="cockpit-pill-btn">Verifikasi Donasi</a>
+                      </div>
+                    </div>
+                    <div class="cockpit-banner-avatar-wrap">
+                      <div class="cockpit-avatar-ring">
+                        <img src="/assets/images/mudir.jpg" alt="Mudir RTM" class="cockpit-avatar-img" />
+                      </div>
+                    </div>
                   </div>
-                  <div class="stat-card-icon stat-purple">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+
+                  <!-- 3. Metric 4-Card Row (Matching Reference Image) -->
+                  <div class="cockpit-stat-row">
+                    <div class="cockpit-stat-card">
+                      <div class="cockpit-stat-iconbox">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      </div>
+                      <div>
+                        <div class="cockpit-stat-num">850+</div>
+                        <div class="cockpit-stat-lbl">Santri Aktif</div>
+                      </div>
+                    </div>
+
+                    <div class="cockpit-stat-card">
+                      <div class="cockpit-stat-iconbox">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                      </div>
+                      <div>
+                        <div class="cockpit-stat-num">42</div>
+                        <div class="cockpit-stat-lbl">Asatidz Sanad</div>
+                      </div>
+                    </div>
+
+                    <div class="cockpit-stat-card">
+                      <div class="cockpit-stat-iconbox">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                      </div>
+                      <div>
+                        <div class="cockpit-stat-num" id="kpiTotalDonasi">Rp 494M</div>
+                        <div class="cockpit-stat-lbl">Total Wakaf</div>
+                      </div>
+                    </div>
+
+                    <div class="cockpit-stat-card">
+                      <div class="cockpit-stat-iconbox">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      </div>
+                      <div>
+                        <div class="cockpit-stat-num" id="kpiTotalPPDB">38</div>
+                        <div class="cockpit-stat-lbl">Pendaftar PPDB</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Hidden indicators for JS bindings -->
+                  <span id="kpiActiveCampaigns" style="display:none;">3 Program</span>
+                  <span id="kpiPendingReceipts" style="display:none;">2 Transaksi</span>
+
+                  <!-- 4. "Team Executive" / Distribusi Santri Chart & Breakdown (Matching Reference Image) -->
+                  <div class="cockpit-executive-card">
+                    <div class="cockpit-card-header">
+                      <h3 class="cockpit-card-title">Distribusi Santri & Pendaftar</h3>
+                      <span class="cockpit-card-meta">850 Santri Terdaftar</span>
+                    </div>
+                    <div class="cockpit-executive-body">
+                      <!-- Donut chart -->
+                      <div class="cockpit-donut-wrap">
+                        <div class="cockpit-donut-chart">
+                          <span class="cockpit-donut-center">
+                            <strong>850</strong>
+                            <small>Santri</small>
+                          </span>
+                        </div>
+                      </div>
+                      <!-- Legend & Progress bars -->
+                      <div class="cockpit-progress-list">
+                        <div class="cockpit-prog-item">
+                          <div class="cockpit-prog-label">
+                            <span class="prog-dot dot-green"></span>
+                            <span>SMP Tahfidz (Formal)</span>
+                            <span class="prog-count">320</span>
+                          </div>
+                          <div class="cockpit-prog-bar"><div class="prog-fill fill-green" style="width: 38%;"></div></div>
+                        </div>
+                        <div class="cockpit-prog-item">
+                          <div class="cockpit-prog-label">
+                            <span class="prog-dot dot-blue"></span>
+                            <span>SMA Tahfidz Sains</span>
+                            <span class="prog-count">280</span>
+                          </div>
+                          <div class="cockpit-prog-bar"><div class="prog-fill fill-blue" style="width: 33%;"></div></div>
+                        </div>
+                        <div class="cockpit-prog-item">
+                          <div class="cockpit-prog-label">
+                            <span class="prog-dot dot-yellow"></span>
+                            <span>Mahasantri Aly (Qira'at)</span>
+                            <span class="prog-count">150</span>
+                          </div>
+                          <div class="cockpit-prog-bar"><div class="prog-fill fill-yellow" style="width: 18%;"></div></div>
+                        </div>
+                        <div class="cockpit-prog-item">
+                          <div class="cockpit-prog-label">
+                            <span class="prog-dot dot-coral"></span>
+                            <span>TPA Anak & Ngaji Online</span>
+                            <span class="prog-count">100</span>
+                          </div>
+                          <div class="cockpit-prog-bar"><div class="prog-fill fill-coral" style="width: 11%;"></div></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 5. Tables Row (Pending Donations & Recent PPDB) -->
+                  <div class="cockpit-tables-grid">
+                    <div class="admin-card">
+                      <div class="admin-card-header">
+                        <span class="admin-card-title">Verifikasi Transfer Donasi Menunggu Tindakan</span>
+                        <a href="#admin-donasi" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Buka Semua</a>
+                      </div>
+                      <div class="admin-table-wrapper">
+                        <table class="admin-table">
+                          <thead>
+                            <tr>
+                              <th>Donatur</th>
+                              <th>Program</th>
+                              <th>Nominal</th>
+                              <th>Status</th>
+                              <th>Aksi</th>
+                            </tr>
+                          </thead>
+                          <tbody id="overviewPendingDonationsTable">
+                            <!-- Populated by JS -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="admin-card">
+                      <div class="admin-card-header">
+                        <span class="admin-card-title">Pendaftar PPDB Calon Santri Terbaru</span>
+                        <a href="#admin-akademik" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Kelola PPDB</a>
+                      </div>
+                      <div class="admin-table-wrapper">
+                        <table class="admin-table">
+                          <thead>
+                            <tr>
+                              <th>Nama Santri</th>
+                              <th>Jenjang</th>
+                              <th>Wali</th>
+                              <th>Tanggal</th>
+                              <th>Status</th>
+                              <th>Aksi</th>
+                            </tr>
+                          </thead>
+                          <tbody id="overviewPPDBTable">
+                            <!-- Populated by JS -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div class="admin-stat-card">
-                  <div class="stat-card-info">
-                    <span class="stat-card-label">Pendaftar Santri PPDB</span>
-                    <span class="stat-card-val" id="kpiTotalPPDB">38 Santri</span>
-                    <span class="stat-card-sub" style="color: #2563eb;">● Gelombang 1 Dibuka</span>
+                <!-- Right Sidebar ("My activity" Matching Reference Image) -->
+                <div class="cockpit-activity-column">
+                  <div class="activity-top-header">
+                    <h3 class="activity-column-title">Aktivitas Lembaga</h3>
+                    <a href="#admin-galeri" class="activity-view-all">Lihat Semua</a>
                   </div>
-                  <div class="stat-card-icon stat-blue">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                  </div>
-                </div>
 
-                <div class="admin-stat-card">
-                  <div class="stat-card-info">
-                    <span class="stat-card-label">Campaign Wakaf Aktif</span>
-                    <span class="stat-card-val" id="kpiActiveCampaigns">3 Program</span>
-                    <span class="stat-card-sub" style="color: #059669;">● 1 Campaign Sukses</span>
-                  </div>
-                  <div class="stat-card-icon stat-emerald">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  </div>
-                </div>
+                  <!-- Upcoming Events / Talks -->
+                  <div class="activity-subgroup">
+                    <div class="activity-subgroup-title">
+                      <span>Agenda Terdekat</span>
+                    </div>
+                    <div class="activity-agenda-card">
+                      <div class="agenda-date-badge">
+                        <span class="agenda-day">13</span>
+                        <span class="agenda-mo">NOV</span>
+                      </div>
+                      <div class="agenda-info">
+                        <h4 class="agenda-title">Halaqoh Akbar & Tahfidz</h4>
+                        <div class="agenda-meta">08:00 - 11:30 WIB · Masjid Jamie</div>
+                      </div>
+                    </div>
 
-                <div class="admin-stat-card">
-                  <div class="stat-card-info">
-                    <span class="stat-card-label">Struk Donasi Pending</span>
-                    <span class="stat-card-val" id="kpiPendingReceipts">2 Transaksi</span>
-                    <span class="stat-card-sub" style="color: #d97706;">Perlu Verifikasi Bank</span>
+                    <div class="activity-agenda-card">
+                      <div class="agenda-date-badge">
+                        <span class="agenda-day">20</span>
+                        <span class="agenda-mo">NOV</span>
+                      </div>
+                      <div class="agenda-info">
+                        <h4 class="agenda-title">Tes Observasi PPDB Gel. 1</h4>
+                        <div class="agenda-meta">09:00 - 14:00 WIB · Lab Komputer</div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="stat-card-icon stat-gold">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  </div>
-                </div>
-              </div>
 
-              <!-- Two Column Activity Tables -->
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 1.5rem;">
-                <!-- Pending Donations Table -->
-                <div class="admin-card">
-                  <div class="admin-card-header">
-                    <span class="admin-card-title">
-                      <span>Verifikasi Transfer Manual Menunggu Tindakan</span>
-                    </span>
-                    <a href="#admin-donasi" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Buka Semua</a>
-                  </div>
-                  <div class="admin-table-wrapper">
-                    <table class="admin-table">
-                      <thead>
-                        <tr>
-                          <th>Donatur</th>
-                          <th>Program</th>
-                          <th>Nominal</th>
-                          <th>Status</th>
-                          <th>Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody id="overviewPendingDonationsTable">
-                        <!-- Populated by JS -->
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- Recent PPDB Registrations -->
-                <div class="admin-card">
-                  <div class="admin-card-header">
-                    <span class="admin-card-title">
-                      <span>Pendaftar PPDB Calon Santri Terbaru</span>
-                    </span>
-                    <a href="#admin-akademik" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Kelola PPDB</a>
-                  </div>
-                  <div class="admin-table-wrapper">
-                    <table class="admin-table">
-                      <thead>
-                        <tr>
-                          <th>Nama Santri</th>
-                          <th>Jenjang</th>
-                          <th>Wali Santri</th>
-                          <th>Tanggal</th>
-                          <th>Status</th>
-                          <th>Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody id="overviewPPDBTable">
-                        <!-- Populated by JS -->
-                      </tbody>
-                    </table>
+                  <!-- Latest Shoutouts / Activity Feed -->
+                  <div class="activity-subgroup" style="margin-top: 1.75rem;">
+                    <div class="activity-subgroup-title">
+                      <span>Aktivitas Sistem Terbaru</span>
+                    </div>
+                    <div class="activity-shoutout-item">
+                      <div class="shoutout-avatar">AP</div>
+                      <div class="shoutout-info">
+                        <div class="shoutout-name">Ahmad Panitia</div>
+                        <div class="shoutout-desc">Memverifikasi berkas pendaftaran santri baru SMP</div>
+                      </div>
+                    </div>
+                    <div class="activity-shoutout-item">
+                      <div class="shoutout-avatar avatar-gold">BZ</div>
+                      <div class="shoutout-info">
+                        <div class="shoutout-name">Bendahara Ziswaf</div>
+                        <div class="shoutout-desc">Verifikasi transfer masuk wakaf asrama Rp 1.500.000</div>
+                      </div>
+                    </div>
+                    <div class="activity-shoutout-item">
+                      <div class="shoutout-avatar avatar-blue">WS</div>
+                      <div class="shoutout-info">
+                        <div class="shoutout-name">Wali Santri</div>
+                        <div class="shoutout-desc">Mengajukan reservasi kunjungan kampus putra</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

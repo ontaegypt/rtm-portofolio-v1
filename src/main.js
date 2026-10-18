@@ -592,19 +592,11 @@ export function navigateToAdmin(moduleName) {
     topbarRoleBadge.className = `user-role-badge ${roleConf.badgeClass}`;
   }
 
-  // Update Sidebar Alert Badges
-  const pendingCount = donationsState.filter(d => d.paymentStatus === 'pending').length;
+  // Sidebar alert badges removed per user request for clean 1-line menu typography
   const pendingBadge = document.getElementById('sidebarPendingDonationBadge');
-  if (pendingBadge) {
-    pendingBadge.textContent = `${pendingCount} Struk`;
-    pendingBadge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
-  }
-
-  const pendingVisits = visitsState.filter(v => v.status === 'pending').length;
+  if (pendingBadge) pendingBadge.style.display = 'none';
   const visitBadge = document.getElementById('sidebarVisitCount');
-  if (visitBadge) {
-    visitBadge.textContent = `${pendingVisits} Baru`;
-  }
+  if (visitBadge) visitBadge.style.display = 'none';
 
   // Update Topbar Notification Bell
   updateNotificationBell();

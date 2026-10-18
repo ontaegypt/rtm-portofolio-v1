@@ -737,9 +737,10 @@ api.get('/galleries', (req, res) => {
   }
 });
 
-api.post('/galleries', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
+api.post('/galleries', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
   try {
-    const { title, category, media_url, caption, date } = req.body;
+    const { title, category, caption, date } = req.body;
+    const media_url = req.body.media_url || req.body.image;
     if (!title || !media_url) {
       return res.status(400).json({ success: false, message: 'Judul dan URL gambar/media wajib diisi.' });
     }
@@ -763,7 +764,7 @@ api.post('/galleries', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, 
   }
 });
 
-api.delete('/galleries/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
+api.delete('/galleries/:id', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
   try {
     db.prepare('DELETE FROM galleries WHERE id = ?').run(req.params.id);
     res.json({ success: true, message: 'Foto dokumentasi berhasil dihapus.' });
@@ -1129,6 +1130,25 @@ api.delete('/users/:id', verifyRoleIfAuthenticated('superadmin'), (req, res) => 
 
     db.prepare('DELETE FROM users WHERE id = ?').run(id);
     res.json({ success: true, message: 'Akun staf berhasil dihapus.' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+api.patch('/users/:id', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, role, role_title, password } = req.body;
+    const updates = [];
+    const params = [];
+    if (name) { updates.push('name = ?'); params.push(name); }
+    if (role) { updates.push('role = ?'); params.push(role); }
+    if (role_title) { updates.push('role_title = ?'); params.push(role_title); }
+    if (password && password.trim().length > 0) { updates.push('password_hash = ?'); params.push(hashPassword(password)); }
+    if (updates.length === 0) return res.status(400).json({ success: false, message: 'Tidak ada data diubah.' });
+    params.push(id);
+    db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+    res.json({ success: true, message: 'Akun staf berhasil diperbarui.' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

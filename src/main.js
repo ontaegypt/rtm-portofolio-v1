@@ -69,6 +69,7 @@ let donationsState = JSON.parse(JSON.stringify(DONATION_TRANSACTIONS));
 let ppdbState = JSON.parse(JSON.stringify(PPDB_LEADS));
 let visitsState = JSON.parse(JSON.stringify(VISIT_RESERVATIONS));
 let articlesState = JSON.parse(JSON.stringify(NEWS_ARTICLES));
+let galleriesState = JSON.parse(JSON.stringify(GALLERIES));
 let usersState = JSON.parse(JSON.stringify(ADMIN_USERS));
 let programsState = PROGRAMS.map(p => ({ ...p, ppdbOpen: true }));
 
@@ -145,10 +146,26 @@ function normalizeArticle(a) {
   };
 }
 
+function normalizeGallery(g) {
+  return {
+    id: g.id,
+    title: g.title,
+    category: g.category || 'gedung',
+    image: g.media_url || g.image || '/assets/images/campus.jpg',
+    caption: g.caption || g.title,
+    date: g.date || 'Terbaru'
+  };
+}
+
 function normalizeUser(u) {
+  const roleNameMap = {
+    superadmin: 'Admin',
+    editor: 'Content',
+    finance: 'Finance'
+  };
   return {
     ...u,
-    roleTitle: u.role_title || u.roleTitle,
+    roleTitle: roleNameMap[u.role] || u.role_title || u.roleTitle || 'Admin',
     lastLogin: u.last_login_at || u.lastLogin || 'Baru Saja'
   };
 }
@@ -176,6 +193,9 @@ export async function syncDatabaseState() {
     if (artRes.status === 'fulfilled' && artRes.value.data) {
       articlesState = artRes.value.data.map(normalizeArticle);
     }
+    if (galRes.status === 'fulfilled' && galRes.value.data) {
+      galleriesState = galRes.value.data.map(normalizeGallery);
+    }
     if (campRes.status === 'fulfilled' && campRes.value.data) {
       campaignsState = campRes.value.data.map(normalizeCampaign);
     }
@@ -197,25 +217,25 @@ export async function syncDatabaseState() {
 }
 
 
-// RBAC Role Definitions & Permission Maps (PRD Section 5.1 B)
+// RBAC Role Definitions & Permission Maps (PRD Section 5.1 B - Istilah Disederhanakan)
 const ROLES_CONFIG = {
   superadmin: {
     role: 'superadmin',
-    name: 'Super Administrator',
+    name: 'Admin',
     badgeClass: 'superadmin',
     allowedModules: ['overview', 'akademik', 'donasi', 'galeri', 'berita', 'tampilan', 'users'],
     defaultModule: 'overview'
   },
   editor: {
     role: 'editor',
-    name: 'Content Editor',
+    name: 'Content',
     badgeClass: 'editor',
     allowedModules: ['berita', 'akademik', 'galeri'],
     defaultModule: 'berita'
   },
   finance: {
     role: 'finance',
-    name: 'Finance / Bendahara',
+    name: 'Finance',
     badgeClass: 'finance',
     allowedModules: ['donasi'],
     defaultModule: 'donasi'
@@ -1195,8 +1215,8 @@ function renderGalleryGrid() {
   if (!container) return;
 
   const filtered = state.galleryFilter === 'all'
-    ? GALLERIES
-    : GALLERIES.filter(g => g.category === state.galleryFilter);
+    ? galleriesState
+    : galleriesState.filter(g => g.category === state.galleryFilter);
 
   container.innerHTML = filtered.map((item, idx) => `
     <div class="gallery-card-item" data-index="${idx}" data-id="${item.id}">
@@ -1211,7 +1231,7 @@ function renderGalleryGrid() {
   container.querySelectorAll('.gallery-card-item').forEach(card => {
     card.addEventListener('click', (e) => {
       const id = e.currentTarget.getAttribute('data-id');
-      const item = GALLERIES.find(g => g.id === id);
+      const item = galleriesState.find(g => g.id === id);
       if (item) {
         openLightbox(item);
       }
@@ -2379,6 +2399,11 @@ function renderAdminPPDBTable() {
 
   ppdbBody.querySelectorAll('.btn-delete-lead').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
       const id = e.currentTarget.getAttribute('data-id');
       const lead = ppdbState.find(l => l.id === id);
       if (!confirm(`Hapus permanen pendaftaran santri ${lead ? lead.studentName : id}? Tindakan ini tidak dapat dibatalkan.`)) return;
@@ -2572,17 +2597,49 @@ function renderAdminGaleri() {
     });
   }
 
-  // Mini Media Grid
+  // Mini Media Grid in Admin Panel Galeri
   const mediaGrid = document.getElementById('adminMediaMiniGrid');
   if (mediaGrid) {
-    mediaGrid.innerHTML = GALLERIES.slice(0, 8).map(g => `
-      <div style="border-radius: var(--radius-md); overflow: hidden; border: 1px solid rgba(0,0,0,0.08); background: #000; height: 110px; position: relative;">
-        <img src="${g.image}" alt="${g.title}" style="width: 100%; height: 100%; object-fit: cover;" />
-        <span style="position: absolute; bottom: 4px; left: 4px; background: rgba(0,0,0,0.7); color: #fff; font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 4px;">
-          ${g.title.substring(0, 15)}...
-        </span>
+    const items = (galleriesState && galleriesState.length > 0) ? galleriesState : GALLERIES;
+    mediaGrid.innerHTML = items.map(g => `
+      <div class="admin-media-card" style="border-radius: var(--radius-md); overflow: hidden; border: 1px solid rgba(0,0,0,0.08); background: #000; height: 120px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <img src="${g.image}" alt="${g.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/assets/images/campus.jpg';" />
+        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 40%, rgba(0,0,0,0.85) 100%); pointer-events: none;"></div>
+        <button type="button" class="btn-delete-gal-item" data-id="${g.id}" title="Hapus Media Galeri" style="position: absolute; top: 6px; right: 6px; background: rgba(220, 38, 38, 0.85); color: #fff; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='rgba(220,38,38,0.85)'">
+          🗑️
+        </button>
+        <div style="position: absolute; bottom: 6px; left: 6px; right: 6px; display: flex; justify-content: space-between; align-items: flex-end;">
+          <span style="color: #fff; font-size: 0.7rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">
+            ${g.title}
+          </span>
+          <span style="background: rgba(16, 185, 129, 0.85); color: #fff; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 3px; font-weight: 600; text-transform: uppercase;">
+            ${g.category || 'Galeri'}
+          </span>
+        </div>
       </div>
     `).join('');
+
+    mediaGrid.querySelectorAll('.btn-delete-gal-item').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const currentUser = auth.getStoredUser() || usersState[0];
+        if (currentUser.role !== 'superadmin') {
+          showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+          return;
+        }
+        const gId = e.currentTarget.getAttribute('data-id');
+        const gItem = (galleriesState || []).find(item => String(item.id) === String(gId));
+        if (!confirm(`Hapus media galeri "${gItem ? gItem.title : 'ini'}" secara permanen?`)) return;
+        try {
+          await galleriesApi.delete(gId);
+          showToast('Media galeri berhasil dihapus dari sistem.', 'success');
+          await syncDatabaseState();
+          renderAdminGaleri();
+          renderGalleryGrid();
+        } catch (err) {
+          showToast(err.message, 'warning');
+        }
+      });
+    });
   }
 }
 
@@ -2656,6 +2713,11 @@ function renderAdminBerita() {
 
   tbody.querySelectorAll('.btn-delete-article').forEach(btn => {
     btn.addEventListener('click', (e) => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
       const id = e.currentTarget.getAttribute('data-id');
       if (confirm('Apakah Anda yakin ingin menghapus artikel ini?')) {
         articlesState = articlesState.filter(a => a.id !== id);
@@ -2703,22 +2765,94 @@ function renderAdminUsers() {
     <tr>
       <td>
         <div style="display: flex; align-items: center; gap: 0.6rem;">
-          <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">${u.avatar}</div>
+          <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">${u.avatar || u.name.substring(0, 2).toUpperCase()}</div>
           <div>
             <strong>${u.name}</strong>
           </div>
         </div>
       </td>
       <td><code>${u.email}</code></td>
-      <td><span class="user-role-badge ${u.role}">${u.roleTitle}</span></td>
+      <td><span class="user-role-badge ${u.role}">${u.roleTitle || (u.role === 'superadmin' ? 'Admin' : (u.role === 'editor' ? 'Content' : 'Finance'))}</span></td>
       <td style="font-size: 0.78rem; color: var(--text-dark);">${roleDescriptions[u.role] || '-'}</td>
       <td><span style="font-size: 0.78rem; color: var(--text-muted);">${u.lastLogin}</span></td>
       <td><span class="status-pill status-success">Aktif</span></td>
       <td>
-        <button class="btn-icon-action" title="Ubah Password">Ubah</button>
+        <div class="table-action-btns" style="display: flex; gap: 0.35rem; align-items: center;">
+          <button type="button" class="btn btn-secondary btn-sm btn-edit-user-action" data-id="${u.id}" title="Ubah Akun Pengguna" style="font-size: 0.75rem; padding: 0.2rem 0.55rem;">
+            ✏️ Ubah
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm btn-delete-user-action" data-id="${u.id}" title="Hapus Pengguna" style="font-size: 0.75rem; padding: 0.2rem 0.55rem; color: #dc2626; border-color: rgba(220, 38, 38, 0.3);">
+            🗑️ Hapus
+          </button>
+        </div>
       </td>
     </tr>
   `).join('');
+
+  // Wire Ubah & Hapus action buttons
+  tbody.querySelectorAll('.btn-edit-user-action').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
+      const id = e.currentTarget.getAttribute('data-id');
+      const targetUser = usersState.find(u => u.id === id);
+      if (targetUser) {
+        openEditUserModal(targetUser);
+      }
+    });
+  });
+
+  tbody.querySelectorAll('.btn-delete-user-action').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
+      const id = e.currentTarget.getAttribute('data-id');
+      const targetUser = usersState.find(u => u.id === id);
+      if (!targetUser) return;
+      if (targetUser.id === 'usr-1' || targetUser.id === currentUser.id) {
+        showToast('Akun Admin utama atau akun aktif tidak dapat dihapus.', 'warning');
+        return;
+      }
+      if (!confirm(`Hapus permanen akun pengguna "${targetUser.name}" (${targetUser.roleTitle || targetUser.role})?`)) return;
+      try {
+        await usersApi.delete(id);
+        showToast(`Akun pengguna ${targetUser.name} berhasil dihapus.`, 'success');
+        await syncDatabaseState();
+        renderAdminUsers();
+      } catch (err) {
+        showToast(err.message, 'warning');
+      }
+    });
+  });
+}
+
+function openEditUserModal(user) {
+  const userModal = document.getElementById('adminUserModal');
+  if (!userModal) return;
+  const title = document.getElementById('userModalTitle');
+  const idInput = document.getElementById('userFormUserId');
+  const nameInput = document.getElementById('userFormName');
+  const emailInput = document.getElementById('userFormEmail');
+  const passInput = document.getElementById('userFormPassword');
+  const roleSelect = document.getElementById('userFormRole');
+
+  if (title) title.textContent = 'Ubah Akun Pengguna';
+  if (idInput) idInput.value = user.id;
+  if (nameInput) nameInput.value = user.name;
+  if (emailInput) emailInput.value = user.email;
+  if (roleSelect) roleSelect.value = user.role;
+  if (passInput) {
+    passInput.value = '';
+    passInput.required = false;
+    passInput.placeholder = 'Kosongkan jika kata sandi tidak diubah...';
+  }
+  userModal.classList.add('open');
 }
 
 // 9. Receipt Verification Modal Handlers
@@ -3217,7 +3351,7 @@ function initAdminUI() {
     });
   }
 
-  // J. User Creation Modal (Sprint 3 API Integration)
+  // J. User Creation & Edit Modal (Super Admin Only)
   const userModal = document.getElementById('adminUserModal');
   const btnCreateUser = document.getElementById('btnCreateUser');
   const btnCloseUser = document.getElementById('btnCloseUserModal');
@@ -3225,7 +3359,25 @@ function initAdminUI() {
   const userForm = document.getElementById('adminUserForm');
 
   if (btnCreateUser && userModal) {
-    btnCreateUser.addEventListener('click', () => userModal.classList.add('open'));
+    btnCreateUser.addEventListener('click', () => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
+      const title = document.getElementById('userModalTitle');
+      const idInput = document.getElementById('userFormUserId');
+      const passInput = document.getElementById('userFormPassword');
+      if (title) title.textContent = 'Tambah Pengguna Baru';
+      if (idInput) idInput.value = '';
+      if (passInput) {
+        passInput.value = '';
+        passInput.required = true;
+        passInput.placeholder = 'Min. 6 Karakter...';
+      }
+      if (userForm) userForm.reset();
+      userModal.classList.add('open');
+    });
   }
   if (btnCloseUser && userModal) {
     btnCloseUser.addEventListener('click', () => userModal.classList.remove('open'));
@@ -3236,32 +3388,134 @@ function initAdminUI() {
   if (userForm && userModal) {
     userForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('userFormName').value;
-      const email = document.getElementById('userFormEmail').value;
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
+
+      const userId = document.getElementById('userFormUserId')?.value;
+      const name = document.getElementById('userFormName').value.trim();
+      const email = document.getElementById('userFormEmail').value.trim();
       const pass = document.getElementById('userFormPassword').value;
       const role = document.getElementById('userFormRole').value;
 
       const roleTitles = {
-        superadmin: 'Super Administrator',
-        editor: 'Content Editor',
-        finance: 'Finance / Bendahara'
+        superadmin: 'Admin',
+        editor: 'Content',
+        finance: 'Finance'
       };
 
       try {
-        await usersApi.create({
-          name,
-          email,
-          password: pass,
-          role,
-          role_title: roleTitles[role] || role
-        });
-        showToast(`Akun pengguna ${name} (${roleTitles[role] || role}) berhasil didaftarkan ke sistem!`, 'success');
+        if (userId) {
+          const payload = {
+            name,
+            email,
+            role,
+            role_title: roleTitles[role] || role
+          };
+          if (pass && pass.trim()) {
+            payload.password = pass.trim();
+          }
+          await usersApi.update(userId, payload);
+          showToast(`Akun pengguna ${name} berhasil diperbarui!`, 'success');
+        } else {
+          await usersApi.create({
+            name,
+            email,
+            password: pass,
+            role,
+            role_title: roleTitles[role] || role
+          });
+          showToast(`Akun pengguna ${name} (${roleTitles[role] || role}) berhasil didaftarkan ke sistem!`, 'success');
+        }
         userForm.reset();
         if (userModal) userModal.classList.remove('open');
         await syncDatabaseState();
         renderAdminUsers();
       } catch (err) {
         showToast(err.message, 'warning');
+      }
+    });
+  }
+
+  // K. Gallery Documentation Modal (#adminGalleryModal - Super Admin Only)
+  const galleryModal = document.getElementById('adminGalleryModal');
+  const btnAddGalleryMedia = document.getElementById('btnAddGalleryMedia');
+  const btnCloseGalleryModal = document.getElementById('btnCloseGalleryModal');
+  const btnCancelGallery = document.getElementById('btnCancelGallery');
+  const adminGalleryForm = document.getElementById('adminGalleryForm');
+
+  if (btnAddGalleryMedia && galleryModal) {
+    btnAddGalleryMedia.addEventListener('click', () => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
+      if (adminGalleryForm) adminGalleryForm.reset();
+      const dateInput = document.getElementById('galleryFormDate');
+      if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+      galleryModal.classList.add('open');
+    });
+  }
+
+  if (btnCloseGalleryModal && galleryModal) {
+    btnCloseGalleryModal.addEventListener('click', () => galleryModal.classList.remove('open'));
+  }
+
+  if (btnCancelGallery && galleryModal) {
+    btnCancelGallery.addEventListener('click', () => galleryModal.classList.remove('open'));
+  }
+
+  // Quick preset buttons for image URL
+  document.querySelectorAll('.btn-quick-gal-img').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const imgPath = e.currentTarget.getAttribute('data-img');
+      const urlInput = document.getElementById('galleryFormUrl');
+      if (urlInput && imgPath) {
+        urlInput.value = imgPath;
+      }
+    });
+  });
+
+  if (adminGalleryForm && galleryModal) {
+    adminGalleryForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
+
+      const title = document.getElementById('galleryFormTitle').value.trim();
+      const category = document.getElementById('galleryFormCategory').value;
+      const date = document.getElementById('galleryFormDate').value || new Date().toISOString().split('T')[0];
+      const image = document.getElementById('galleryFormUrl').value.trim();
+      const caption = document.getElementById('galleryFormCaption')?.value.trim() || '';
+
+      if (!title || !image) {
+        showToast('Judul dan URL Media Gambar wajib diisi.', 'warning');
+        return;
+      }
+
+      try {
+        await galleriesApi.create({
+          title,
+          category,
+          date,
+          image,
+          media_url: image,
+          caption
+        });
+        showToast(`Foto galeri "${title}" berhasil ditambahkan ke database!`, 'success');
+        adminGalleryForm.reset();
+        galleryModal.classList.remove('open');
+        await syncDatabaseState();
+        renderAdminGaleri();
+        renderGalleryGrid();
+      } catch (err) {
+        showToast('Gagal menambahkan galeri: ' + err.message, 'warning');
       }
     });
   }

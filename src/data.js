@@ -1133,7 +1133,7 @@ export const ADMIN_USERS = [
     email: "admin@rumahtahfidz.sch.id",
     password: "admin123",
     role: "superadmin", // Full Access
-    roleTitle: "Super Administrator",
+    roleTitle: "Admin",
     avatar: "MZ",
     lastLogin: "Baru saja",
     status: "active"
@@ -1144,7 +1144,7 @@ export const ADMIN_USERS = [
     email: "editor@rumahtahfidz.sch.id",
     password: "editor123",
     role: "editor", // Content & Academic
-    roleTitle: "Content Editor",
+    roleTitle: "Content",
     avatar: "AS",
     lastLogin: "2 jam yang lalu",
     status: "active"
@@ -1155,7 +1155,7 @@ export const ADMIN_USERS = [
     email: "finance@rumahtahfidz.sch.id",
     password: "finance123",
     role: "finance", // Donations & Finance
-    roleTitle: "Finance / Bendahara",
+    roleTitle: "Finance",
     avatar: "RK",
     lastLogin: "Kemarin, 16:30",
     status: "active"

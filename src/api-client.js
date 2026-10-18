@@ -163,6 +163,7 @@ export const ppdbApi = {
 export const usersApi = {
   getAll: () => client.get('/users'),
   create: (data) => client.post('/users', data),
+  update: (id, data) => client.patch(`/users/${id}`, data),
   delete: (id) => client.delete(`/users/${id}`)
 };
 

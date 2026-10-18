@@ -326,6 +326,47 @@ export function showToast(message, type = 'success') {
   }, 3500);
 }
 
+// Server-Side Authoritative Session & Role Lock (Otorisasi Dipatenkan)
+let isVerifyingSession = false;
+async function verifyAndSyncSession() {
+  if (isVerifyingSession) return;
+  const token = client.token;
+  if (!token) return;
+
+  isVerifyingSession = true;
+  try {
+    const res = await authApi.getMe();
+    if (res && res.success && res.user) {
+      const stored = auth.getStoredUser();
+      // If local storage was manually tampered, enforce authoritative DB role
+      if (!stored || stored.role !== res.user.role || stored.id !== res.user.id || stored.name !== res.user.name) {
+        auth.setStoredUser(res.user, true);
+        const roleConf = ROLES_CONFIG[res.user.role] || ROLES_CONFIG.superadmin;
+        const currentHash = window.location.hash.slice(1);
+        if (currentHash.startsWith('admin-')) {
+          const mod = currentHash.replace('admin-', '');
+          if (!roleConf.allowedModules.includes(mod)) {
+            showToast(`🔒 Akses Ditolak (403): Otorisasi akun Anda (${roleConf.name}) dipatenkan. Mengalihkan ke modul resmi.`, 'warning');
+            window.location.hash = `#admin-${roleConf.defaultModule}`;
+            return;
+          }
+        }
+        if (state.currentView === 'admin' && state.activeAdminModule) {
+          navigateToAdmin(state.activeAdminModule);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('[Auth] Server session validation failed:', err.message);
+    auth.clearUser();
+    client.clearToken();
+    showToast('Sesi masuk Anda telah kedaluwarsa. Silakan masuk kembali.', 'warning');
+    window.location.hash = '#admin-login';
+  } finally {
+    isVerifyingSession = false;
+  }
+}
+
 // Router and Navigation System (Sprint 1 + Sprint 2 Auth Guard)
 function initRouter() {
   const handleHashChange = () => {
@@ -336,7 +377,7 @@ function initRouter() {
     // A. Route Guard for Admin Login (#admin-login)
     if (rawHash === 'admin-login') {
       const currentUser = auth.getStoredUser();
-      if (currentUser) {
+      if (currentUser && client.token) {
         const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
         window.location.hash = `#admin-${roleConf.defaultModule}`;
         return;
@@ -345,15 +386,18 @@ function initRouter() {
       return;
     }
 
-    // B. Route Guard for Backoffice Area (#admin, #admin-*) (PRD 5.1 A)
+    // B. Route Guard for Backoffice Area (#admin, #admin-*) (PRD 5.1 A - Otorisasi Dipatenkan)
     if (rawHash === 'admin' || rawHash.startsWith('admin-')) {
       const currentUser = auth.getStoredUser();
-      if (!currentUser) {
+      if (!currentUser || !client.token) {
         auth.setCallbackUrl(rawHash);
         showToast('Sesi masuk diperlukan untuk mengakses modul administratif.', 'warning');
         window.location.hash = '#admin-login';
         return;
       }
+
+      // Synchronize and verify authoritative role from database
+      verifyAndSyncSession();
 
       // User authenticated: extract target module
       let targetModule = rawHash === 'admin' ? null : rawHash.replace('admin-', '');
@@ -365,7 +409,7 @@ function initRouter() {
 
       // Check Role-Based Access Control (RBAC 403 Forbidden check)
       if (!roleConf.allowedModules.includes(targetModule)) {
-        showToast(`Akses Ditolak (403): Role ${roleConf.name} tidak berwenang mengelola modul ini.`, 'warning');
+        showToast(`🔒 Akses Ditolak (403): Role "${roleConf.name}" tidak berwenang mengelola modul ini. Hak akses dipatenkan.`, 'warning');
         window.location.hash = `#admin-${roleConf.defaultModule}`;
         return;
       }
@@ -508,7 +552,7 @@ export function navigateToAdmin(moduleName) {
   const topbarAvatar = document.getElementById('topbarAvatar');
   const topbarName = document.getElementById('topbarUserName');
   const topbarRole = document.getElementById('topbarUserRole');
-  const quickRoleSelect = document.getElementById('quickRoleSelect');
+  const topbarRoleBadge = document.getElementById('topbarUserRoleBadge');
 
   if (sidebarAvatar) sidebarAvatar.textContent = currentUser.avatar || 'AD';
   if (sidebarName) sidebarName.textContent = currentUser.name;
@@ -520,7 +564,10 @@ export function navigateToAdmin(moduleName) {
   if (topbarAvatar) topbarAvatar.textContent = currentUser.avatar || 'AD';
   if (topbarName) topbarName.textContent = currentUser.name;
   if (topbarRole) topbarRole.textContent = roleConf.name;
-  if (quickRoleSelect) quickRoleSelect.value = currentUser.role;
+  if (topbarRoleBadge) {
+    topbarRoleBadge.textContent = roleConf.name;
+    topbarRoleBadge.className = `user-role-badge ${roleConf.badgeClass}`;
+  }
 
   // Update Sidebar Alert Badges
   const pendingCount = donationsState.filter(d => d.paymentStatus === 'pending').length;
@@ -2849,25 +2896,36 @@ function initAdminUI() {
     });
   }
 
-  // B. Logout Button
+  // B. Logout Button (Clears session & token completely)
   const logoutBtn = document.getElementById('adminLogoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       auth.clearUser();
-      showToast('Anda telah berhasil keluar dari sesi administrasi.', 'success');
+      client.clearToken();
+      showToast('Sesi administrasi ditutup. Anda telah berhasil keluar.', 'success');
       window.location.hash = '#admin-login';
     });
   }
 
-  // C. Quick Role Switcher Dropdown (Live Demo Feature)
-  const quickRoleSelect = document.getElementById('quickRoleSelect');
-  if (quickRoleSelect) {
-    quickRoleSelect.addEventListener('change', (e) => {
-      const newRole = e.target.value;
-      const targetUser = usersState.find(u => u.role === newRole) || usersState[0];
-      auth.setStoredUser(targetUser, true);
-      showToast(`Beralih mode peran: ${targetUser.roleTitle}`, 'success');
-      const roleConf = ROLES_CONFIG[newRole] || ROLES_CONFIG.superadmin;
+  // C. Intercept Restricted Role Menu Items (Otorisasi Terkunci & Dipatenkan)
+  document.querySelectorAll('.sidebar-menu-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (item.classList.contains('restricted-role')) {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentUser = auth.getStoredUser() || usersState[0];
+        const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
+        showToast(`🔒 Akses Ditolak (403): Role "${roleConf.name}" tidak memiliki hak akses ke modul ini. Otorisasi telah dipatenkan.`, 'warning');
+      }
+    });
+  });
+
+  // Back to allowed module button from 403 alert banner
+  const btnBackAllowed = document.getElementById('btnBackToAllowed');
+  if (btnBackAllowed) {
+    btnBackAllowed.addEventListener('click', () => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
       window.location.hash = `#admin-${roleConf.defaultModule}`;
     });
   }

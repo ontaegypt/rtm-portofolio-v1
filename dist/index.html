@@ -68,8 +68,8 @@
     rel="stylesheet" />
 
   <!-- Main Stylesheet -->
-  <script type="module" crossorigin src="/assets/index-DHuZIVWc.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-0ZWi4tkb.css">
+  <script type="module" crossorigin src="/assets/index-CNRDToPP.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BVVEAeuf.css">
 </head>
 
 <body>
@@ -1236,14 +1236,13 @@
             </div>
 
             <div class="topbar-right">
-              <!-- Quick Role Switcher for live demos -->
-              <div class="quick-role-switcher" title="Ganti Role Cepat untuk Demo">
-                <span class="switcher-label">Mode Role:</span>
-                <select id="quickRoleSelect" class="quick-role-select">
-                  <option value="superadmin">👑 Super Admin</option>
-                  <option value="editor">✍️ Content Editor</option>
-                  <option value="finance">💰 Finance / Bendahara</option>
-                </select>
+              <!-- Verified Locked Role Indicator (Otorisasi Akun Dipatenkan) -->
+              <div class="topbar-role-badge-box" id="topbarRoleBox" title="Hak Akses Resmi Terverifikasi (Terkunci & Dipatenkan)">
+                <span class="topbar-role-label">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  Role Terverifikasi:
+                </span>
+                <span id="topbarUserRoleBadge" class="user-role-badge superadmin">👑 Super Administrator</span>
               </div>
 
               <!-- Notification Bell with Dropdown -->

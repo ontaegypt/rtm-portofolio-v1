@@ -445,7 +445,7 @@ Notifikasi WA / Mail	Fonnte / Wablas (WA) & Resend (Email)	Twilio / SendGrid
          └── Step 5 News Page
 │   ├── Sprint 2 Sistem Auth (/admin), Dashboard Admin
 │   ├── Sprint 3 Server, Database, Integrasi secara keseluruhan
-│   └── Sprint 4 Integrasi Form PPDB, Testing, & Go Live
+│   └── Sprint 4 Integrasi Form PPDB, Testing, Go live!
 └── Phase 2 (Rencana Masa Depan / Future Releases)
     ├── Aktivasi Engine Wakaf & Donasi (Payment Gateway Otomatis)
     └── Sistem Learning Management System (LMS) untuk Santri

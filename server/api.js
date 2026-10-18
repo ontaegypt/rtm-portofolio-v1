@@ -196,6 +196,72 @@ api.get('/auth/me', (req, res) => {
 });
 
 // ============================================================================
+// SERVER-SIDE ROLE AUTHORIZATION HELPERS (Otorisasi Dipatenkan)
+// ============================================================================
+export function getAuthenticatedUser(req) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return null;
+  try {
+    const token = authHeader.replace('Bearer ', '');
+    const decoded = Buffer.from(token, 'base64').toString('utf-8');
+    const [userId] = decoded.split(':');
+    return db.prepare('SELECT id, name, email, role, role_title, avatar FROM users WHERE id = ?').get(userId);
+  } catch {
+    return null;
+  }
+}
+
+export function requireRole(...allowedRoles) {
+  return (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({
+        success: false,
+        message: 'Otorisasi diperlukan: Token otentikasi tidak ditemukan. Silakan login kembali.'
+      });
+    }
+
+    const user = getAuthenticatedUser(req);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Sesi otentikasi tidak valid atau akun tidak terdaftar.'
+      });
+    }
+
+    if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: `Akses Ditolak (403 Forbidden): Peran "${user.role_title || user.role}" tidak berwenang untuk tindakan ini. Otorisasi akun dipatenkan.`
+      });
+    }
+
+    req.user = user;
+    next();
+  };
+}
+
+export function verifyRoleIfAuthenticated(...allowedRoles) {
+  return (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return next();
+    }
+
+    const user = getAuthenticatedUser(req);
+    if (user && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: `Akses Ditolak (403 Forbidden): Peran "${user.role_title || user.role}" tidak berwenang untuk operasi ini. Otorisasi akun dipatenkan.`
+      });
+    }
+
+    req.user = user;
+    next();
+  };
+}
+
+// ============================================================================
 // 3. ACADEMIC PROGRAMS & CURRICULUM (PRD Section 5.4 & 6 Branch 2)
 // ============================================================================
 api.get('/programs', (req, res) => {
@@ -272,7 +338,7 @@ api.get('/programs/:id', (req, res) => {
   }
 });
 
-api.put('/programs/:id', (req, res) => {
+api.put('/programs/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { id } = req.params;
     const { name, headline, description, duration_claim, target_participants, quota, investment_fee } = req.body;
@@ -296,7 +362,7 @@ api.put('/programs/:id', (req, res) => {
   }
 });
 
-api.patch('/programs/:id/toggle', (req, res) => {
+api.patch('/programs/:id/toggle', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { id } = req.params;
     const prog = db.prepare('SELECT is_active FROM academic_programs WHERE id = ?').get(id);
@@ -473,7 +539,7 @@ api.post('/ppdb', (req, res) => {
   }
 });
 
-api.patch('/ppdb/:id/status', (req, res) => {
+api.patch('/ppdb/:id/status', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { id } = req.params;
     const { status, notes } = req.body;
@@ -509,7 +575,7 @@ api.patch('/ppdb/:id/status', (req, res) => {
   }
 });
 
-api.delete('/ppdb/:id', (req, res) => {
+api.delete('/ppdb/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const existing = db.prepare('SELECT id FROM ppdb_registrations WHERE id = ?').get(req.params.id);
     if (!existing) {
@@ -566,7 +632,7 @@ api.get('/articles/:idOrSlug', (req, res) => {
   }
 });
 
-api.post('/articles', (req, res) => {
+api.post('/articles', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { title, category, excerpt, content, thumbnail_url, read_time, status } = req.body;
     if (!title || !content) {
@@ -574,7 +640,12 @@ api.post('/articles', (req, res) => {
     }
 
     const id = `art-${Date.now()}`;
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    let baseSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    let slug = baseSlug;
+    let counter = 1;
+    while (db.prepare('SELECT id FROM articles WHERE slug = ?').get(slug)) {
+      slug = `${baseSlug}-${counter++}`;
+    }
 
     db.prepare(`
       INSERT INTO articles (
@@ -599,7 +670,7 @@ api.post('/articles', (req, res) => {
   }
 });
 
-api.put('/articles/:id', (req, res) => {
+api.put('/articles/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { id } = req.params;
     const { title, category, excerpt, content, thumbnail_url, status } = req.body;
@@ -621,7 +692,7 @@ api.put('/articles/:id', (req, res) => {
   }
 });
 
-api.patch('/articles/:id/toggle', (req, res) => {
+api.patch('/articles/:id/toggle', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { id } = req.params;
     const art = db.prepare('SELECT status FROM articles WHERE id = ?').get(id);
@@ -635,7 +706,7 @@ api.patch('/articles/:id/toggle', (req, res) => {
   }
 });
 
-api.delete('/articles/:id', (req, res) => {
+api.delete('/articles/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     db.prepare('DELETE FROM articles WHERE id = ?').run(req.params.id);
     res.json({ success: true, message: 'Artikel berhasil dihapus dari sistem.' });
@@ -666,7 +737,7 @@ api.get('/galleries', (req, res) => {
   }
 });
 
-api.post('/galleries', (req, res) => {
+api.post('/galleries', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { title, category, media_url, caption, date } = req.body;
     if (!title || !media_url) {
@@ -692,7 +763,7 @@ api.post('/galleries', (req, res) => {
   }
 });
 
-api.delete('/galleries/:id', (req, res) => {
+api.delete('/galleries/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     db.prepare('DELETE FROM galleries WHERE id = ?').run(req.params.id);
     res.json({ success: true, message: 'Foto dokumentasi berhasil dihapus.' });
@@ -756,7 +827,7 @@ api.post('/reservations', (req, res) => {
   }
 });
 
-api.patch('/reservations/:id/status', (req, res) => {
+api.patch('/reservations/:id/status', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { id } = req.params;
     const { status, notes } = req.body;
@@ -791,7 +862,7 @@ api.get('/campaigns', (req, res) => {
   }
 });
 
-api.post('/campaigns', (req, res) => {
+api.post('/campaigns', verifyRoleIfAuthenticated('superadmin', 'finance'), (req, res) => {
   try {
     const { title, category_name, target_amount, cover_image, description, end_date, is_urgent } = req.body;
     if (!title || !target_amount) {
@@ -799,7 +870,12 @@ api.post('/campaigns', (req, res) => {
     }
 
     const id = `camp-${Date.now()}`;
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    let baseSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    let slug = baseSlug;
+    let counter = 1;
+    while (db.prepare('SELECT id FROM campaigns WHERE slug = ?').get(slug)) {
+      slug = `${baseSlug}-${counter++}`;
+    }
 
     db.prepare(`
       INSERT INTO campaigns (
@@ -824,7 +900,7 @@ api.post('/campaigns', (req, res) => {
   }
 });
 
-api.put('/campaigns/:id', (req, res) => {
+api.put('/campaigns/:id', verifyRoleIfAuthenticated('superadmin', 'finance'), (req, res) => {
   try {
     const { id } = req.params;
     const { title, category_name, target_amount, cover_image, description, status, is_urgent } = req.body;
@@ -924,7 +1000,7 @@ api.post('/donations', (req, res) => {
   }
 });
 
-api.patch('/donations/:id/status', (req, res) => {
+api.patch('/donations/:id/status', verifyRoleIfAuthenticated('superadmin', 'finance'), (req, res) => {
   try {
     const { id } = req.params;
     const { payment_status, notes } = req.body;
@@ -1007,7 +1083,7 @@ api.get('/users', (req, res) => {
   }
 });
 
-api.post('/users', (req, res) => {
+api.post('/users', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
   try {
     const { name, email, password, role, role_title } = req.body;
     if (!name || !email || !password || !role) {
@@ -1041,7 +1117,7 @@ api.post('/users', (req, res) => {
   }
 });
 
-api.delete('/users/:id', (req, res) => {
+api.delete('/users/:id', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
   try {
     const { id } = req.params;
     const superadminCount = db.prepare("SELECT count(*) as c FROM users WHERE role = 'superadmin'").get().c;
@@ -1078,7 +1154,7 @@ api.get('/settings', (req, res) => {
   }
 });
 
-api.put('/settings', (req, res) => {
+api.put('/settings', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
   try {
     const updates = req.body; // e.g. { site_identity: {...}, institution_profile: {...} }
     const stmt = db.prepare(`

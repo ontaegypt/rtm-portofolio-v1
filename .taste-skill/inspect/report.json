@@ -1,0 +1,2428 @@
+{
+ "url": "index.html",
+ "at": "2026-10-18T15:29:02.720Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 8,
+   "filled": [
+    1,
+    1,
+    0.56,
+    0.72,
+    0.85,
+    1,
+    1,
+    1
+   ],
+   "motion": {
+    "elements": 3,
+    "css": 2,
+    "transitions": 1,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 7027,
+     "screens": 7.8,
+     "words": 1173,
+     "img": 31,
+     "video": 0,
+     "canvas": 0,
+     "svg": 53,
+     "sections": 5,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 8,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "hero-santri.jpg",
+      "mudir.jpg",
+      "halaqoh.jpg",
+      "campus.jpg",
+      "wisuda.jpg",
+      "halaqoh.jpg",
+      "hero-santri.jpg",
+      "halaqoh.jpg"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [
+      "🎓",
+      "🏛",
+      "📖",
+      "💖",
+      "✨",
+      "📜",
+      "🌱",
+      "🏡",
+      "🏆",
+      "★"
+     ]
+    },
+    "hero": {
+     "text": "Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakhlak Mulia",
+     "words": 9,
+     "chars": 57,
+     "lines": 3,
+     "size": 54.4,
+     "vw": 3.8,
+     "font": "Outfit",
+     "weight": 800,
+     "tracking": -0.02,
+     "leading": 1.15,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "left",
+     "widthRatio": 0.47,
+     "top": 213,
+     "gradientText": true,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakhlak Mulia",
+     "words": 9,
+     "lines": 3,
+     "size": 54.4,
+     "font": "Outfit"
+    },
+    "headings": [
+     {
+      "text": "Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakhlak Mulia",
+      "words": 9,
+      "chars": 57,
+      "lines": 3,
+      "size": 54.4,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.15,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.47,
+      "top": 213,
+      "gradientText": true,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "850+",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 28,
+      "vw": 1.9,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.1,
+      "top": 681,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "42",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 28,
+      "vw": 1.9,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.1,
+      "top": 681,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "1.280+",
+      "words": 1,
+      "chars": 6,
+      "lines": 1,
+      "size": 28,
+      "vw": 1.9,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.1,
+      "top": 681,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "A",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 28,
+      "vw": 1.9,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.1,
+      "top": 681,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "Membangun Fondasi Akhlak Sejak Dini Melalui Kalamullah",
+      "words": 7,
+      "chars": 54,
+      "lines": 1,
+      "size": 29.6,
+      "vw": 2.1,
+      "font": "Outfit",
+      "weight": 700,
+      "tracking": -0.02,
+      "leading": 1.3,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.55,
+      "top": 1044,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Mengapa Memilih Rumah Tahfidz?",
+      "words": 4,
+      "chars": 30,
+      "lines": 1,
+      "size": 40,
+      "vw": 2.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.43,
+      "top": 1446,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Program Pendidikan Pilihan",
+      "words": 3,
+      "chars": 26,
+      "lines": 1,
+      "size": 40,
+      "vw": 2.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.35,
+      "top": 2165,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Capaian Gemilang Santri Rumah Tahfidz",
+      "words": 5,
+      "chars": 37,
+      "lines": 2,
+      "size": 40,
+      "vw": 2.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.5,
+      "top": 3982,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Kisah Nyata Transformasi Santri",
+      "words": 4,
+      "chars": 31,
+      "lines": 1,
+      "size": 40,
+      "vw": 2.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.41,
+      "top": 4558,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Alur & Informasi Pendaftaran Santri Baru",
+      "words": 6,
+      "chars": 40,
+      "lines": 2,
+      "size": 40,
+      "vw": 2.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.5,
+      "top": 5232,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Berinvestasi Abadi Melalui Wakaf Pembangunan Asrama Santri",
+      "words": 7,
+      "chars": 58,
+      "lines": 1,
+      "size": 28,
+      "vw": 1.9,
+      "font": "Outfit",
+      "weight": 700,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.54,
+      "top": 6304,
+      "tag": "h3",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 12,
+     "maxLines": 3,
+     "over2Lines": 1,
+     "statements": 0,
+     "centered": 5,
+     "medianWords": 4,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Plus Jakarta Sans",
+       "share": 0.87,
+       "mono": false
+      },
+      {
+       "family": "Outfit",
+       "share": 0.13,
+       "mono": false
+      },
+      {
+       "family": "monospace",
+       "share": 0,
+       "mono": false
+      }
+     ],
+     "familyCount": 3,
+     "sizes": [
+      10,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      21,
+      22,
+      28,
+      30,
+      40,
+      54
+     ],
+     "sizeCount": 14,
+     "notLoaded": [],
+     "body": {
+      "font": "Plus Jakarta Sans",
+      "size": 14.4,
+      "leading": 1.6,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 4.9
+     },
+     "measureChars": 95,
+     "max": {
+      "size": 54.4,
+      "vw": 3.8,
+      "font": "Outfit",
+      "text": "Mencetak Generasi Qur'ani & Berakhlak Mu"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [
+      "monospace"
+     ],
+     "monoSamples": [
+      "7123 4567 89"
+     ],
+     "microLabels": 5,
+     "microLabelShare": 0.011,
+     "microSamples": [
+      "Keunggulan Lembaga",
+      "Katalog Program",
+      "Jejak Prestasi",
+      "Testimoni Wali & Alumni",
+      "PPDB TA 2026/2027"
+     ],
+     "upperShare": 0.01,
+     "centerShare": 0.16,
+     "smallText": 29
+    },
+    "eyebrows": [
+     {
+      "text": "✨ Sambutan Mudir Pondok Pesantren",
+      "above": "Membangun Fondasi Akhlak Sejak Dini Mela",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 992
+     },
+     {
+      "text": "Keunggulan Lembaga",
+      "above": "Mengapa Memilih Rumah Tahfidz?",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 1403
+     },
+     {
+      "text": "Katalog Program",
+      "above": "Program Pendidikan Pilihan",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 2122
+     },
+     {
+      "text": "Jejak Prestasi",
+      "above": "Capaian Gemilang Santri Rumah Tahfidz",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 3939
+     },
+     {
+      "text": "Testimoni Wali & Alumni",
+      "above": "Kisah Nyata Transformasi Santri",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 4515
+     },
+     {
+      "text": "PPDB TA 2026/2027",
+      "above": "Alur & Informasi Pendaftaran Santri Baru",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 5189
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#faf8fd",
+     "bodyBgHsl": {
+      "h": 264,
+      "s": 0.56,
+      "l": 0.98
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#ffffff",
+       "top": 80,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      },
+      {
+       "color": "#faf8fd",
+       "top": 80,
+       "hsl": {
+        "h": 264,
+        "s": 0.56,
+        "l": 0.98
+       }
+      },
+      {
+       "color": "#0f0d22",
+       "top": 6544,
+       "hsl": {
+        "h": 246,
+        "s": 0.45,
+        "l": 0.09
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#6b6683",
+       "share": 0.37
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.17
+      },
+      {
+       "color": "#36304f",
+       "share": 0.15
+      },
+      {
+       "color": "#0f0d22",
+       "share": 0.13
+      },
+      {
+       "color": "#c59700",
+       "share": 0.07
+      }
+     ],
+     "button": {
+      "bg": "#f8f5fe",
+      "hsl": {
+       "h": 260,
+       "s": 0.82,
+       "l": 0.98
+      },
+      "fg": "#590072"
+     },
+     "lowContrast": [
+      {
+       "text": "★★★★★",
+       "ratio": 1.5,
+       "need": 4.5,
+       "size": 16,
+       "fg": "#fdca18",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "★★★★★",
+       "ratio": 1.5,
+       "need": 4.5,
+       "size": 16,
+       "fg": "#fdca18",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "★★★★★",
+       "ratio": 1.5,
+       "need": 4.5,
+       "size": 16,
+       "fg": "#fdca18",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Keunggulan Lembaga",
+       "ratio": 2.5,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#c59700",
+       "bg": "#f9f9bb"
+      },
+      {
+       "text": "Katalog Program",
+       "ratio": 2.5,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#c59700",
+       "bg": "#f9f9bb"
+      },
+      {
+       "text": "Jejak Prestasi",
+       "ratio": 2.5,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#c59700",
+       "bg": "#f9f9bb"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 18,
+     "inHero": 5,
+     "radius": "pill",
+     "height": 48,
+     "withShadow": 10,
+     "withGradient": 5,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "🎓 Daftar PPDB",
+      "Donasi SOON",
+      "Login",
+      "🎓 Daftar PPDB Sekarang",
+      "Pelajari Program"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 32,
+     "shadowOverlay": 5,
+     "shadowSamples": [
+      "a.btn.btn-primary → rgba(129, 28, 229, 0.35) 0px 10px 25px -4px",
+      "a.btn.btn-secondary → rgba(25, 21, 51, 0.06) 0px 4px 12px 0px",
+      "div.hero-stats-bar → rgba(25, 21, 51, 0.08) 0px 10px 25px -4px",
+      "div.hero-image-card → rgba(25, 21, 51, 0.22) 0px 28px 50px -12px"
+     ],
+     "gradients": 5,
+     "scrims": 0,
+     "gradientSamples": [
+      "button.btn.btn-donate → linear-gradient(135deg, rgb(142, 35, 178), rgb(129, 28, 229))",
+      "section.hero-section → radial-gradient(circle at 80% 20%, rgba(129, 28, 229, 0.12) 0%, rgba(0, 0, 0, 0) 60%), radial-gradient(circle ",
+      "div.mudir-greeting-card → linear-gradient(135deg, rgb(15, 13, 34), rgb(25, 21, 51))",
+      "section.ppdb-section → linear-gradient(rgb(250, 248, 253) 0%, rgb(236, 245, 240) 100%)"
+     ],
+     "gradientText": 1,
+     "hairlines": 21,
+     "hairlineSamples": [
+      "header.site-header 1440px",
+      "div 1392px",
+      "a.mobile-nav-link 1392px",
+      "span.mobile-nav-link 1392px",
+      "a.mobile-nav-link 1392px"
+     ],
+     "outlinedBoxes": 29,
+     "dashed": 3,
+     "blurred": 8,
+     "roundedBoxes": 30,
+     "boxRadius": 20,
+     "squareMedia": 0,
+     "roundedMedia": 8,
+     "mediaRadius": 28,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 5,
+       "iconTopped": true,
+       "rounded": true,
+       "top": 1619
+      },
+      {
+       "count": 6,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 2437
+      },
+      {
+       "count": 3,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 4205
+      },
+      {
+       "count": 3,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 4648
+      },
+      {
+       "count": 5,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 5428
+      }
+     ]
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.18
+     }
+    ],
+    "nav": {
+     "links": 7,
+     "fixed": true,
+     "height": 80,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "outfit",
+     "plus jakarta sans"
+    ]
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 12,
+   "filled": [
+    1,
+    1,
+    1,
+    0.75,
+    0.86,
+    0.92,
+    0.87,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "motion": {
+    "elements": 3,
+    "css": 2,
+    "transitions": 1,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 12673,
+     "screens": 12.4,
+     "words": 1158,
+     "img": 31,
+     "video": 0,
+     "canvas": 0,
+     "svg": 53,
+     "sections": 5,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 8,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "hero-santri.jpg",
+      "mudir.jpg",
+      "halaqoh.jpg",
+      "campus.jpg",
+      "wisuda.jpg",
+      "halaqoh.jpg",
+      "hero-santri.jpg",
+      "halaqoh.jpg"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [
+      "🏛",
+      "📖",
+      "💖",
+      "🎓",
+      "✨",
+      "📜",
+      "🌱",
+      "🏡",
+      "🏆",
+      "★"
+     ]
+    },
+    "hero": {
+     "text": "Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakhlak Mulia",
+     "words": 9,
+     "chars": 57,
+     "lines": 2,
+     "size": 35.2,
+     "vw": 4.6,
+     "font": "Outfit",
+     "weight": 800,
+     "tracking": -0.02,
+     "leading": 1.15,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "center",
+     "widthRatio": 0.94,
+     "top": 213,
+     "gradientText": true,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakhlak Mulia",
+     "words": 9,
+     "lines": 2,
+     "size": 35.2,
+     "font": "Outfit"
+    },
+    "headings": [
+     {
+      "text": "Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakhlak Mulia",
+      "words": 9,
+      "chars": 57,
+      "lines": 2,
+      "size": 35.2,
+      "vw": 4.6,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.15,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 213,
+      "gradientText": true,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "850+",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.6,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.42,
+      "top": 575,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "42",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.6,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.42,
+      "top": 575,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "1.280+",
+      "words": 1,
+      "chars": 6,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.6,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.42,
+      "top": 649,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "A",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.6,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.42,
+      "top": 649,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "Membangun Fondasi Akhlak Sejak Dini Melalui Kalamullah",
+      "words": 7,
+      "chars": 54,
+      "lines": 2,
+      "size": 29.6,
+      "vw": 3.9,
+      "font": "Outfit",
+      "weight": 700,
+      "tracking": -0.02,
+      "leading": 1.3,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.83,
+      "top": 1958,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Mengapa Memilih Rumah Tahfidz?",
+      "words": 4,
+      "chars": 30,
+      "lines": 1,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.58,
+      "top": 2417,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Program Pendidikan Pilihan",
+      "words": 3,
+      "chars": 26,
+      "lines": 1,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.47,
+      "top": 3458,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Capaian Gemilang Santri Rumah Tahfidz",
+      "words": 5,
+      "chars": 37,
+      "lines": 1,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.68,
+      "top": 7275,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Kisah Nyata Transformasi Santri",
+      "words": 4,
+      "chars": 31,
+      "lines": 1,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.55,
+      "top": 8190,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Alur & Informasi Pendaftaran Santri Baru",
+      "words": 6,
+      "chars": 40,
+      "lines": 1,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.69,
+      "top": 9324,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Berinvestasi Abadi Melalui Wakaf Pembangunan Asrama Santri",
+      "words": 7,
+      "chars": 58,
+      "lines": 2,
+      "size": 28,
+      "vw": 3.6,
+      "font": "Outfit",
+      "weight": 700,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.81,
+      "top": 10978,
+      "tag": "h3",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 12,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 6,
+     "medianWords": 4,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Plus Jakarta Sans",
+       "share": 0.86,
+       "mono": false
+      },
+      {
+       "family": "Outfit",
+       "share": 0.13,
+       "mono": false
+      },
+      {
+       "family": "monospace",
+       "share": 0,
+       "mono": false
+      }
+     ],
+     "familyCount": 3,
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      21,
+      22,
+      28,
+      29,
+      30,
+      35
+     ],
+     "sizeCount": 13,
+     "notLoaded": [],
+     "body": {
+      "font": "Plus Jakarta Sans",
+      "size": 14.4,
+      "leading": 1.6,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 4.9
+     },
+     "measureChars": 76,
+     "max": {
+      "size": 35.2,
+      "vw": 4.6,
+      "font": "Outfit",
+      "text": "Mencetak Generasi Qur'ani & Berakhlak Mu"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [
+      "monospace"
+     ],
+     "monoSamples": [
+      "7123 4567 89"
+     ],
+     "microLabels": 5,
+     "microLabelShare": 0.011,
+     "microSamples": [
+      "Keunggulan Lembaga",
+      "Katalog Program",
+      "Jejak Prestasi",
+      "Testimoni Wali & Alumni",
+      "PPDB TA 2026/2027"
+     ],
+     "upperShare": 0.01,
+     "centerShare": 0.18,
+     "smallText": 29
+    },
+    "eyebrows": [
+     {
+      "text": "✨ Sambutan Mudir Pondok Pesantren",
+      "above": "Membangun Fondasi Akhlak Sejak Dini Mela",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 1906
+     },
+     {
+      "text": "Keunggulan Lembaga",
+      "above": "Mengapa Memilih Rumah Tahfidz?",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 2374
+     },
+     {
+      "text": "Katalog Program",
+      "above": "Program Pendidikan Pilihan",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 3415
+     },
+     {
+      "text": "Jejak Prestasi",
+      "above": "Capaian Gemilang Santri Rumah Tahfidz",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 7233
+     },
+     {
+      "text": "Testimoni Wali & Alumni",
+      "above": "Kisah Nyata Transformasi Santri",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 8147
+     },
+     {
+      "text": "PPDB TA 2026/2027",
+      "above": "Alur & Informasi Pendaftaran Santri Baru",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 9282
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#faf8fd",
+     "bodyBgHsl": {
+      "h": 264,
+      "s": 0.56,
+      "l": 0.98
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#ffffff",
+       "top": 80,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      },
+      {
+       "color": "#faf8fd",
+       "top": 80,
+       "hsl": {
+        "h": 264,
+        "s": 0.56,
+        "l": 0.98
+       }
+      },
+      {
+       "color": "#0f0d22",
+       "top": 11340,
+       "hsl": {
+        "h": 246,
+        "s": 0.45,
+        "l": 0.09
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#6b6683",
+       "share": 0.38
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.17
+      },
+      {
+       "color": "#36304f",
+       "share": 0.15
+      },
+      {
+       "color": "#0f0d22",
+       "share": 0.13
+      },
+      {
+       "color": "#c59700",
+       "share": 0.07
+      }
+     ],
+     "button": {
+      "bg": "#f8f5fe",
+      "hsl": {
+       "h": 260,
+       "s": 0.82,
+       "l": 0.98
+      },
+      "fg": "#590072"
+     },
+     "lowContrast": [
+      {
+       "text": "Keunggulan Lembaga",
+       "ratio": 2.5,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#c59700",
+       "bg": "#f9f9bb"
+      },
+      {
+       "text": "Katalog Program",
+       "ratio": 2.5,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#c59700",
+       "bg": "#f9f9bb"
+      },
+      {
+       "text": "Pendidikan Menengah Terpadu: Mutqin 15 J",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 13.6,
+       "fg": "#c59700",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Mencetak Calon Ulama Cendekiawan: Mutqin",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 13.6,
+       "fg": "#c59700",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Kaderisasi Ulama Huffadz & Pakar Qira'at",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 13.6,
+       "fg": "#c59700",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Membangun Cinta Al-Qur'an Sejak Dini den",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 13.6,
+       "fg": "#c59700",
+       "bg": "#ffffff"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 17,
+     "inHero": 4,
+     "radius": "pill",
+     "height": 48,
+     "withShadow": 9,
+     "withGradient": 4,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "💖 Wakaf & Donasi (Coming Soon)",
+      "🎓 Portal Akademik & LMS",
+      "🎓 Daftar PPDB Sekarang",
+      "Pelajari Program"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 32,
+     "shadowOverlay": 2,
+     "shadowSamples": [
+      "a.btn.btn-primary → rgba(129, 28, 229, 0.35) 0px 10px 25px -4px",
+      "a.btn.btn-secondary → rgba(25, 21, 51, 0.06) 0px 4px 12px 0px",
+      "div.hero-stats-bar → rgba(25, 21, 51, 0.08) 0px 10px 25px -4px",
+      "div.hero-image-card → rgba(25, 21, 51, 0.22) 0px 28px 50px -12px"
+     ],
+     "gradients": 7,
+     "scrims": 0,
+     "gradientSamples": [
+      "button.btn.btn-donate → linear-gradient(135deg, rgb(142, 35, 178), rgb(129, 28, 229))",
+      "section.hero-section → radial-gradient(circle at 80% 20%, rgba(129, 28, 229, 0.12) 0%, rgba(0, 0, 0, 0) 60%), radial-gradient(circle ",
+      "div.mudir-greeting-card → linear-gradient(135deg, rgb(15, 13, 34), rgb(25, 21, 51))",
+      "section.ppdb-section → linear-gradient(rgb(250, 248, 253) 0%, rgb(236, 245, 240) 100%)"
+     ],
+     "gradientText": 1,
+     "hairlines": 21,
+     "hairlineSamples": [
+      "header.site-header 768px",
+      "div 720px",
+      "a.mobile-nav-link 720px",
+      "span.mobile-nav-link 720px",
+      "a.mobile-nav-link 720px"
+     ],
+     "outlinedBoxes": 29,
+     "dashed": 3,
+     "blurred": 8,
+     "roundedBoxes": 30,
+     "boxRadius": 20,
+     "squareMedia": 0,
+     "roundedMedia": 8,
+     "mediaRadius": 28,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 5,
+       "iconTopped": true,
+       "rounded": true,
+       "top": 2577
+      },
+      {
+       "count": 5,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 9456
+      }
+     ]
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.23
+     }
+    ],
+    "nav": {
+     "links": 1,
+     "fixed": true,
+     "height": 80,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "outfit",
+     "plus jakarta sans"
+    ]
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 12,
+   "filled": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.44,
+    0.39,
+    0.43,
+    0.46,
+    0.43,
+    0.43,
+    0.45,
+    0.5
+   ],
+   "motion": {
+    "elements": 3,
+    "css": 2,
+    "transitions": 1,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 756,
+     "h": 1637
+    },
+    "page": {
+     "height": 15968,
+     "screens": 9.8,
+     "words": 1158,
+     "img": 31,
+     "video": 0,
+     "canvas": 0,
+     "svg": 53,
+     "sections": 5,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 8,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "hero-santri.jpg",
+      "mudir.jpg",
+      "halaqoh.jpg",
+      "campus.jpg",
+      "wisuda.jpg",
+      "halaqoh.jpg",
+      "hero-santri.jpg",
+      "halaqoh.jpg"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [
+      "🏛",
+      "📖",
+      "💖",
+      "🎓",
+      "✨",
+      "📜",
+      "🌱",
+      "🏡",
+      "🏆",
+      "★"
+     ]
+    },
+    "hero": {
+     "text": "Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakhlak Mulia",
+     "words": 9,
+     "chars": 57,
+     "lines": 3,
+     "size": 35.2,
+     "vw": 4.7,
+     "font": "Outfit",
+     "weight": 800,
+     "tracking": -0.02,
+     "leading": 1.15,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "left",
+     "widthRatio": 0.45,
+     "top": 236,
+     "gradientText": true,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakhlak Mulia",
+     "words": 9,
+     "lines": 3,
+     "size": 35.2,
+     "font": "Outfit"
+    },
+    "headings": [
+     {
+      "text": "Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakhlak Mulia",
+      "words": 9,
+      "chars": 57,
+      "lines": 3,
+      "size": 35.2,
+      "vw": 4.7,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.15,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.45,
+      "top": 236,
+      "gradientText": true,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "850+",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.7,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.18,
+      "top": 801,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "42",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.7,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.18,
+      "top": 801,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "1.280+",
+      "words": 1,
+      "chars": 6,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.7,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.18,
+      "top": 875,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "A",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.7,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.18,
+      "top": 875,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "Membangun Fondasi Akhlak Sejak Dini Melalui Kalamullah",
+      "words": 7,
+      "chars": 54,
+      "lines": 4,
+      "size": 29.6,
+      "vw": 3.9,
+      "font": "Outfit",
+      "weight": 700,
+      "tracking": -0.02,
+      "leading": 1.3,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.34,
+      "top": 2206,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Mengapa Memilih Rumah Tahfidz?",
+      "words": 4,
+      "chars": 30,
+      "lines": 2,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.45,
+      "top": 2948,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Program Pendidikan Pilihan",
+      "words": 3,
+      "chars": 26,
+      "lines": 2,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.45,
+      "top": 4713,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Capaian Gemilang Santri Rumah Tahfidz",
+      "words": 5,
+      "chars": 37,
+      "lines": 2,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.45,
+      "top": 9447,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Kisah Nyata Transformasi Santri",
+      "words": 4,
+      "chars": 31,
+      "lines": 2,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.45,
+      "top": 10565,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Alur & Informasi Pendaftaran Santri Baru",
+      "words": 6,
+      "chars": 40,
+      "lines": 2,
+      "size": 28.8,
+      "vw": 3.8,
+      "font": "Outfit",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.45,
+      "top": 12052,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Berinvestasi Abadi Melalui Wakaf Pembangunan Asrama Santri",
+      "words": 7,
+      "chars": 58,
+      "lines": 4,
+      "size": 28,
+      "vw": 3.7,
+      "font": "Outfit",
+      "weight": 700,
+      "tracking": -0.02,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.33,
+      "top": 13971,
+      "tag": "h3",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 12,
+     "maxLines": 4,
+     "over2Lines": 3,
+     "statements": 0,
+     "centered": 6,
+     "medianWords": 4,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Plus Jakarta Sans",
+       "share": 0.86,
+       "mono": false
+      },
+      {
+       "family": "Outfit",
+       "share": 0.13,
+       "mono": false
+      },
+      {
+       "family": "monospace",
+       "share": 0,
+       "mono": false
+      }
+     ],
+     "familyCount": 3,
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      21,
+      22,
+      28,
+      29,
+      30,
+      35
+     ],
+     "sizeCount": 13,
+     "notLoaded": [],
+     "body": {
+      "font": "Plus Jakarta Sans",
+      "size": 14.4,
+      "leading": 1.6,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 4.9
+     },
+     "measureChars": 31,
+     "max": {
+      "size": 35.2,
+      "vw": 4.7,
+      "font": "Outfit",
+      "text": "Mencetak Generasi Qur'ani & Berakhlak Mu"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [
+      "monospace"
+     ],
+     "monoSamples": [
+      "7123 4567 89"
+     ],
+     "microLabels": 5,
+     "microLabelShare": 0.011,
+     "microSamples": [
+      "Keunggulan Lembaga",
+      "Katalog Program",
+      "Jejak Prestasi",
+      "Testimoni Wali & Alumni",
+      "PPDB TA 2026/2027"
+     ],
+     "upperShare": 0.01,
+     "centerShare": 0.18,
+     "smallText": 29
+    },
+    "eyebrows": [
+     {
+      "text": "✨ Sambutan Mudir Pondok Pesantren",
+      "above": "Membangun Fondasi Akhlak Sejak Dini Mela",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 2132
+     },
+     {
+      "text": "Keunggulan Lembaga",
+      "above": "Mengapa Memilih Rumah Tahfidz?",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 2905
+     },
+     {
+      "text": "Katalog Program",
+      "above": "Program Pendidikan Pilihan",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 4670
+     },
+     {
+      "text": "Jejak Prestasi",
+      "above": "Capaian Gemilang Santri Rumah Tahfidz",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 9405
+     },
+     {
+      "text": "Testimoni Wali & Alumni",
+      "above": "Kisah Nyata Transformasi Santri",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 10522
+     },
+     {
+      "text": "PPDB TA 2026/2027",
+      "above": "Alur & Informasi Pendaftaran Santri Baru",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": true,
+      "size": 12.8,
+      "top": 12009
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#faf8fd",
+     "bodyBgHsl": {
+      "h": 264,
+      "s": 0.56,
+      "l": 0.98
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#ffffff",
+       "top": 80,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      },
+      {
+       "color": "#faf8fd",
+       "top": 80,
+       "hsl": {
+        "h": 264,
+        "s": 0.56,
+        "l": 0.98
+       }
+      },
+      {
+       "color": "#0f0d22",
+       "top": 14482,
+       "hsl": {
+        "h": 246,
+        "s": 0.45,
+        "l": 0.09
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#6b6683",
+       "share": 0.38
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.17
+      },
+      {
+       "color": "#36304f",
+       "share": 0.15
+      },
+      {
+       "color": "#0f0d22",
+       "share": 0.13
+      },
+      {
+       "color": "#c59700",
+       "share": 0.07
+      }
+     ],
+     "button": {
+      "bg": "#f8f5fe",
+      "hsl": {
+       "h": 260,
+       "s": 0.82,
+       "l": 0.98
+      },
+      "fg": "#590072"
+     },
+     "lowContrast": [
+      {
+       "text": "Keunggulan Lembaga",
+       "ratio": 2.5,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#c59700",
+       "bg": "#f9f9bb"
+      },
+      {
+       "text": "Katalog Program",
+       "ratio": 2.5,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#c59700",
+       "bg": "#f9f9bb"
+      },
+      {
+       "text": "Jejak Prestasi",
+       "ratio": 2.5,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#c59700",
+       "bg": "#f9f9bb"
+      },
+      {
+       "text": "Pendidikan Menengah Terpadu: Mutqin 15 J",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 13.6,
+       "fg": "#c59700",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Mencetak Calon Ulama Cendekiawan: Mutqin",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 13.6,
+       "fg": "#c59700",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Kaderisasi Ulama Huffadz & Pakar Qira'at",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 13.6,
+       "fg": "#c59700",
+       "bg": "#ffffff"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 14,
+     "inHero": 4,
+     "radius": "pill",
+     "height": 48,
+     "withShadow": 8,
+     "withGradient": 4,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "💖 Wakaf & Donasi (Coming Soon)",
+      "🎓 Portal Akademik & LMS",
+      "🎓 Daftar PPDB Sekarang",
+      "Pelajari Program"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 32,
+     "shadowOverlay": 2,
+     "shadowSamples": [
+      "a.btn.btn-primary → rgba(129, 28, 229, 0.35) 0px 10px 25px -4px",
+      "a.btn.btn-secondary → rgba(25, 21, 51, 0.06) 0px 4px 12px 0px",
+      "div.hero-stats-bar → rgba(25, 21, 51, 0.08) 0px 10px 25px -4px",
+      "div.hero-image-card → rgba(25, 21, 51, 0.22) 0px 28px 50px -12px"
+     ],
+     "gradients": 5,
+     "scrims": 0,
+     "gradientSamples": [
+      "button.btn.btn-donate → linear-gradient(135deg, rgb(142, 35, 178), rgb(129, 28, 229))",
+      "section.hero-section → radial-gradient(circle at 80% 20%, rgba(129, 28, 229, 0.12) 0%, rgba(0, 0, 0, 0) 60%), radial-gradient(circle ",
+      "div.mudir-greeting-card → linear-gradient(135deg, rgb(15, 13, 34), rgb(25, 21, 51))",
+      "section.ppdb-section → linear-gradient(rgb(250, 248, 253) 0%, rgb(236, 245, 240) 100%)"
+     ],
+     "gradientText": 1,
+     "hairlines": 21,
+     "hairlineSamples": [
+      "header.site-header 390px",
+      "div 708px",
+      "a.mobile-nav-link 708px",
+      "span.mobile-nav-link 708px",
+      "a.mobile-nav-link 708px"
+     ],
+     "outlinedBoxes": 29,
+     "dashed": 3,
+     "blurred": 8,
+     "roundedBoxes": 30,
+     "boxRadius": 20,
+     "squareMedia": 0,
+     "roundedMedia": 8,
+     "mediaRadius": 28,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 4,
+       "iconTopped": false,
+       "rounded": false,
+       "top": 80
+      },
+      {
+       "count": 5,
+       "iconTopped": true,
+       "rounded": true,
+       "top": 3171
+      },
+      {
+       "count": 6,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 5111
+      },
+      {
+       "count": 3,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 9671
+      },
+      {
+       "count": 3,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 10677
+      },
+      {
+       "count": 5,
+       "iconTopped": false,
+       "rounded": true,
+       "top": 12275
+      }
+     ]
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.13
+     }
+    ],
+    "nav": {
+     "links": 1,
+     "fixed": true,
+     "height": 80,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "outfit",
+     "plus jakarta sans"
+    ]
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "FAIL",
+   "id": "headline-lines",
+   "width": 1440,
+   "message": "1 headline(s) wrap past two lines at 1440px: \"Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakh\" → 3 lines (9 words, 54.4px)",
+   "fix": "Cut words first (a headline is a title, not a sentence). Then give it a wider measure. Lower the size only as a last resort and never below the scale you chose. A real statement paragraph belongs in a <p> or <blockquote> at 36px or less."
+  },
+  {
+   "level": "FAIL",
+   "id": "eyebrow",
+   "width": 1440,
+   "message": "6 eyebrow/kicker label(s) above headings: \"✨ Sambutan Mudir Pondok Pesantren\" (pill) above \"Membangun Fondasi Akhlak Sejak Dini Mela\"; \"Keunggulan Lembaga\" (pill) above \"Mengapa Memilih Rumah Tahfidz?\"; \"Katalog Program\" (pill) above \"Program Pendidikan Pilihan\"; \"Jejak Prestasi\" (pill) above \"Capaian Gemilang Santri Rumah Tahfidz\"; \"Testimoni Wali & Alumni\" (pill) above \"Kisah Nyata Transformasi Santri\"",
+   "fix": "Delete them. If the label carried real information, fold it into the headline or the supporting sentence.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "micro-label",
+   "width": 1440,
+   "message": "5 tiny uppercase letter-spaced labels (e.g. \"Keunggulan Lembaga\", \"Katalog Program\", \"Jejak Prestasi\", \"Testimoni Wali & Alumni\").",
+   "fix": "Use sentence-case text at a readable size, or delete the label.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "emoji",
+   "width": 1440,
+   "message": "Emoji in the page: 🎓 🏛 📖 💖 ✨ 📜 🌱 🏡 🏆 ★",
+   "fix": "Remove. Use words or real imagery.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "gradient",
+   "width": 1440,
+   "message": "5 gradient fill(s): button.btn.btn-donate → linear-gradient(135deg, rgb(142, 35, 178), rgb(129, 28, 229)) | section.hero-section → radial-gradient(circle at 80% 20%, rgba(129, 28, 229, 0.12) 0%, rgba(0, 0, 0, 0) 60%), radial-gradient(circle  | div.mudir-greeting-card → linear-gradient(135deg, rgb(15, 13, 34), rgb(25, 21, 51))",
+   "fix": "Use a flat colour or a real image. The only gradient allowed by default is a neutral scrim over a photo for legibility.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "gradient-text",
+   "width": 1440,
+   "message": "1 gradient-filled text element(s).",
+   "fix": "Solid colour text.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "shadow",
+   "width": 1440,
+   "message": "32 box-shadow(s) on elements at rest: a.btn.btn-primary → rgba(129, 28, 229, 0.35) 0px 10px 25px -4px | a.btn.btn-secondary → rgba(25, 21, 51, 0.06) 0px 4px 12px 0px | div.hero-stats-bar → rgba(25, 21, 51, 0.08) 0px 10px 25px -4px",
+   "fix": "Remove. Separate surfaces with a tone step or space. Shadows are for things that really float (menus, dialogs, sticky bars).",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "button-fx",
+   "width": 1440,
+   "message": "Buttons with gradient fill and shadow/glow.",
+   "fix": "Flat fill, one colour.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "hairline",
+   "width": 1440,
+   "message": "21 thin rule(s)/divider line(s): header.site-header 1440px | div 1392px | a.mobile-nav-link 1392px | span.mobile-nav-link 1392px",
+   "fix": "Delete. Separate with space, a tone change, or scale. Lines are only for real tables and form fields.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "outlined-box",
+   "width": 1440,
+   "message": "29 boxes drawn with a 1px outline.",
+   "fix": "Define a surface by its fill (one tone step from the page) or leave the content unboxed.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "dashed",
+   "width": 1440,
+   "message": "3 dashed/dotted border(s).",
+   "fix": "Remove unless it is a real drop zone.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "glass",
+   "width": 1440,
+   "message": "8 backdrop-blur surfaces.",
+   "fix": "One blurred sticky bar at most; glass cards are a tell.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "icon-cards",
+   "width": 1440,
+   "message": "1 row(s) of identical cards each topped with a small icon (5 cards).",
+   "fix": "Replace with one composed section from the direction: a narrative split, a list set in large type, or real imagery per item.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "contrast",
+   "width": 1440,
+   "message": "Unreadable text: \"★★★★★\" 1.5:1 (#fdca18 on #ffffff); \"★★★★★\" 1.5:1 (#fdca18 on #ffffff); \"★★★★★\" 1.5:1 (#fdca18 on #ffffff); \"Keunggulan Lembaga\" 2.5:1 (#c59700 on #f9f9bb)",
+   "fix": "Raise contrast to at least 4.5:1 for text, 3:1 for large display.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "size-count",
+   "width": 1440,
+   "message": "14 different font sizes (10, 12, 13, 14, 15, 16, 17, 18, 21, 22, 28, 30, 40, 54).",
+   "fix": "A page needs about five: display, heading, lead, body, small.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "body-size",
+   "width": 1440,
+   "message": "Body text is 14.4px (the size most of the running text is set in).",
+   "fix": "Body copy 16–20px. Map small sizes from blueprints onto your body step.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "grey-body",
+   "width": 1440,
+   "message": "The running text is a soft grey on its ground (4.9:1).",
+   "fix": "Set body copy in the full ink (7:1 or more). Keep the muted ink for secondary notes; pages read thin and unfinished when everything is grey.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "no-footage",
+   "width": 1440,
+   "message": "No video anywhere on the page.",
+   "fix": "Look for one honest clip with scripts/assets.mjs --video (the place, the material, the process) and use it as a muted loop with a poster frame. Defend its absence only if no clip fits the subject."
+  },
+  {
+   "level": "WARN",
+   "id": "measure",
+   "width": 1440,
+   "message": "Longest paragraph runs about 95 characters per line.",
+   "fix": "Cap paragraphs at 45–75 characters (max-width: 60ch)."
+  },
+  {
+   "level": "FAIL",
+   "id": "small-text",
+   "width": 1440,
+   "message": "29 text blocks under 13px.",
+   "fix": "Nothing meant to be read goes below 13px.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "focal-point",
+   "width": 1440,
+   "message": "The first screen has no dominant element: the largest type is 54.4px (3.8vw) and no single picture holds a third of the viewport.",
+   "fix": "Make one thing lead: the headline at display size, or one large picture. A grid of many small pictures is not one thing; in blind tests jurors marked a first screen without a headline down every time. On the strongest studied sites the largest type has a median of 8.4vw."
+  },
+  {
+   "level": "FAIL",
+   "id": "still-page",
+   "width": 1440,
+   "message": "Only 3 element(s) moved while the page loaded and scrolled.",
+   "fix": "Build the motion layer (SKILL.md step 9, references/motion.md): the signature move, an entrance for the parts of every section, feedback on every control, and one moving picture. Transform and opacity only, with a reduced-motion fallback."
+  },
+  {
+   "level": "FAIL",
+   "id": "headline-lines",
+   "width": 390,
+   "message": "3 headline(s) wrap past two lines at 390px: \"Mencetak Generasi Qur'ani Mutqin 30 Juz & Berakh\" → 3 lines (9 words, 35.2px); \"Membangun Fondasi Akhlak Sejak Dini Melalui Kala\" → 4 lines (7 words, 29.6px); \"Berinvestasi Abadi Melalui Wakaf Pembangunan Asr\" → 4 lines (7 words, 28px)",
+   "fix": "Cut words first (a headline is a title, not a sentence). Then give it a wider measure. Lower the size only as a last resort and never below the scale you chose. A real statement paragraph belongs in a <p> or <blockquote> at 24px or less."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "/Users/ontaegypt/Downloads/rtm-portofolio-v1/.taste-skill/inspect/desktop-fold.jpg",
+   "pages": [
+    "/Users/ontaegypt/Downloads/rtm-portofolio-v1/.taste-skill/inspect/desktop-page-01.jpg",
+    "/Users/ontaegypt/Downloads/rtm-portofolio-v1/.taste-skill/inspect/desktop-page-02.jpg"
+   ]
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "/Users/ontaegypt/Downloads/rtm-portofolio-v1/.taste-skill/inspect/tablet-fold.jpg",
+   "pages": [
+    "/Users/ontaegypt/Downloads/rtm-portofolio-v1/.taste-skill/inspect/tablet-page-01.jpg",
+    "/Users/ontaegypt/Downloads/rtm-portofolio-v1/.taste-skill/inspect/tablet-page-02.jpg"
+   ]
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "/Users/ontaegypt/Downloads/rtm-portofolio-v1/.taste-skill/inspect/mobile-fold.jpg",
+   "pages": [
+    "/Users/ontaegypt/Downloads/rtm-portofolio-v1/.taste-skill/inspect/mobile-page-01.jpg",
+    "/Users/ontaegypt/Downloads/rtm-portofolio-v1/.taste-skill/inspect/mobile-page-02.jpg"
+   ]
+  }
+ ]
+}

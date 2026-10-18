@@ -1,3 +1,21 @@
+
+function initMotion() {
+  if (typeof IntersectionObserver !== "undefined") {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-in");
+          io.unobserve(e.target);
+        }
+      }
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+
+    document.querySelectorAll("[data-reveal], .shutter, section").forEach((el) => {
+      io.observe(el);
+    });
+  }
+}
+
 import {
   INSTITUTION,
   PROGRAMS,
@@ -346,7 +364,7 @@ async function verifyAndSyncSession() {
         if (currentHash.startsWith('admin-')) {
           const mod = currentHash.replace('admin-', '');
           if (!roleConf.allowedModules.includes(mod)) {
-            showToast(`🔒 Akses Ditolak (403): Otorisasi akun Anda (${roleConf.name}) dipatenkan. Mengalihkan ke modul resmi.`, 'warning');
+            showToast(`Akses Ditolak (403): Otorisasi akun Anda (${roleConf.name}) dipatenkan. Mengalihkan ke modul resmi.`, 'warning');
             window.location.hash = `#admin-${roleConf.defaultModule}`;
             return;
           }
@@ -409,7 +427,7 @@ function initRouter() {
 
       // Check Role-Based Access Control (RBAC 403 Forbidden check)
       if (!roleConf.allowedModules.includes(targetModule)) {
-        showToast(`🔒 Akses Ditolak (403): Role "${roleConf.name}" tidak berwenang mengelola modul ini. Hak akses dipatenkan.`, 'warning');
+        showToast(`Akses Ditolak (403): Role "${roleConf.name}" tidak berwenang mengelola modul ini. Hak akses dipatenkan.`, 'warning');
         window.location.hash = `#admin-${roleConf.defaultModule}`;
         return;
       }
@@ -688,7 +706,6 @@ function renderAkademikView() {
     <section class="prog-about-block">
       <div class="container">
         <div class="section-header">
-          <span class="section-tag">Kurikulum & Metode</span>
           <h3 class="section-title">Tentang Program ${program.shortTitle}</h3>
           <p class="section-description">Pelajari rincian materi esensial, profil peserta, hingga pendekatan belajar yang diterapkan.</p>
         </div>
@@ -710,7 +727,6 @@ function renderAkademikView() {
     <section class="prog-why-block">
       <div class="container">
         <div class="section-header">
-          <span class="section-tag">Urgensi & Solusi</span>
           <h3 class="section-title">Tantangan Zaman & Solusi Al-Qur'an</h3>
           <p class="section-description">Menjawab kegelisahan wali santri dalam mencetak generasi tangguh di era serba cepat.</p>
         </div>
@@ -718,12 +734,12 @@ function renderAkademikView() {
         <div class="problem-solution-grid">
           <div class="ps-column problems">
             <div class="ps-header">
-              <span>⚠️</span>
+              <span style="font-weight: 700; color: var(--primary-purple);">[!]</span>
               <span>Tantangan Umum yang Dihadapi:</span>
             </div>
             ${program.whyQuran.problems.map(prob => `
               <div class="ps-item">
-                <span>❌</span>
+                <span style="font-weight: 700; color: #dc2626;">x</span>
                 <span>${prob}</span>
               </div>
             `).join('')}
@@ -731,12 +747,12 @@ function renderAkademikView() {
 
           <div class="ps-column solutions">
             <div class="ps-header">
-              <span>✅</span>
+              <span style="font-weight: 700; color: #059669;">OK</span>
               <span>Solusi Rumah Tahfidz Al-Hikmah:</span>
             </div>
             ${program.whyQuran.solutions.map(sol => `
               <div class="ps-item">
-                <span>✔️</span>
+                <span style="font-weight: 700; color: #059669;">OK</span>
                 <span>${sol}</span>
               </div>
             `).join('')}
@@ -749,7 +765,6 @@ function renderAkademikView() {
     <section class="prog-pillars-block">
       <div class="container">
         <div class="section-header">
-          <span class="section-tag">4 Pilar Keunggulan</span>
           <h3 class="section-title">Mengapa Memilih Program Ini?</h3>
           <p class="section-description">Standar mutu pengajaran tinggi dengan sanad keilmuan yang dapat dipertanggungjawabkan.</p>
         </div>
@@ -770,7 +785,6 @@ function renderAkademikView() {
     <section class="prog-curriculum-block">
       <div class="container">
         <div class="section-header">
-          <span class="section-tag">Learning Path</span>
           <h3 class="section-title">Runtutan Fase Pembelajaran</h3>
           <p class="section-description">Tahapan kurikulum sistematis dari penguatan tajwid, ziyadah, hingga tasmi' kelulusan.</p>
         </div>
@@ -815,7 +829,6 @@ function renderAkademikView() {
     <section class="prog-schedule-fee-block">
       <div class="container">
         <div class="section-header">
-          <span class="section-tag">Jadwal & Investasi</span>
           <h3 class="section-title">Jadwal Batch & Rincian Biaya</h3>
           <p class="section-description">Informasi transparan kuota pendaftaran aktif dan fasilitas yang diperoleh peserta.</p>
         </div>
@@ -868,7 +881,6 @@ function renderAkademikView() {
     <section class="prog-stepper-block">
       <div class="container">
         <div class="section-header">
-          <span class="section-tag">Mudah & Terbimbing</span>
           <h3 class="section-title">4 Langkah Mudah Pendaftaran</h3>
           <p class="section-description">Panduan alur administrasi dari registrasi hingga mulai aktif belajar.</p>
         </div>
@@ -902,7 +914,6 @@ function renderAkademikView() {
     <section class="prog-testimonials-block">
       <div class="container">
         <div class="section-header">
-          <span class="section-tag">Kisah Nyata</span>
           <h3 class="section-title">Kata Mereka Tentang ${program.shortTitle}</h3>
           <p class="section-description">Kesan dan transformasi nyata santri serta wali murid yang telah bergabung.</p>
         </div>
@@ -910,7 +921,7 @@ function renderAkademikView() {
         <div class="testimonials-grid">
           ${program.testimonials.map(t => `
             <div class="testimonial-card">
-              <div class="quote-stars">★★★★★</div>
+              <span class="rating-stars" aria-label="Rating 5.0"><svg width="14" height="14" viewBox="0 0 24 24" fill="#811ce5" style="display:inline; vertical-align:-2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 5.0 (Wali Santri)</span>
               <p class="testimonial-text">"${t.quote}"</p>
               <div class="testimonial-author">
                 <div class="author-avatar">${t.avatar}</div>
@@ -930,7 +941,6 @@ function renderAkademikView() {
       <div class="container">
         <div class="enrollment-form-container">
           <div class="section-header" style="margin-bottom: 2.5rem;">
-            <span class="section-tag">Formulir Pendaftaran</span>
             <h3 class="section-title">Daftar Program: ${program.name}</h3>
             <p class="section-description">Silakan isi formulir resmi di bawah ini. Tim panitia PPDB akan segera menghubungi Anda via WhatsApp.</p>
           </div>
@@ -1022,7 +1032,7 @@ function renderAkademikView() {
                 Kirim Pendaftaran Santri Baru
               </button>
               <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem;">
-                🔒 Data privasi Anda terlindungi aman sesuai standar kepesantrenan Al-Hikmah.
+                Data privasi Anda terlindungi aman sesuai standar kepesantrenan Al-Hikmah.
               </p>
             </div>
           </form>
@@ -1034,7 +1044,6 @@ function renderAkademikView() {
     <section class="prog-faq-block">
       <div class="container">
         <div class="section-header">
-          <span class="section-tag">FAQ Program</span>
           <h3 class="section-title">Pertanyaan yang Sering Diajukan</h3>
           <p class="section-description">Informasi lebih lanjut seputar teknis kurikulum, visitasi asrama, dan perizinan.</p>
         </div>
@@ -1271,7 +1280,7 @@ function renderNewsGrid() {
       </div>
       <div class="news-body">
         <div class="news-meta-row">
-          <span>📅 ${art.date}</span>
+          <span>${art.date}</span>
           <span>•</span>
           <span>⏱️ ${art.readTime || '3 menit'}</span>
         </div>
@@ -1963,7 +1972,7 @@ function renderHomeProgramCards(category) {
         
         <div class="program-card-specs">
           <span class="spec-item">⏱️ ${p.stats.durasi}</span>
-          <span class="spec-item">📖 ${p.stats.targetHafalan}</span>
+          <span class="spec-item">${p.stats.targetHafalan}</span>
         </div>
 
         <a href="#akademik-${p.id}" class="btn-detail-link">
@@ -2006,7 +2015,7 @@ function updateNotificationBell() {
     pendingDonations.forEach(d => {
       itemsHtml += `
         <li class="notif-item" data-notif-target="donasi">
-          <strong>💳 Transfer Donasi Masuk</strong>
+          <strong>Transfer Donasi Masuk</strong>
           <div>${d.donorName} (${d.invoiceNumber}) - Rp ${d.amount.toLocaleString('id-ID')}</div>
           <div class="notif-item-time">${d.paidAt}</div>
         </li>
@@ -2016,7 +2025,7 @@ function updateNotificationBell() {
     pendingVisits.forEach(v => {
       itemsHtml += `
         <li class="notif-item" data-notif-target="galeri">
-          <strong>🏛️ Reservasi Kunjungan Kampus</strong>
+          <strong>Reservasi Kunjungan Kampus</strong>
           <div>${v.groupName} (${v.count} Peserta)</div>
           <div class="notif-item-time">Rencana: ${v.date}</div>
         </li>
@@ -2128,7 +2137,7 @@ async function renderAdminOverview() {
           </span>
         </td>
         <td>
-          <button class="btn-icon-action btn-inspect-ppdb-overview" data-id="${p.id}" title="Lihat Dossier Calon Santri">👁️</button>
+          <button class="btn-icon-action btn-inspect-ppdb-overview" data-id="${p.id}" title="Lihat Dossier Calon Santri">Lihat</button>
         </td>
       </tr>
     `).join('');
@@ -2152,7 +2161,7 @@ function renderAdminAkademik() {
           <strong>${p.name}</strong>
           <div style="font-size: 0.75rem; color: var(--text-muted);">${p.shortTitle}</div>
         </td>
-        <td><span class="badge-tag-pill" style="font-size: 0.72rem;">${p.category === 'formal' ? '🏛️ Formal' : '📖 Non-Formal'}</span></td>
+        <td><span class="badge-tag-pill" style="font-size: 0.72rem;">${p.category === 'formal' ? 'Formal' : 'Non-Formal'}</span></td>
         <td>${p.stats.targetHafalan}</td>
         <td>${p.stats.durasi}</td>
         <td>
@@ -2166,7 +2175,7 @@ function renderAdminAkademik() {
         </td>
         <td>
           <a href="#" class="btn-download-syllabus" data-id="${p.id}" style="color: var(--primary-600); font-weight: 700; text-decoration: underline; font-size: 0.82rem;">
-            📄 Silabus-${p.id.toUpperCase()}.pdf
+            Silabus-${p.id.toUpperCase()}.pdf
           </a>
         </td>
         <td>
@@ -2309,7 +2318,7 @@ function renderAdminPPDBTable() {
         <td>${lead.parentName}</td>
         <td>
           <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" style="color: #059669; font-weight: 600; font-size: 0.85rem;">
-            💬 ${lead.phone}
+            ${lead.phone}
           </a>
         </td>
         <td>${lead.registeredAt}</td>
@@ -2320,7 +2329,7 @@ function renderAdminPPDBTable() {
         </td>
         <td>
           <div class="table-action-btns">
-            <button class="btn-icon-action btn-view-lead" data-id="${lead.id}" title="Lihat Dossier Calon Santri">👁️</button>
+            <button class="btn-icon-action btn-view-lead" data-id="${lead.id}" title="Lihat Dossier Calon Santri">Lihat</button>
             <button class="btn-icon-action approve-btn btn-accept-lead" data-id="${lead.id}" title="Terima Santri">✓</button>
             <button class="btn-icon-action btn-verify-lead" data-id="${lead.id}" title="Verifikasi Berkas" style="color: #2563eb;">🔍</button>
             <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" class="btn-icon-action" title="Hubungi via WhatsApp">💬</a>
@@ -2427,7 +2436,7 @@ function renderAdminDonasi() {
               <span>Donatur: ${c.donorCount} Orang</span>
             </div>
             <button class="btn btn-secondary btn-sm btn-edit-campaign" data-id="${c.id}" style="margin-top: 0.25rem;">
-              ✏️ Kelola & Edit Campaign
+              Kelola & Edit Campaign
             </button>
           </div>
         </div>
@@ -2491,7 +2500,7 @@ function renderDonationTransactionsTable() {
         <div class="table-action-btns">
           ${t.paymentStatus === 'pending' ? `
             <button class="btn btn-primary btn-sm btn-inspect-receipt" data-id="${t.id}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
-              🔍 Periksa Struk
+              Periksa Struk
             </button>
           ` : `
             <span style="font-size: 0.78rem; color: #059669; font-weight: 700;">✓ Lunas</span>
@@ -2531,7 +2540,7 @@ function renderAdminGaleri() {
       <tr>
         <td><strong>${v.groupName}</strong></td>
         <td>${v.leaderName}</td>
-        <td><a href="https://wa.me/${v.phone.replace(/^0/, '62')}" target="_blank" style="color: #059669; font-weight: 600;">💬 ${v.phone}</a></td>
+        <td><a href="https://wa.me/${v.phone.replace(/^0/, '62')}" target="_blank" style="color: #059669; font-weight: 600;">${v.phone}</a></td>
         <td><strong>${v.date}</strong></td>
         <td>${v.count} Orang</td>
         <td style="max-width: 220px; font-size: 0.8rem;">${v.goal}</td>
@@ -2709,7 +2718,7 @@ function renderAdminUsers() {
       <td><span style="font-size: 0.78rem; color: var(--text-muted);">${u.lastLogin}</span></td>
       <td><span class="status-pill status-success">Aktif</span></td>
       <td>
-        <button class="btn-icon-action" title="Ubah Password">🔑</button>
+        <button class="btn-icon-action" title="Ubah Password">Ubah</button>
       </td>
     </tr>
   `).join('');
@@ -2816,7 +2825,7 @@ function openArticleModal(articleId = null) {
 // 12. Export CSV Functionality (PRD Section 5.2 - Live Backend Stream)
 function exportDonationsCSV() {
   window.open(donationsApi.exportCsvUrl, '_blank');
-  showToast('📥 Mengunduh data rekap donasi resmi dari server database...', 'success');
+  showToast('Mengunduh data rekap donasi resmi dari server database...', 'success');
 }
 
 // 13. Initialize Admin UI and Event Listeners
@@ -2857,7 +2866,7 @@ function initAdminUI() {
       } catch (err) {
         if (loginAlertBox) {
           loginAlertBox.style.display = 'flex';
-          loginAlertBox.innerHTML = `❌ ${err.message}`;
+          loginAlertBox.innerHTML = `${err.message}`;
         }
       }
     });
@@ -2887,10 +2896,10 @@ function initAdminUI() {
       if (passInput) {
         if (passInput.type === 'password') {
           passInput.type = 'text';
-          togglePassBtn.textContent = '🙈';
+          togglePassBtn.textContent = 'Sembunyikan';
         } else {
           passInput.type = 'password';
-          togglePassBtn.textContent = '👁️';
+          togglePassBtn.textContent = 'Lihat';
         }
       }
     });
@@ -2915,7 +2924,7 @@ function initAdminUI() {
         e.stopPropagation();
         const currentUser = auth.getStoredUser() || usersState[0];
         const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
-        showToast(`🔒 Akses Ditolak (403): Role "${roleConf.name}" tidak memiliki hak akses ke modul ini. Otorisasi telah dipatenkan.`, 'warning');
+        showToast(`Akses Ditolak (403): Role "${roleConf.name}" tidak memiliki hak akses ke modul ini. Otorisasi telah dipatenkan.`, 'warning');
       }
     });
   });
@@ -2974,7 +2983,7 @@ function initAdminUI() {
       if (state.selectedReceiptTrx) {
         try {
           await donationsApi.verify(state.selectedReceiptTrx.id, 'success');
-          showToast(`✅ Bukti transfer ${state.selectedReceiptTrx.invoiceNumber} berhasil diverifikasi! Tercatat di database.`, 'success');
+          showToast(`Bukti transfer ${state.selectedReceiptTrx.invoiceNumber} berhasil diverifikasi! Tercatat di database.`, 'success');
           if (receiptModal) receiptModal.classList.remove('open');
           await syncDatabaseState();
           renderAdminDonasi();
@@ -2992,7 +3001,7 @@ function initAdminUI() {
       if (state.selectedReceiptTrx) {
         try {
           await donationsApi.verify(state.selectedReceiptTrx.id, 'failed');
-          showToast(`❌ Transaksi ${state.selectedReceiptTrx.invoiceNumber} telah ditolak.`, 'warning');
+          showToast(`Transaksi ${state.selectedReceiptTrx.invoiceNumber} telah ditolak.`, 'warning');
           if (receiptModal) receiptModal.classList.remove('open');
           await syncDatabaseState();
           renderAdminDonasi();
@@ -3269,9 +3278,9 @@ function initAdminUI() {
             mudir: mudirInput ? mudirInput.value : INSTITUTION.mudir
           }
         });
-        showToast('💾 Pengaturan identitas berhasil disimpan ke database SQLite server.', 'success');
+        showToast('Pengaturan identitas berhasil disimpan ke database SQLite server.', 'success');
       } catch (err) {
-        showToast('💾 Pengaturan identitas dan tampilan yayasan berhasil disimpan.', 'success');
+        showToast('Pengaturan identitas dan tampilan yayasan berhasil disimpan.', 'success');
       }
     });
   }
@@ -3299,6 +3308,7 @@ function initAdminUI() {
 
 // Initial Boot (Sprint 3 Full Integration)
 document.addEventListener('DOMContentLoaded', async () => {
+  initMotion();
   initGlobalUI();
   initModals();
   initAdminUI();

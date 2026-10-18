@@ -500,7 +500,7 @@ export const PROGRAMS = [
     durationClaim: "Kelas Sore (Senin - Kamis, 15.30 - 17.15 WIB)",
     badge: "Non-Formal Unggulan",
     summary: "Program belajar Al-Qur'an untuk anak usia 4-12 tahun dengan pendekatan metode Yanbu'a/Ummi yang interaktif, dongeng islami, hafalan juz 30, serta penanaman adab harian.",
-    image: "/assets/images/santri-study.jpg",
+    image: "/assets/images/halaqoh.jpg",
     stats: {
       durasi: "Tingkat Jilid 1 - 6 (Berkala)",
       targetHafalan: "Juz 30 & Doa Harian",
@@ -1004,7 +1004,7 @@ export const LEADERSHIP = [
     role: "Pengasuh Santriwati & Pembina Ummahat",
     sanad: "Hafizhah 30 Juz Mutqin & Sanad Jazariyah",
     alumni: "Institut Ilmu Al-Qur'an (IIQ) Jakarta",
-    image: "/assets/images/santri-study.jpg",
+    image: "/assets/images/halaqoh.jpg",
     bio: "Berfokus pada pembinaan akhlak santriwati dan pembimbing utama halaqoh muslimah."
   }
 ];

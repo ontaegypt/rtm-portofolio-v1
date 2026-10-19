@@ -3435,11 +3435,13 @@ function initAdminUI() {
   function openAdminSidebar() {
     if (sidebar) sidebar.classList.add('open');
     if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+    document.body.classList.add('admin-sidebar-open');
   }
 
   function closeAdminSidebar() {
     if (sidebar) sidebar.classList.remove('open');
     if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+    document.body.classList.remove('admin-sidebar-open');
   }
 
   if (sidebarToggleBtn) {

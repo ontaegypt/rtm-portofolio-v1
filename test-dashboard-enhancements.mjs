@@ -95,6 +95,40 @@ test('main.js handles profile submodule routing and renderAdminProfile', () => {
   assert(mainJs.includes('adminProfileForm'), 'adminProfileForm submit handler wired');
 });
 
+// Test 9: Dark and Light Feature Removed
+test('Dark and light theme toggle is removed from index.html', () => {
+  assert(!html.includes('id="themeLightBtn"'), 'themeLightBtn should not exist in index.html');
+  assert(!html.includes('id="themeDarkBtn"'), 'themeDarkBtn should not exist in index.html');
+  assert(!html.includes('class="sidebar-theme-toggle"'), 'sidebar-theme-toggle should not exist in index.html');
+});
+
+// Test 10: Dashboard Brand Logo uses logo-footer-RTM.png with responsive sizing
+test('Dashboard brand logo uses logo-footer-RTM.png and responsive styling', () => {
+  assert(html.includes('src="/assets/images/logo-footer-RTM.png" alt="Rumah Tahfidz Madani" class="dashboard-brand-logo"'), 'Dashboard logo-footer-RTM.png missing in index.html');
+  assert(css.includes('.dashboard-brand-logo'), 'dashboard-brand-logo class missing in CSS');
+  assert(css.includes('max-width: 175px;'), 'Desktop logo max-width missing');
+  assert(css.includes('max-width: 150px;'), 'iPad/Tablet logo max-width missing');
+  assert(css.includes('max-width: 135px;'), 'Mobile logo max-width missing');
+});
+
+// Test 11: Mobile Bottom Nav has 4 menus only and Wakaf icon is money/banknote
+test('Mobile bottom nav has 4 menus (no FAB button) and Wakaf icon uses money icon', () => {
+  assert(!html.includes('id="mobQuickActionFab"'), 'mobQuickActionFab FAB button should be removed');
+  const bottomNavSnippet = html.match(/<nav class="mobile-app-bottom-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
+  const mobNavItems = (bottomNavSnippet.match(/class="mob-nav-item/g) || []).length;
+  assert.strictEqual(mobNavItems, 4, `Expected exactly 4 mob-nav-item elements, found ${mobNavItems}`);
+  assert(!bottomNavSnippet.includes('M19 14c1.49-1.46'), 'Bottom nav Wakaf icon should not use heart svg');
+  assert(bottomNavSnippet.includes('<circle cx="12" cy="12" r="2.5"/>'), 'Wakaf icon must use money banknote icon');
+});
+
+// Test 12: Mobile Sidebar Drawer is above bottom nav and does not cover logout button
+test('Mobile drawer has higher z-index (10010) than sticky bottom nav (9999) and logout is unobstructed', () => {
+  assert(css.includes('.admin-sidebar') && css.includes('z-index: 10010 !important;'), 'admin-sidebar must have z-index: 10010 !important');
+  assert(css.includes('.sidebar-backdrop') && css.includes('z-index: 10005 !important;'), 'sidebar-backdrop must have z-index: 10005 !important');
+  assert(css.includes('body.admin-sidebar-open .mobile-app-bottom-nav'), 'Bottom nav should hide when drawer is open');
+  assert(css.includes('padding: 1rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;'), 'Sidebar footer must have safe-area padding for logout button');
+});
+
 console.log(`\n========================================`);
 console.log(`Test Results: ${passed}/${total} Passed (${Math.round(passed / total * 100)}%)`);
 console.log(`========================================\n`);

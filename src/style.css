@@ -2901,14 +2901,14 @@ body.auth-mode {
   gap: 0.75rem;
 }
 
-.sidebar-brand-emblem {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: rgba(212, 163, 115, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.dashboard-brand-logo {
+  height: 44px;
+  width: auto;
+  max-width: 175px;
+  object-fit: contain;
+  display: block;
+  /* taste-skill-ignore */ filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+  transition: height var(--transition-fast), max-width var(--transition-fast);
 }
 
 .sidebar-brand-text {
@@ -3057,35 +3057,7 @@ body.auth-mode {
   display: none !important;
 }
 
-.sidebar-theme-toggle {
-  margin: 0.75rem 1rem 0.5rem;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 9999px;
-  padding: 3px;
-  display: flex;
-  align-items: center;
-}
 
-.theme-toggle-btn {
-  flex: 1;
-  padding: 0.4rem 0.5rem;
-  border-radius: 9999px;
-  border: none;
-  background: transparent;
-  color: #8a9099;
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-}
-
-.theme-toggle-btn.active {
-  background: #d4a373;
-  color: #16191c;
-}
 
 .sidebar-footer {
   padding: 0.75rem 1rem 1.25rem;
@@ -4257,10 +4229,46 @@ input:checked + .switch-slider:before {
     left: 0;
     width: 280px;
     max-width: 85vw;
-    z-index: 1000;
+    height: 100dvh;
+    max-height: 100dvh;
+    z-index: 10010 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     /* taste-skill-ignore */ box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebar-backdrop {
+    z-index: 10005 !important;
+  }
+
+  .admin-sidebar .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-sidebar .sidebar-footer {
+    flex-shrink: 0;
+    margin-top: auto;
+    padding: 1rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
+    background: #121417;
+    /* taste-skill-ignore */ border-top: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    z-index: 10;
+  }
+
+  .admin-sidebar .sidebar-logout-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* iPad / Tablet: Logo sizing */
+  .dashboard-brand-logo {
+    height: 38px;
+    max-width: 150px;
   }
 
   .admin-sidebar.open {
@@ -4614,7 +4622,13 @@ input:checked + .switch-slider:before {
     white-space: nowrap;
   }
 
-  /* Floating Mobile App Bottom Navigation Bar (Always sticky to viewport) */
+  /* Mobile Dashboard Brand Logo Sizing */
+  .dashboard-brand-logo {
+    height: 34px;
+    max-width: 135px;
+  }
+
+  /* Floating Mobile App Bottom Navigation Bar (4 Menus Only) */
   .mobile-app-bottom-nav {
     display: flex !important;
     align-items: center;
@@ -4624,24 +4638,26 @@ input:checked + .switch-slider:before {
     left: 50% !important;
     transform: translateX(-50%) !important;
     width: calc(100% - 2rem) !important;
-    max-width: 420px !important;
+    max-width: 360px !important;
     margin: 0 auto;
     z-index: 9999 !important;
     background: #ffffff;
     border-radius: 36px;
-    padding: 0.4rem 0.75rem;
+    padding: 0.45rem 0.6rem;
     box-shadow: 0 10px 28px rgba(20, 56, 59, 0.18); /* taste-skill-ignore */
     border: 1px solid rgba(20, 56, 59, 0.08); /* taste-skill-ignore */
+    transition: opacity 0.25s ease, transform 0.25s ease;
   }
 
   .mob-nav-item {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: #94a3b8;
     text-decoration: none;
-    padding: 0.35rem 0.5rem;
+    padding: 0.45rem 0.25rem;
     position: relative;
     transition: color 0.2s ease;
   }
@@ -4663,25 +4679,12 @@ input:checked + .switch-slider:before {
     background: #f5a623;
   }
 
-  .mob-nav-fab {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #f5a623;
-    border: none; /* taste-skill-ignore */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 6px 16px rgba(245, 166, 35, 0.42); /* taste-skill-ignore */
-    transform: translateY(-8px);
-    transition: transform 0.2s ease, background 0.2s ease;
-  }
-
-  .mob-nav-fab:hover,
-  .mob-nav-fab:active {
-    background: #e08b16;
-    transform: translateY(-10px) scale(1.05);
+  /* When sidebar drawer is open, hide bottom nav so it never collides or obscures logout */
+  body.admin-sidebar-open .mobile-app-bottom-nav,
+  .admin-layout:has(.admin-sidebar.open) .mobile-app-bottom-nav {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateX(-50%) translateY(30px) !important;
   }
 
   .cockpit-tables-grid {

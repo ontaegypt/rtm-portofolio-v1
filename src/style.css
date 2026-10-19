@@ -4713,22 +4713,118 @@ input:checked + .switch-slider:before {
     text-overflow: ellipsis;
   }
 
+  .col-desktop-only {
+    display: none !important;
+  }
+
   .admin-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    overflow-x: hidden !important;
+    max-width: 100% !important;
     border-radius: 12px;
+    box-sizing: border-box;
   }
 
   .admin-table {
-    min-width: 480px;
-    font-size: 0.8rem;
+    width: 100% !important;
+    min-width: 0 !important;
+    font-size: 0.78rem;
+    table-layout: auto;
   }
 
   .admin-table th,
   .admin-table td {
-    padding: 0.55rem 0.65rem;
-    white-space: nowrap;
+    padding: 0.5rem 0.35rem;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .admin-table th:first-child,
+  .admin-table td:first-child {
+    padding-left: 0.5rem;
+  }
+
+  .admin-table th:last-child,
+  .admin-table td:last-child {
+    padding-right: 0.5rem;
+  }
+
+  /* Campaign Grid in Admin Mobile: 1 line 3 campaigns */
+  .admin-campaign-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.4rem !important;
+    margin-top: 0.6rem !important;
+  }
+
+  .admin-campaign-card {
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    cursor: pointer;
+  }
+
+  .campaign-card-thumb {
+    height: 58px !important;
+  }
+
+  .campaign-card-category-badge {
+    top: 3px !important;
+    left: 3px !important;
+    font-size: 0.52rem !important;
+    padding: 0.1rem 0.25rem !important;
+  }
+
+  .campaign-card-body {
+    padding: 0.35rem !important;
+    gap: 0.2rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1;
+  }
+
+  .campaign-card-body .badge-tag-pill,
+  .campaign-card-body .status-pill {
+    font-size: 0.52rem !important;
+    padding: 0.1rem 0.25rem !important;
+  }
+
+  .campaign-card-title {
+    font-size: 0.68rem !important;
+    line-height: 1.2 !important;
+    height: 2.4em !important;
+    overflow: hidden !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    margin: 0 !important;
+  }
+
+  .admin-progress-bar {
+    height: 4px !important;
+  }
+
+  .admin-progress-meta {
+    font-size: 0.58rem !important;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  .campaign-progress-collected {
+    display: none !important;
+  }
+
+  .campaign-card-meta-secondary {
+    display: none !important;
+  }
+
+  .btn-edit-campaign {
+    font-size: 0.62rem !important;
+    padding: 0.2rem 0.3rem !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin-top: auto !important;
   }
 
   /* Admin Login Page Mobile */

@@ -386,6 +386,7 @@ async function verifyAndSyncSession() {
           const SUBMODULE_PARENTS = {
             'article-form': 'berita',
             'user-form': 'users',
+            'user-detail': 'users',
             'gallery-form': 'galeri',
             'syllabus-form': 'akademik',
             'campaign-form': 'donasi',
@@ -457,6 +458,7 @@ function initRouter() {
       const SUBMODULE_PARENTS = {
         'article-form': 'berita',
         'user-form': 'users',
+        'user-detail': 'users',
         'gallery-form': 'galeri',
         'syllabus-form': 'akademik',
         'campaign-form': 'donasi',
@@ -472,7 +474,7 @@ function initRouter() {
       }
 
       // Check Superadmin-only sub-pages
-      if ((targetModule === 'user-form' || targetModule === 'gallery-form') && currentUser.role !== 'superadmin') {
+      if ((targetModule === 'user-form' || targetModule === 'user-detail' || targetModule === 'gallery-form') && currentUser.role !== 'superadmin') {
         showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
         window.location.hash = `#admin-${roleConf.defaultModule}`;
         return;
@@ -578,6 +580,7 @@ export function navigateToAdmin(moduleName) {
   const SUBMODULE_PARENTS = {
     'article-form': 'berita',
     'user-form': 'users',
+    'user-detail': 'users',
     'gallery-form': 'galeri',
     'syllabus-form': 'akademik',
     'campaign-form': 'donasi',
@@ -596,6 +599,7 @@ export function navigateToAdmin(moduleName) {
     users: 'Manajemen Pengguna & RBAC',
     'article-form': 'Kelola Artikel / Berita > Editor Form',
     'user-form': 'Manajemen Pengguna > Form Pengguna',
+    'user-detail': 'Manajemen Pengguna > Detail Informasi Akun',
     'gallery-form': 'Kelola Galeri > Form Media Dokumentasi',
     'syllabus-form': 'Kelola Akademik > Unggah Silabus',
     'campaign-form': 'Modul Wakaf & Donasi > Form Program Campaign',
@@ -672,6 +676,7 @@ export function navigateToAdmin(moduleName) {
   if (moduleName === 'berita') renderAdminBerita();
   if (moduleName === 'tampilan') renderAdminTampilan();
   if (moduleName === 'users') renderAdminUsers();
+  if (moduleName === 'user-detail') renderUserDetailPage();
   if (moduleName === 'profile') renderAdminProfile();
 
   // Scroll to top of content area and window
@@ -2234,9 +2239,9 @@ async function renderAdminOverview() {
             <strong>${t.donorName}</strong>
             <div style="font-size: 0.75rem; color: var(--text-muted);">${t.invoiceNumber}</div>
           </td>
-          <td>${t.campaignTitle.substring(0, 24)}...</td>
+          <td class="col-desktop-only">${t.campaignTitle.substring(0, 24)}...</td>
           <td><strong style="color: #059669;">Rp ${t.amount.toLocaleString('id-ID')}</strong></td>
-          <td><span class="status-pill status-pending">Menunggu Verifikasi</span></td>
+          <td class="col-desktop-only"><span class="status-pill status-pending">Menunggu Verifikasi</span></td>
           <td>
             <button class="btn btn-primary btn-sm btn-inspect-receipt" data-id="${t.id}" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
               Periksa Struk
@@ -2264,8 +2269,8 @@ async function renderAdminOverview() {
           <div style="font-size: 0.7rem; color: var(--text-muted); font-family: monospace;">${p.id}</div>
         </td>
         <td><span class="badge-tag-pill" style="font-size: 0.72rem;">${p.programName}</span></td>
-        <td>${p.parentName}</td>
-        <td>${p.registeredAt}</td>
+        <td class="col-desktop-only">${p.parentName}</td>
+        <td class="col-desktop-only">${p.registeredAt}</td>
         <td>
           <span class="status-pill ${p.status === 'accepted' ? 'status-success' : (p.status === 'verified' ? 'status-active' : (p.status === 'rejected' ? 'status-draft' : 'status-pending'))}">
             ${p.status === 'accepted' ? 'Diterima' : (p.status === 'verified' ? 'Terverifikasi' : (p.status === 'rejected' ? 'Ditolak' : 'Menunggu'))}
@@ -2296,9 +2301,9 @@ function renderAdminAkademik() {
           <strong>${p.name}</strong>
           <div style="font-size: 0.75rem; color: var(--text-muted);">${p.shortTitle}</div>
         </td>
-        <td><span class="badge-tag-pill" style="font-size: 0.72rem;">${p.category === 'formal' ? 'Formal' : 'Non-Formal'}</span></td>
-        <td>${p.stats.targetHafalan}</td>
-        <td>${p.stats.durasi}</td>
+        <td class="col-desktop-only"><span class="badge-tag-pill" style="font-size: 0.72rem;">${p.category === 'formal' ? 'Formal' : 'Non-Formal'}</span></td>
+        <td class="col-desktop-only">${p.stats.targetHafalan}</td>
+        <td class="col-desktop-only">${p.stats.durasi}</td>
         <td>
           <label class="switch-label">
             <div class="switch-toggle">
@@ -2308,7 +2313,7 @@ function renderAdminAkademik() {
             <span class="switch-text">${p.ppdbOpen ? 'Buka (Open)' : 'Tutup (Closed)'}</span>
           </label>
         </td>
-        <td>
+        <td class="col-desktop-only">
           <a href="#" class="btn-download-syllabus" data-id="${p.id}" style="color: var(--primary-600); font-weight: 700; text-decoration: underline; font-size: 0.82rem;">
             Silabus-${p.id.toUpperCase()}.pdf
           </a>
@@ -2440,23 +2445,23 @@ function renderAdminPPDBTable() {
     const cleanPhone = (lead.phone || '').replace(/^0/, '62').replace(/[^0-9]/g, '');
     const waText = encodeURIComponent(`Assalamu'alaikum Warahmatullah Bapak/Ibu ${lead.parentName || 'Wali Santri'}, kami dari Panitia PPDB Rumah Tahfidz Madani terkait pendaftaran ananda ${lead.studentName}...`);
     return `
-      <tr>
-        <td><code style="font-size: 0.78rem; font-weight: 700; color: var(--primary-purple);">${lead.id}</code></td>
+      <tr class="ppdb-table-row" data-id="${lead.id}" style="cursor: pointer;">
+        <td class="col-desktop-only"><code style="font-size: 0.78rem; font-weight: 700; color: var(--primary-purple);">${lead.id}</code></td>
         <td>
           <strong>${lead.studentName}</strong>
-          <div style="font-size: 0.72rem; color: var(--text-muted);">${lead.gender} • ${lead.birthDate || '-'}</div>
+          <div style="font-size: 0.72rem; color: var(--text-muted);">${lead.gender} • ${lead.programName}</div>
         </td>
-        <td>
+        <td class="col-desktop-only">
           <span class="badge-tag-pill" style="font-size: 0.72rem;">${lead.programName}</span>
           <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${lead.batchId}</div>
         </td>
-        <td>${lead.parentName}</td>
-        <td>
-          <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" style="color: #059669; font-weight: 600; font-size: 0.85rem;">
+        <td class="col-desktop-only">${lead.parentName}</td>
+        <td class="col-desktop-only">
+          <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" style="color: #059669; font-weight: 600; font-size: 0.85rem;" onclick="event.stopPropagation();">
             ${lead.phone}
           </a>
         </td>
-        <td>${lead.registeredAt}</td>
+        <td class="col-desktop-only">${lead.registeredAt}</td>
         <td>
           <span class="status-pill ${lead.status === 'accepted' ? 'status-success' : (lead.status === 'verified' ? 'status-active' : (lead.status === 'rejected' ? 'status-draft' : 'status-pending'))}">
             ${lead.status === 'accepted' ? 'Diterima' : (lead.status === 'verified' ? 'Terverifikasi' : (lead.status === 'rejected' ? 'Ditolak' : 'Menunggu'))}
@@ -2467,7 +2472,7 @@ function renderAdminPPDBTable() {
             <button class="btn-icon-action btn-view-lead" data-id="${lead.id}" title="Lihat Dossier Calon Santri">Lihat</button>
             <button class="btn-icon-action approve-btn btn-accept-lead" data-id="${lead.id}" title="Terima Santri">✓</button>
             <button class="btn-icon-action btn-verify-lead" data-id="${lead.id}" title="Verifikasi Berkas" style="color: #2563eb;">🔍</button>
-            <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" class="btn-icon-action" title="Hubungi via WhatsApp">💬</a>
+            <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" class="btn-icon-action" title="Hubungi via WhatsApp" onclick="event.stopPropagation();">💬</a>
             <button class="btn-icon-action btn-delete-lead" data-id="${lead.id}" title="Hapus Data Santri" style="color: #dc2626;">🗑️</button>
           </div>
         </td>
@@ -2475,9 +2480,19 @@ function renderAdminPPDBTable() {
     `;
   }).join('');
 
+  // Row click opens dossier modal
+  ppdbBody.querySelectorAll('.ppdb-table-row').forEach(row => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('button') || e.target.closest('a')) return;
+      const id = row.getAttribute('data-id');
+      openAdminPPDBDetailModal(id);
+    });
+  });
+
   // Attach table row actions
   ppdbBody.querySelectorAll('.btn-view-lead').forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const id = e.currentTarget.getAttribute('data-id');
       openAdminPPDBDetailModal(id);
     });
@@ -2554,7 +2569,7 @@ function renderAdminDonasi() {
     campGrid.innerHTML = campaignsState.map(c => {
       const pct = Math.min(100, (c.collectedAmount / c.targetAmount * 100)).toFixed(1);
       return `
-        <div class="admin-campaign-card">
+        <div class="admin-campaign-card" data-id="${c.id}" style="cursor: pointer;">
           <div class="campaign-card-thumb">
             <img src="${c.image}" alt="${c.title}" />
             <span class="campaign-card-category-badge">${c.category}</span>
@@ -2572,24 +2587,32 @@ function renderAdminDonasi() {
                 <div class="admin-progress-fill" style="width: ${pct}%;"></div>
               </div>
               <div class="admin-progress-meta">
-                <span>Terkumpul: <strong>Rp ${c.collectedAmount.toLocaleString('id-ID')}</strong></span>
+                <span class="campaign-progress-collected">Terkumpul: <strong>Rp ${c.collectedAmount.toLocaleString('id-ID')}</strong></span>
                 <span><strong>${pct}%</strong></span>
               </div>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--text-muted); border-top: 1px solid rgba(0,0,0,0.05); padding-top: 0.5rem;">
+            <div class="campaign-card-meta-secondary" style="display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--text-muted); border-top: 1px solid rgba(0,0,0,0.05); padding-top: 0.5rem;">
               <span>Target: Rp ${c.targetAmount.toLocaleString('id-ID')}</span>
               <span>Donatur: ${c.donorCount} Orang</span>
             </div>
             <button class="btn btn-secondary btn-sm btn-edit-campaign" data-id="${c.id}" style="margin-top: 0.25rem;">
-              Kelola & Edit Campaign
+              Kelola & Edit
             </button>
           </div>
         </div>
       `;
     }).join('');
 
+    campGrid.querySelectorAll('.admin-campaign-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const id = card.getAttribute('data-id');
+        openCampaignModal(id);
+      });
+    });
+
     campGrid.querySelectorAll('.btn-edit-campaign').forEach(btn => {
       btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const id = e.currentTarget.getAttribute('data-id');
         openCampaignModal(id);
       });
@@ -2625,17 +2648,17 @@ function renderDonationTransactionsTable() {
   }
 
   tbody.innerHTML = filtered.map(t => `
-    <tr>
-      <td><code>${t.invoiceNumber}</code></td>
+    <tr class="donation-table-row" data-id="${t.id}" style="cursor: pointer;">
+      <td class="col-desktop-only"><code>${t.invoiceNumber}</code></td>
       <td>
         <strong>${t.donorName}</strong>
         ${t.isAnonymous ? '<span class="badge-tag-pill" style="font-size: 0.65rem; margin-left: 0.25rem;">Hamba Allah</span>' : ''}
         <div style="font-size: 0.74rem; color: var(--text-muted);">${t.donorPhone}</div>
       </td>
-      <td>${t.campaignTitle.substring(0, 28)}...</td>
+      <td class="col-desktop-only">${t.campaignTitle.substring(0, 28)}...</td>
       <td><strong style="color: #059669; font-size: 0.95rem;">Rp ${t.amount.toLocaleString('id-ID')}</strong></td>
-      <td><span style="font-size: 0.82rem;">${t.paymentMethod}</span></td>
-      <td><span style="font-size: 0.78rem; color: var(--text-muted);">${t.paidAt}</span></td>
+      <td class="col-desktop-only"><span style="font-size: 0.82rem;">${t.paymentMethod}</span></td>
+      <td class="col-desktop-only"><span style="font-size: 0.78rem; color: var(--text-muted);">${t.paidAt}</span></td>
       <td>
         <span class="status-pill ${t.paymentStatus === 'success' ? 'status-success' : (t.paymentStatus === 'pending' ? 'status-pending' : 'status-failed')}">
           ${t.paymentStatus === 'success' ? 'Sukses' : (t.paymentStatus === 'pending' ? 'Menunggu' : 'Gagal')}
@@ -2658,8 +2681,18 @@ function renderDonationTransactionsTable() {
     </tr>
   `).join('');
 
+  // Row click opens receipt modal
+  tbody.querySelectorAll('.donation-table-row').forEach(row => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('button') || e.target.closest('a')) return;
+      const id = row.getAttribute('data-id');
+      openReceiptModal(id);
+    });
+  });
+
   tbody.querySelectorAll('.btn-inspect-receipt').forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const id = e.currentTarget.getAttribute('data-id');
       openReceiptModal(id);
     });
@@ -2667,6 +2700,7 @@ function renderDonationTransactionsTable() {
 
   tbody.querySelectorAll('.btn-send-wa-receipt').forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const id = e.currentTarget.getAttribute('data-id');
       const trx = donationsState.find(d => d.id === id);
       if (trx) {
@@ -2684,11 +2718,11 @@ function renderAdminGaleri() {
     visitBody.innerHTML = visitsState.map(v => `
       <tr>
         <td><strong>${v.groupName}</strong></td>
-        <td>${v.leaderName}</td>
-        <td><a href="https://wa.me/${v.phone.replace(/^0/, '62')}" target="_blank" style="color: #059669; font-weight: 600;">${v.phone}</a></td>
+        <td class="col-desktop-only">${v.leaderName}</td>
+        <td class="col-desktop-only"><a href="https://wa.me/${v.phone.replace(/^0/, '62')}" target="_blank" style="color: #059669; font-weight: 600;">${v.phone}</a></td>
         <td><strong>${v.date}</strong></td>
-        <td>${v.count} Orang</td>
-        <td style="max-width: 220px; font-size: 0.8rem;">${v.goal}</td>
+        <td class="col-desktop-only">${v.count} Orang</td>
+        <td class="col-desktop-only" style="max-width: 220px; font-size: 0.8rem;">${v.goal}</td>
         <td>
           <span class="status-pill ${v.status === 'confirmed' ? 'status-success' : 'status-pending'}">
             ${v.status === 'confirmed' ? 'Disetujui' : 'Menunggu'}
@@ -2787,7 +2821,7 @@ function renderAdminBerita() {
 
   tbody.innerHTML = filtered.map(art => `
     <tr>
-      <td>
+      <td class="col-desktop-only">
         <div style="width: 50px; height: 40px; border-radius: 6px; overflow: hidden;">
           <img src="${art.image}" alt="${art.title}" style="width: 100%; height: 100%; object-fit: cover;" />
         </div>
@@ -2796,9 +2830,9 @@ function renderAdminBerita() {
         <strong>${art.title}</strong>
         <div style="font-size: 0.74rem; color: var(--text-muted); font-family: monospace;">/${art.id}</div>
       </td>
-      <td><span class="badge-tag-pill" style="font-size: 0.72rem;">${art.category}</span></td>
-      <td>${art.author || 'Admin Media'}</td>
-      <td><span style="font-size: 0.78rem; color: var(--text-muted);">${art.date}</span></td>
+      <td class="col-desktop-only"><span class="badge-tag-pill" style="font-size: 0.72rem;">${art.category}</span></td>
+      <td class="col-desktop-only">${art.author || 'Admin Media'}</td>
+      <td class="col-desktop-only"><span style="font-size: 0.78rem; color: var(--text-muted);">${art.date}</span></td>
       <td>
         <label class="switch-label">
           <div class="switch-toggle">
@@ -2887,6 +2921,8 @@ function renderAdminTampilan() {
 }
 
 // 8. Render Users & RBAC Panel
+let selectedUserIdForDetail = 'usr-1';
+
 function renderAdminUsers() {
   const tbody = document.getElementById('adminUsersTableBody');
   if (!tbody) return;
@@ -2898,7 +2934,7 @@ function renderAdminUsers() {
   };
 
   tbody.innerHTML = usersState.map(u => `
-    <tr>
+    <tr class="user-table-row" data-id="${u.id}" style="cursor: pointer;">
       <td>
         <div style="display: flex; align-items: center; gap: 0.6rem;">
           <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">${u.avatar || u.name.substring(0, 2).toUpperCase()}</div>
@@ -2907,11 +2943,11 @@ function renderAdminUsers() {
           </div>
         </div>
       </td>
-      <td><code>${u.email}</code></td>
+      <td class="col-desktop-only"><code>${u.email}</code></td>
       <td><span class="user-role-badge ${u.role}">${u.roleTitle || (u.role === 'superadmin' ? 'Admin' : (u.role === 'editor' ? 'Content' : 'Finance'))}</span></td>
-      <td style="font-size: 0.78rem; color: var(--text-dark);">${roleDescriptions[u.role] || '-'}</td>
-      <td><span style="font-size: 0.78rem; color: var(--text-muted);">${u.lastLogin}</span></td>
-      <td><span class="status-pill status-success">Aktif</span></td>
+      <td class="col-desktop-only" style="font-size: 0.78rem; color: var(--text-dark);">${roleDescriptions[u.role] || '-'}</td>
+      <td class="col-desktop-only"><span style="font-size: 0.78rem; color: var(--text-muted);">${u.lastLogin}</span></td>
+      <td class="col-desktop-only"><span class="status-pill status-success">Aktif</span></td>
       <td>
         <div class="table-action-btns" style="display: flex; gap: 0.35rem; align-items: center;">
           <button type="button" class="btn btn-secondary btn-sm btn-edit-user-action" data-id="${u.id}" title="Ubah Akun Pengguna" style="font-size: 0.75rem; padding: 0.2rem 0.55rem;">
@@ -2925,9 +2961,20 @@ function renderAdminUsers() {
     </tr>
   `).join('');
 
+  // Row click navigates to user detail page
+  tbody.querySelectorAll('.user-table-row').forEach(row => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('button') || e.target.closest('a')) return;
+      const id = row.getAttribute('data-id');
+      selectedUserIdForDetail = id;
+      window.location.hash = '#admin-user-detail';
+    });
+  });
+
   // Wire Ubah & Hapus action buttons
   tbody.querySelectorAll('.btn-edit-user-action').forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const currentUser = auth.getStoredUser() || usersState[0];
       if (currentUser.role !== 'superadmin') {
         showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
@@ -2943,6 +2990,7 @@ function renderAdminUsers() {
 
   tbody.querySelectorAll('.btn-delete-user-action').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
       const currentUser = auth.getStoredUser() || usersState[0];
       if (currentUser.role !== 'superadmin') {
         showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
@@ -2972,6 +3020,95 @@ function renderAdminUsers() {
       }
     });
   });
+}
+
+export function renderUserDetailPage(userId) {
+  if (userId) selectedUserIdForDetail = userId;
+  const user = usersState.find(u => u.id === selectedUserIdForDetail) || usersState[0];
+  if (!user) return;
+
+  const roleConf = ROLES_CONFIG[user.role] || ROLES_CONFIG.superadmin;
+  
+  const avatarEl = document.getElementById('userDetailAvatar');
+  const nameEl = document.getElementById('userDetailName');
+  const roleBadgeEl = document.getElementById('userDetailRoleBadge');
+  const emailSubEl = document.getElementById('userDetailEmailSubtitle');
+  const idEl = document.getElementById('userDetailId');
+  const emailEl = document.getElementById('userDetailEmail');
+  const roleNameEl = document.getElementById('userDetailRoleName');
+  const scopeEl = document.getElementById('userDetailScope');
+  const forbiddenEl = document.getElementById('userDetailForbidden');
+  const lastLoginEl = document.getElementById('userDetailLastLogin');
+
+  if (avatarEl) avatarEl.textContent = user.avatar || user.name.substring(0, 2).toUpperCase();
+  if (nameEl) nameEl.textContent = user.name;
+  if (roleBadgeEl) {
+    roleBadgeEl.textContent = roleConf.name;
+    roleBadgeEl.className = `user-role-badge ${roleConf.badgeClass}`;
+  }
+  if (emailSubEl) emailSubEl.textContent = user.email;
+  if (idEl) idEl.textContent = user.id;
+  if (emailEl) emailEl.textContent = user.email;
+  if (roleNameEl) roleNameEl.textContent = `${roleConf.name} (${user.roleTitle || user.role})`;
+
+  const scopeMap = {
+    superadmin: 'Akses Penuh (Full Access) ke seluruh 7 modul sistem',
+    editor: 'Modul Artikel Berita, Akademik & Silabus, Galeri & Kunjungan',
+    finance: 'Modul Wakaf & Donasi, Verifikasi Transfer Bank, Pembukuan CSV'
+  };
+  const forbiddenMap = {
+    superadmin: 'Tidak ada batasan (Super Admin)',
+    editor: 'Wakaf & Donasi Finansial, Manajemen Pengguna & RBAC',
+    finance: 'Artikel Berita, Akademik & PPDB, Manajemen Pengguna & RBAC'
+  };
+
+  if (scopeEl) scopeEl.textContent = scopeMap[user.role] || '-';
+  if (forbiddenEl) forbiddenEl.textContent = forbiddenMap[user.role] || '-';
+  if (lastLoginEl) lastLoginEl.textContent = user.lastLogin || '-';
+
+  // Wire detail action buttons
+  const editBtn = document.getElementById('btnDetailEditUser');
+  if (editBtn) {
+    editBtn.onclick = () => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
+      openEditUserModal(user);
+    };
+  }
+
+  const deleteBtn = document.getElementById('btnDetailDeleteUser');
+  if (deleteBtn) {
+    deleteBtn.onclick = async () => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
+      if (user.id === 'usr-1' || user.id === currentUser.id) {
+        showToast('Akun Admin utama atau akun aktif tidak dapat dihapus.', 'warning');
+        return;
+      }
+      const confirmed = await showInteractiveConfirm({
+        title: 'Hapus Akun Pengguna',
+        message: `Apakah Anda yakin ingin menghapus akun <strong>"${user.name}"</strong> (${user.roleTitle || user.role})? Akses masuk dan wewenang akun ini akan dicabut permanen.`,
+        confirmText: 'Ya, Hapus Pengguna',
+        confirmBtnClass: 'btn-danger'
+      });
+      if (!confirmed) return;
+      try {
+        await usersApi.delete(user.id);
+        showToast(`Akun pengguna ${user.name} berhasil dihapus.`, 'success');
+        await syncDatabaseState();
+        renderAdminUsers();
+        window.location.hash = '#admin-users';
+      } catch (err) {
+        showToast(err.message, 'warning');
+      }
+    };
+  }
 }
 
 function openEditUserModal(user) {

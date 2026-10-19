@@ -2185,6 +2185,24 @@ function updateNotificationBell() {
   }
 }
 
+// Helper: Shorten Jenjang names for clean mobile typography (PRD & Wireframe adherence)
+export function getShortJenjang(programName, programId) {
+  if (!programName && !programId) return '-';
+  const name = (programName || '').toLowerCase().trim();
+  const id = (programId || '').toLowerCase().trim();
+
+  if (name.startsWith('smp') || id === 'smp') return 'SMP';
+  if (name.startsWith('sma') || id === 'sma') return 'SMA';
+  if (name.startsWith('mahasantri') || id === 'mahasantri') return 'Mahasantri';
+  if (name.includes('halaqoh') || id === 'halaqoh-ibu') return 'Halaqoh Ibu';
+  if (name.includes('ngaji') || id === 'online') return 'Ngaji Online';
+  if (name.includes('tpa') || id === 'tpa') return 'TPA Anak';
+
+  const words = (programName || id).split(/\s+/);
+  if (words.length <= 2) return programName || id.toUpperCase();
+  return words[0].length <= 3 && words[1] ? `${words[0]} ${words[1]}` : words[0];
+}
+
 // 2. Render Overview Panel (Sprint 3 Live SQLite DB Stats)
 async function renderAdminOverview() {
   try {
@@ -2262,28 +2280,41 @@ async function renderAdminOverview() {
   // Render Overview PPDB Table
   const ppdbTable = document.getElementById('overviewPPDBTable');
   if (ppdbTable) {
-    ppdbTable.innerHTML = ppdbState.slice(0, 6).map(p => `
-      <tr>
-        <td>
-          <strong>${p.studentName}</strong>
-          <div style="font-size: 0.7rem; color: var(--text-muted); font-family: monospace;">${p.id}</div>
-        </td>
-        <td><span class="badge-tag-pill" style="font-size: 0.72rem;">${p.programName}</span></td>
-        <td class="col-desktop-only">${p.parentName}</td>
-        <td class="col-desktop-only">${p.registeredAt}</td>
-        <td>
-          <span class="status-pill ${p.status === 'accepted' ? 'status-success' : (p.status === 'verified' ? 'status-active' : (p.status === 'rejected' ? 'status-draft' : 'status-pending'))}">
-            ${p.status === 'accepted' ? 'Diterima' : (p.status === 'verified' ? 'Terverifikasi' : (p.status === 'rejected' ? 'Ditolak' : 'Menunggu'))}
-          </span>
-        </td>
-        <td>
-          <button class="btn-icon-action btn-inspect-ppdb-overview" data-id="${p.id}" title="Lihat Dossier Calon Santri">Lihat</button>
-        </td>
-      </tr>
-    `).join('');
+    ppdbTable.innerHTML = ppdbState.slice(0, 6).map(p => {
+      const shortJenjang = getShortJenjang(p.programName, p.programId);
+      return `
+        <tr class="ppdb-overview-row" data-id="${p.id}" style="cursor: pointer;">
+          <td style="white-space: nowrap;">
+            <strong style="white-space: nowrap; font-size: 0.82rem;">${p.studentName}</strong>
+          </td>
+          <td style="white-space: nowrap; text-align: center;">
+            <span class="badge-tag-pill" style="font-size: 0.72rem; white-space: nowrap; padding: 0.2rem 0.5rem;">${shortJenjang}</span>
+          </td>
+          <td class="col-desktop-only">${p.parentName}</td>
+          <td class="col-desktop-only">${p.registeredAt}</td>
+          <td style="white-space: nowrap; text-align: right;">
+            <span class="status-pill ${p.status === 'accepted' ? 'status-success' : (p.status === 'verified' ? 'status-active' : (p.status === 'rejected' ? 'status-draft' : 'status-pending'))}" style="white-space: nowrap; font-size: 0.72rem;">
+              ${p.status === 'accepted' ? 'Diterima' : (p.status === 'verified' ? 'Terverifikasi' : (p.status === 'rejected' ? 'Ditolak' : 'Menunggu'))}
+            </span>
+          </td>
+          <td class="col-desktop-only">
+            <button class="btn-icon-action btn-inspect-ppdb-overview" data-id="${p.id}" title="Lihat Dossier Calon Santri">Lihat</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    // Clicking anywhere on the row opens the detail dossier modal
+    ppdbTable.querySelectorAll('.ppdb-overview-row').forEach(row => {
+      row.addEventListener('click', (e) => {
+        const id = row.getAttribute('data-id');
+        openAdminPPDBDetailModal(id);
+      });
+    });
 
     ppdbTable.querySelectorAll('.btn-inspect-ppdb-overview').forEach(btn => {
       btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const id = e.currentTarget.getAttribute('data-id');
         openAdminPPDBDetailModal(id);
       });
@@ -2448,8 +2479,8 @@ function renderAdminPPDBTable() {
       <tr class="ppdb-table-row" data-id="${lead.id}" style="cursor: pointer;">
         <td class="col-desktop-only"><code style="font-size: 0.78rem; font-weight: 700; color: var(--primary-purple);">${lead.id}</code></td>
         <td>
-          <strong>${lead.studentName}</strong>
-          <div style="font-size: 0.72rem; color: var(--text-muted);">${lead.gender} • ${lead.programName}</div>
+          <strong style="white-space: nowrap;">${lead.studentName}</strong>
+          <div style="font-size: 0.72rem; color: var(--text-muted); white-space: nowrap;">${lead.gender} • ${getShortJenjang(lead.programName, lead.programId)}</div>
         </td>
         <td class="col-desktop-only">
           <span class="badge-tag-pill" style="font-size: 0.72rem;">${lead.programName}</span>

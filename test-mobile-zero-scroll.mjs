@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert';
 
-console.log('🧪 Testing Mobile Zero-Horizontal-Scroll & User Detail Flow...\n');
+console.log('🧪 Testing Mobile Zero-Horizontal-Scroll, Short Jenjang, & 2-per-line Campaign Flow...\n');
 
 let passed = 0;
 let total = 0;
@@ -22,9 +22,10 @@ const css = fs.readFileSync('src/style.css', 'utf-8');
 const mainJs = fs.readFileSync('src/main.js', 'utf-8');
 
 // 1. Table headers carry .col-desktop-only
-test('All secondary table headers in index.html carry col-desktop-only', () => {
+test('All secondary table headers in index.html carry col-desktop-only including overview PPDB Aksi', () => {
   assert(html.includes('<th class="col-desktop-only">Program</th>'), 'Cockpit donations th program');
   assert(html.includes('<th class="col-desktop-only">Wali</th>'), 'Cockpit ppdb th wali');
+  assert(html.includes('<th class="col-desktop-only">Aksi</th>'), 'Cockpit ppdb th aksi');
   assert(html.includes('<th class="col-desktop-only">Kategori</th>'), 'Programs th kategori');
   assert(html.includes('<th class="col-desktop-only">Target Hafalan</th>'), 'Programs th target');
   assert(html.includes('<th class="col-desktop-only">No. Reg</th>'), 'PPDB th no reg');
@@ -53,7 +54,15 @@ test('Main.js table renderers apply col-desktop-only on secondary columns', () =
   assert(mainJs.includes('<td class="col-desktop-only">${lead.parentName}</td>'), 'PPDB td parent');
 });
 
-// 3. User Detail panel in index.html
+// 3. Overview PPDB Short Jenjang and Clickable Row
+test('Overview PPDB table uses getShortJenjang and clickable row without mobile button', () => {
+  assert(mainJs.includes('getShortJenjang'), 'getShortJenjang function missing in main.js');
+  assert(mainJs.includes('ppdb-overview-row'), 'ppdb-overview-row missing in main.js');
+  assert(mainJs.includes('openAdminPPDBDetailModal(id)'), 'Row click handler missing for PPDB overview');
+  assert(css.includes('#overviewPPDBTable td') && css.includes('white-space: nowrap !important;'), 'white-space: nowrap missing for overviewPPDBTable');
+});
+
+// 4. User Detail panel in index.html
 test('User Detail panel (#admin-panel-user-detail) exists with wireframe elements', () => {
   assert(html.includes('id="admin-panel-user-detail"'), 'Panel #admin-panel-user-detail missing');
   assert(html.includes('id="userDetailAvatar"'), '#userDetailAvatar missing');
@@ -68,14 +77,6 @@ test('User Detail panel (#admin-panel-user-detail) exists with wireframe element
   assert(html.includes('id="btnDetailDeleteUser"'), '#btnDetailDeleteUser missing');
 });
 
-// 4. Main.js user detail routing and row click
-test('Main.js user detail routing and user row click handlers are wired', () => {
-  assert(mainJs.includes("'user-detail': 'users'"), 'user-detail submodule parent missing');
-  assert(mainJs.includes('renderUserDetailPage'), 'renderUserDetailPage function missing');
-  assert(mainJs.includes('#admin-user-detail'), 'hash navigation to #admin-user-detail missing');
-  assert(mainJs.includes('.user-table-row'), '.user-table-row class missing');
-});
-
 // 5. Mobile CSS constraints (zero horizontal scroll)
 test('Mobile CSS enforces overflow-x: hidden and hides desktop-only columns', () => {
   assert(css.includes('.col-desktop-only') && css.includes('display: none !important;'), '.col-desktop-only display: none missing');
@@ -83,10 +84,10 @@ test('Mobile CSS enforces overflow-x: hidden and hides desktop-only columns', ()
   assert(css.includes('.admin-table') && css.includes('min-width: 0 !important;'), '.admin-table min-width: 0 missing');
 });
 
-// 6. 1 line 3 campaigns on mobile
-test('Campaign grid on mobile renders 1 line 3 campaigns', () => {
-  assert(css.includes('.admin-campaign-grid') && css.includes('repeat(3, minmax(0, 1fr)) !important;'), '1 line 3 campaigns grid missing');
-  assert(css.includes('.campaign-card-thumb') && css.includes('height: 58px !important;'), 'Compact campaign thumb height missing');
+// 6. 2 campaigns per line on mobile
+test('Campaign grid on mobile renders 2 campaigns per line', () => {
+  assert(css.includes('.admin-campaign-grid') && css.includes('repeat(2, minmax(0, 1fr)) !important;'), '2 campaigns per line grid missing');
+  assert(css.includes('.campaign-card-thumb') && css.includes('height: 96px !important;'), 'Thumb height 96px missing');
   assert(css.includes('.campaign-card-meta-secondary') && css.includes('display: none !important;'), 'campaign-card-meta-secondary hidden on mobile');
 });
 

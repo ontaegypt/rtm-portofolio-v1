@@ -4749,16 +4749,16 @@ input:checked + .switch-slider:before {
     padding-right: 0.5rem;
   }
 
-  /* Campaign Grid in Admin Mobile: 1 line 3 campaigns */
+  /* Campaign Grid in Admin Mobile: 2 per line */
   .admin-campaign-grid {
     display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 0.4rem !important;
-    margin-top: 0.6rem !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+    margin-top: 0.75rem !important;
   }
 
   .admin-campaign-card {
-    border-radius: 10px !important;
+    border-radius: 14px !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
@@ -4766,19 +4766,19 @@ input:checked + .switch-slider:before {
   }
 
   .campaign-card-thumb {
-    height: 58px !important;
+    height: 96px !important;
   }
 
   .campaign-card-category-badge {
-    top: 3px !important;
-    left: 3px !important;
-    font-size: 0.52rem !important;
-    padding: 0.1rem 0.25rem !important;
+    top: 5px !important;
+    left: 5px !important;
+    font-size: 0.62rem !important;
+    padding: 0.15rem 0.4rem !important;
   }
 
   .campaign-card-body {
-    padding: 0.35rem !important;
-    gap: 0.2rem !important;
+    padding: 0.65rem 0.55rem !important;
+    gap: 0.35rem !important;
     display: flex !important;
     flex-direction: column !important;
     flex: 1;
@@ -4786,14 +4786,14 @@ input:checked + .switch-slider:before {
 
   .campaign-card-body .badge-tag-pill,
   .campaign-card-body .status-pill {
-    font-size: 0.52rem !important;
-    padding: 0.1rem 0.25rem !important;
+    font-size: 0.62rem !important;
+    padding: 0.12rem 0.35rem !important;
   }
 
   .campaign-card-title {
-    font-size: 0.68rem !important;
-    line-height: 1.2 !important;
-    height: 2.4em !important;
+    font-size: 0.78rem !important;
+    line-height: 1.25 !important;
+    height: 2.5em !important;
     overflow: hidden !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
@@ -4802,17 +4802,18 @@ input:checked + .switch-slider:before {
   }
 
   .admin-progress-bar {
-    height: 4px !important;
+    height: 5px !important;
   }
 
   .admin-progress-meta {
-    font-size: 0.58rem !important;
+    font-size: 0.65rem !important;
     display: flex !important;
     justify-content: space-between !important;
   }
 
   .campaign-progress-collected {
-    display: none !important;
+    display: inline !important;
+    font-size: 0.62rem !important;
   }
 
   .campaign-card-meta-secondary {
@@ -4820,11 +4821,26 @@ input:checked + .switch-slider:before {
   }
 
   .btn-edit-campaign {
-    font-size: 0.62rem !important;
-    padding: 0.2rem 0.3rem !important;
+    font-size: 0.7rem !important;
+    padding: 0.35rem 0.5rem !important;
     width: 100% !important;
     text-align: center !important;
     margin-top: auto !important;
+  }
+
+  /* Overview PPDB Table Mobile: Clean row with zero wrapped text */
+  #overviewPPDBTable td {
+    white-space: nowrap !important;
+  }
+
+  .ppdb-overview-row {
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+  }
+
+  .ppdb-overview-row:hover,
+  .ppdb-overview-row:active {
+    background-color: var(--bg-surface-soft);
   }
 
   /* Admin Login Page Mobile */

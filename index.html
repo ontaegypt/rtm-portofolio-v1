@@ -1438,7 +1438,7 @@
                   <h2>Kelola Akademik, Program & Pendaftaran PPDB</h2>
                   <p>Kelola informasi publik program pendidikan, skema formulir registrasi, silabus PDF, dan seleksi calon santri.</p>
                 </div>
-                <div class="panel-header-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <div class="panel-header-actions akademik-header-actions">
                   <button class="btn btn-secondary btn-sm" id="btnCreateNewProgram">
                     <span>+ Tambah Program Pendidikan</span>
                   </button>
@@ -1527,7 +1527,7 @@
                       <tr>
                         <th class="col-desktop-only">No. Reg</th>
                         <th>Nama Calon Santri</th>
-                        <th class="col-desktop-only">Pilihan Program</th>
+                        <th class="col-desktop-only col-ppdb-program">Pilihan Program</th>
                         <th class="col-desktop-only">Orang Tua / Wali</th>
                         <th class="col-desktop-only">Nomor WhatsApp</th>
                         <th class="col-desktop-only">Tanggal Daftar</th>
@@ -2692,8 +2692,8 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                           <option value="archived">Status Web: Archived</option>
                         </select>
                         <select id="programFormIsOpen" class="form-input" style="font-size: 0.85rem; padding: 0.45rem 0.75rem;">
-                          <option value="1">PPDB: Pendaftaran Buka</option>
-                          <option value="0">PPDB: Kuota Penuh / Tutup</option>
+                          <option value="1">PPDB: Buka</option>
+                          <option value="0">PPDB: Tutup</option>
                         </select>
                       </div>
                     </div>
@@ -3270,7 +3270,23 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
             </div>
             <div class="form-group">
               <label class="form-label">Nomor WhatsApp Aktif Wali *</label>
-              <input type="tel" id="modalPhone" name="phone_whatsapp" class="form-input" placeholder="081234567890" required />
+              <div class="input-phone-group">
+                <select id="modalPhoneCountryCode" class="form-input form-select-country" aria-label="Kode Negara WhatsApp">
+                  <option value="62" selected>🇮🇩 +62</option>
+                  <option value="60">🇲🇾 +60</option>
+                  <option value="65">🇸🇬 +65</option>
+                  <option value="966">🇸🇦 +966</option>
+                  <option value="971">🇦🇪 +971</option>
+                  <option value="20">🇪🇬 +20</option>
+                  <option value="90">🇹🇷 +90</option>
+                  <option value="1">🇺🇸 +1</option>
+                  <option value="44">🇬🇧 +44</option>
+                  <option value="81">🇯🇵 +81</option>
+                  <option value="82">🇰🇷 +82</option>
+                  <option value="61">🇦🇺 +61</option>
+                </select>
+                <input type="tel" id="modalPhone" name="phone_whatsapp" class="form-input" placeholder="81234567890" required />
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Email Aktif *</label>

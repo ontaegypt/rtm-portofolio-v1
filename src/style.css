@@ -3819,6 +3819,96 @@ body.auth-mode {
   align-items: center;
   flex-wrap: wrap;
 }
+
+/* Kelola Akademik Header Actions: Side-by-Side on Desktop, iPad, and Mobile */
+.akademik-header-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+  flex-wrap: nowrap !important;
+  flex-shrink: 0;
+}
+
+.akademik-header-actions .btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  white-space: nowrap !important;
+  height: 38px !important;
+  padding: 0.5rem 0.9rem !important;
+  font-size: 0.85rem !important;
+}
+
+/* PPDB Pilihan Program Column Width & Max 2 lines */
+.col-ppdb-program {
+  min-width: 195px !important;
+  max-width: 260px !important;
+  width: 215px !important;
+}
+
+.ppdb-program-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ppdb-program-badge {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.35 !important;
+  white-space: normal !important;
+  font-size: 0.74rem !important;
+  max-width: 100% !important;
+  word-break: break-word !important;
+}
+
+.ppdb-batch-subtitle {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* PPDB WhatsApp Link in Table */
+.ppdb-wa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #059669;
+  font-weight: 600;
+  font-size: 0.84rem;
+  text-decoration: none;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ppdb-wa-link:hover {
+  background: #059669;
+  color: #ffffff;
+  border-color: #059669;
+}
+
+/* Form Country Code & Phone Input Group */
+.input-phone-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.form-select-country {
+  width: 115px;
+  flex-shrink: 0;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.5rem;
+}
 /* --------------------------------------------------------------------------
    KPI Stat Cards
    -------------------------------------------------------------------------- */
@@ -4220,6 +4310,22 @@ input:checked + .switch-slider:before {
     min-height: 100dvh;
     position: relative;
     overflow: hidden;
+  }
+
+  .akademik-header-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    width: auto !important;
+  }
+
+  .akademik-header-actions .btn {
+    white-space: nowrap !important;
+    font-size: 0.78rem !important;
+    padding: 0.45rem 0.65rem !important;
+    height: 38px !important;
   }
 
   .admin-sidebar {
@@ -4884,6 +4990,34 @@ input:checked + .switch-slider:before {
     gap: 0.5rem;
   }
 
+  .panel-header-actions.akademik-header-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .panel-header-actions.akademik-header-actions .btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0.45rem 0.35rem !important;
+    font-size: 0.72rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: center !important;
+    justify-content: center !important;
+    gap: 0.25rem !important;
+    height: 38px !important;
+  }
+
+  .panel-header-actions.akademik-header-actions .btn span {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
   .panel-header-actions .btn {
     flex: 1 1 auto;
     text-align: center;
@@ -4916,6 +5050,17 @@ input:checked + .switch-slider:before {
 @media (max-width: 480px) {
   .cockpit-stat-num {
     font-size: 1.15rem;
+  }
+
+  .form-select-country {
+    width: 95px;
+    font-size: 0.78rem;
+    padding: 0.5rem 0.35rem;
+  }
+
+  .panel-header-actions.akademik-header-actions .btn {
+    font-size: 0.68rem !important;
+    padding: 0.4rem 0.25rem !important;
   }
 
   .topbar-name {

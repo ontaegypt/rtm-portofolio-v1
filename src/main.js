@@ -1845,7 +1845,11 @@ export function initPPDBModalEvents() {
         const gender = document.getElementById('modalGender').value;
         const birthDate = document.getElementById('modalBirthDate').value;
         const parentName = document.getElementById('modalParentName').value.trim();
-        const phone = document.getElementById('modalPhone').value.trim();
+        const rawPhone = document.getElementById('modalPhone').value.trim();
+        const countryCode = document.getElementById('modalPhoneCountryCode')?.value?.trim() || '62';
+        let digits = rawPhone.replace(/[^0-9]/g, '');
+        if (digits.startsWith('0')) digits = digits.slice(1);
+        const phone = digits.startsWith(countryCode) ? digits : (countryCode + digits);
         const email = document.getElementById('modalEmail').value.trim();
         const paymentMethod = document.getElementById('modalPaymentMethod').value;
         const infoSource = document.getElementById('modalInfoSource').value;
@@ -2591,7 +2595,9 @@ async function renderAdminOverview() {
             </span>
           </td>
           <td class="col-desktop-only">
-            <button class="btn-icon-action btn-inspect-ppdb-overview" data-id="${p.id}" title="Lihat Dossier Calon Santri">Lihat</button>
+            <button class="btn-icon-action btn-inspect-ppdb-overview" data-id="${p.id}" title="Lihat Dossier Calon Santri">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
           </td>
         </tr>
       `;
@@ -2633,7 +2639,7 @@ function renderAdminAkademik() {
               <input type="checkbox" class="program-ppdb-switch" data-id="${p.id}" ${p.ppdbOpen ? 'checked' : ''} />
               <span class="switch-slider"></span>
             </div>
-            <span class="switch-text">${p.ppdbOpen ? 'Buka (Open)' : 'Tutup (Closed)'}</span>
+            <span class="switch-text">${p.ppdbOpen ? 'Buka' : 'Tutup'}</span>
           </label>
         </td>
         <td class="col-desktop-only">
@@ -2660,13 +2666,13 @@ function renderAdminAkademik() {
         if (prog) {
           prog.ppdbOpen = e.target.checked;
           const label = e.target.closest('.switch-label').querySelector('.switch-text');
-          if (label) label.textContent = prog.ppdbOpen ? 'Buka (Open)' : 'Tutup (Closed)';
+          if (label) label.textContent = prog.ppdbOpen ? 'Buka' : 'Tutup';
           try {
             await programsApi.toggleStatus(id);
           } catch {
             // offline fallback
           }
-          showToast(`Status PPDB ${prog.name} berhasil diubah menjadi: ${prog.ppdbOpen ? 'DIBUKA (OPEN)' : 'DITUTUP (CLOSED)'}`, 'success');
+          showToast(`Status PPDB ${prog.name} berhasil diubah menjadi: ${prog.ppdbOpen ? 'Buka' : 'Tutup'}`, 'success');
         }
       });
     });
@@ -2860,7 +2866,12 @@ function renderAdminPPDBTable() {
   }
 
   ppdbBody.innerHTML = filtered.map(lead => {
-    const cleanPhone = (lead.phone || '').replace(/^0/, '62').replace(/[^0-9]/g, '');
+    let cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '62' + cleanPhone.slice(1);
+    } else if (cleanPhone.startsWith('8')) {
+      cleanPhone = '62' + cleanPhone;
+    }
     const waText = encodeURIComponent(`Assalamu'alaikum Warahmatullah Bapak/Ibu ${lead.parentName || 'Wali Santri'}, kami dari Panitia PPDB Rumah Tahfidz Madani terkait pendaftaran ananda ${lead.studentName}...`);
     return `
       <tr class="ppdb-table-row" data-id="${lead.id}" style="cursor: pointer;">
@@ -2869,14 +2880,17 @@ function renderAdminPPDBTable() {
           <strong style="white-space: nowrap;">${lead.studentName}</strong>
           <div style="font-size: 0.72rem; color: var(--text-muted); white-space: nowrap;">${lead.gender} • ${getShortJenjang(lead.programName, lead.programId)}</div>
         </td>
-        <td class="col-desktop-only">
-          <span class="badge-tag-pill" style="font-size: 0.72rem;">${lead.programName}</span>
-          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${lead.batchId}</div>
+        <td class="col-desktop-only col-ppdb-program">
+          <div class="ppdb-program-cell">
+            <span class="badge-tag-pill ppdb-program-badge" title="${lead.programName}">${lead.programName}</span>
+            <div class="ppdb-batch-subtitle">${lead.batchId}</div>
+          </div>
         </td>
         <td class="col-desktop-only">${lead.parentName}</td>
         <td class="col-desktop-only">
-          <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" style="color: #059669; font-weight: 600; font-size: 0.85rem;" onclick="event.stopPropagation();">
-            ${lead.phone}
+          <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" rel="noopener noreferrer" class="ppdb-wa-link" title="Chat langsung via WhatsApp" onclick="event.stopPropagation();">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c1.001.572 1.77.877 2.806.877 3.182 0 5.768-2.587 5.768-5.766.001-3.18-2.585-5.76-5.768-5.76zm3.393 8.354c-.144.405-.837.774-1.17.824-.312.045-.694.074-2.158-.535-1.748-.727-2.88-2.5-2.967-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.087-.177.183-.076.357.101.174.45 0.742.965 1.201.662.59 1.221.774 1.394.86.173.086.275.073.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086.159.058 1.011.477 1.184.564.173.087.289.13.332.202.043.073.043.419-.101.824z"/></svg>
+            <span>${lead.phone}</span>
           </a>
         </td>
         <td class="col-desktop-only">${lead.registeredAt}</td>
@@ -2887,11 +2901,15 @@ function renderAdminPPDBTable() {
         </td>
         <td>
           <div class="table-action-btns">
-            <button class="btn-icon-action btn-view-lead" data-id="${lead.id}" title="Lihat Dossier Calon Santri">Lihat</button>
-            <button class="btn-icon-action approve-btn btn-accept-lead" data-id="${lead.id}" title="Terima Santri">✓</button>
-            <button class="btn-icon-action btn-verify-lead" data-id="${lead.id}" title="Verifikasi Berkas" style="color: #2563eb;">🔍</button>
-            <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" class="btn-icon-action" title="Hubungi via WhatsApp" onclick="event.stopPropagation();">💬</a>
-            <button class="btn-icon-action btn-delete-lead" data-id="${lead.id}" title="Hapus Data Santri" style="color: #dc2626;">🗑️</button>
+            <button class="btn-icon-action btn-view-lead" data-id="${lead.id}" title="Lihat Dossier Calon Santri">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+            <button class="btn-icon-action approve-btn btn-accept-lead" data-id="${lead.id}" title="Terima / Ceklis Santri" style="color: #059669;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+            <button class="btn-icon-action btn-delete-lead" data-id="${lead.id}" title="Hapus / Buang Data Santri" style="color: #dc2626;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            </button>
           </div>
         </td>
       </tr>

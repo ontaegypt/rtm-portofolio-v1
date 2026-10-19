@@ -383,7 +383,16 @@ async function verifyAndSyncSession() {
         const currentHash = window.location.hash.slice(1);
         if (currentHash.startsWith('admin-')) {
           const mod = currentHash.replace('admin-', '');
-          if (!roleConf.allowedModules.includes(mod)) {
+          const SUBMODULE_PARENTS = {
+            'article-form': 'berita',
+            'user-form': 'users',
+            'gallery-form': 'galeri',
+            'syllabus-form': 'akademik',
+            'campaign-form': 'donasi',
+            'profile': 'overview'
+          };
+          const checkMod = SUBMODULE_PARENTS[mod] || mod;
+          if (mod !== 'profile' && !roleConf.allowedModules.includes(checkMod)) {
             showToast(`Akses Ditolak (403): Otorisasi akun Anda (${roleConf.name}) dipatenkan. Mengalihkan ke modul resmi.`, 'warning');
             window.location.hash = `#admin-${roleConf.defaultModule}`;
             return;
@@ -450,12 +459,13 @@ function initRouter() {
         'user-form': 'users',
         'gallery-form': 'galeri',
         'syllabus-form': 'akademik',
-        'campaign-form': 'donasi'
+        'campaign-form': 'donasi',
+        'profile': 'overview'
       };
       const checkModule = SUBMODULE_PARENTS[targetModule] || targetModule;
 
       // Check Role-Based Access Control (RBAC 403 Forbidden check)
-      if (!roleConf.allowedModules.includes(checkModule)) {
+      if (targetModule !== 'profile' && !roleConf.allowedModules.includes(checkModule)) {
         showToast(`Akses Ditolak (403): Role "${roleConf.name}" tidak berwenang mengelola modul ini. Hak akses dipatenkan.`, 'warning');
         window.location.hash = `#admin-${roleConf.defaultModule}`;
         return;
@@ -570,7 +580,8 @@ export function navigateToAdmin(moduleName) {
     'user-form': 'users',
     'gallery-form': 'galeri',
     'syllabus-form': 'akademik',
-    'campaign-form': 'donasi'
+    'campaign-form': 'donasi',
+    'profile': 'overview'
   };
   const activeNavModule = SUBMODULE_PARENTS[moduleName] || moduleName;
 
@@ -587,7 +598,8 @@ export function navigateToAdmin(moduleName) {
     'user-form': 'Manajemen Pengguna > Form Pengguna',
     'gallery-form': 'Kelola Galeri > Form Media Dokumentasi',
     'syllabus-form': 'Kelola Akademik > Unggah Silabus',
-    'campaign-form': 'Modul Wakaf & Donasi > Form Program Campaign'
+    'campaign-form': 'Modul Wakaf & Donasi > Form Program Campaign',
+    'profile': 'Pengaturan Akun > Ubah Data Profil'
   };
   const breadcrumbEl = document.getElementById('topbarBreadcrumbActive');
   if (breadcrumbEl) {
@@ -660,8 +672,11 @@ export function navigateToAdmin(moduleName) {
   if (moduleName === 'berita') renderAdminBerita();
   if (moduleName === 'tampilan') renderAdminTampilan();
   if (moduleName === 'users') renderAdminUsers();
+  if (moduleName === 'profile') renderAdminProfile();
 
-  // Scroll to top
+  // Scroll to top of content area and window
+  const contentArea = document.getElementById('adminContentArea');
+  if (contentArea) contentArea.scrollTo({ top: 0, behavior: 'smooth' });
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   // Close Mobile Sidebar
@@ -2983,6 +2998,31 @@ function openEditUserModal(user) {
   window.location.hash = '#admin-user-form';
 }
 
+export function renderAdminProfile() {
+  const currentUser = auth.getStoredUser() || usersState[0];
+  const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
+
+  const nameInput = document.getElementById('profileFormName');
+  const emailInput = document.getElementById('profileFormEmail');
+  const previewAvatar = document.getElementById('profilePageAvatarPreview');
+  const previewName = document.getElementById('profilePageDisplayName');
+  const previewRole = document.getElementById('profilePageRoleBadge');
+
+  if (nameInput) nameInput.value = currentUser.name || '';
+  if (emailInput) emailInput.value = currentUser.email || '';
+  if (previewAvatar) previewAvatar.textContent = currentUser.avatar || 'AD';
+  if (previewName) previewName.textContent = currentUser.name || 'Pengguna Admin';
+  if (previewRole) {
+    previewRole.textContent = roleConf.name;
+    previewRole.className = `user-role-badge ${roleConf.badgeClass}`;
+  }
+
+  const newPass = document.getElementById('profileFormNewPass');
+  const confirmPass = document.getElementById('profileFormConfirmPass');
+  if (newPass) newPass.value = '';
+  if (confirmPass) confirmPass.value = '';
+}
+
 // 9. Receipt Verification Modal Handlers
 function openReceiptModal(transactionId) {
   const trx = donationsState.find(d => d.id === transactionId);
@@ -3770,6 +3810,89 @@ function initAdminUI() {
       const currentUser = auth.getStoredUser() || usersState[0];
       const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
       window.location.hash = `#admin-${roleConf.defaultModule}`;
+    });
+  }
+
+  // Q. Profile Form Submit Handler (#adminProfileForm)
+  const profileForm = document.getElementById('adminProfileForm');
+  if (profileForm) {
+    profileForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const currentUser = auth.getStoredUser() || usersState[0];
+      const newName = document.getElementById('profileFormName').value.trim();
+      const newEmail = document.getElementById('profileFormEmail').value.trim();
+      const newPass = document.getElementById('profileFormNewPass')?.value;
+      const confirmPass = document.getElementById('profileFormConfirmPass')?.value;
+
+      if (!newName || !newEmail) {
+        showToast('Nama dan email wajib diisi.', 'warning');
+        return;
+      }
+
+      if (newPass) {
+        if (newPass.length < 6) {
+          showToast('Kata sandi baru minimal 6 karakter.', 'warning');
+          return;
+        }
+        if (newPass !== confirmPass) {
+          showToast('Konfirmasi kata sandi tidak cocok.', 'warning');
+          return;
+        }
+      }
+
+      // Generate initials for avatar
+      const initials = newName.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'AD';
+
+      try {
+        const payload = {
+          name: newName,
+          email: newEmail,
+          avatar: initials
+        };
+        if (newPass) {
+          payload.password = newPass;
+        }
+
+        // Update in backend database API
+        try {
+          await usersApi.update(currentUser.id, payload);
+        } catch (apiErr) {
+          console.warn('[Profile] API update notice:', apiErr.message);
+        }
+
+        // Update local session user
+        const updatedUser = {
+          ...currentUser,
+          name: newName,
+          email: newEmail,
+          avatar: initials
+        };
+        auth.setStoredUser(updatedUser, true);
+
+        // Also update usersState if found
+        const uIdx = usersState.findIndex(u => u.id === currentUser.id);
+        if (uIdx !== -1) {
+          usersState[uIdx] = { ...usersState[uIdx], ...updatedUser };
+        }
+
+        // Update topbar and cockpit UI
+        const topbarAvatar = document.getElementById('topbarAvatar');
+        const topbarName = document.getElementById('topbarUserName');
+        const sidebarAvatar = document.getElementById('sidebarUserAvatar');
+        const sidebarName = document.getElementById('sidebarUserName');
+        const welcomeUserName = document.getElementById('welcomeUserName');
+
+        if (topbarAvatar) topbarAvatar.textContent = initials;
+        if (topbarName) topbarName.textContent = newName;
+        if (sidebarAvatar) sidebarAvatar.textContent = initials;
+        if (sidebarName) sidebarName.textContent = newName;
+        if (welcomeUserName) welcomeUserName.textContent = newName;
+
+        renderAdminProfile();
+        showToast('Data profil Anda berhasil diperbarui!', 'success');
+      } catch (err) {
+        showToast(`Gagal memperbarui profil: ${err.message}`, 'warning');
+      }
     });
   }
 }

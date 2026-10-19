@@ -1,0 +1,27 @@
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [
+    {
+      name: 'rtm-api-server',
+      async configureServer(server) {
+        try {
+          const { apiApp } = await import('./server/api.js');
+          server.middlewares.use('/api', (req, res, next) => {
+            apiApp(req, res, next);
+          });
+        } catch (err) {
+          console.warn('[Vite API Middleware] Could not load server/api.js, running in static mode:', err.message);
+        }
+      }
+    }
+  ],
+  server: {
+    port: 5173,
+    host: '0.0.0.0'
+  },
+  preview: {
+    port: 5173,
+    host: '0.0.0.0'
+  }
+});

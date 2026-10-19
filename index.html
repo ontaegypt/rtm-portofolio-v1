@@ -1244,11 +1244,30 @@
                     <h1 class="cockpit-page-title">
                       <span>Dashboard</span> <strong class="cockpit-accent-word">Operasional</strong>
                     </h1>
-                    <p class="cockpit-page-sub">Monitoring menyeluruh aktivitas santri, capaian wakaf donasi, dan PPDB.</p>
+                    <p class="cockpit-page-sub">Monitoring menyeluruh konten terpublikasi, program akademik, PPDB, wakaf donasi, dan aktivitas staf.</p>
                   </div>
-                  <div class="cockpit-top-actions">
+                  <div class="cockpit-top-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                    <select id="overviewDateFilter" class="form-input" style="font-size: 0.8rem; padding: 0.38rem 0.75rem; width: auto; min-width: 150px;" aria-label="Filter Periode Waktu">
+                      <option value="all">Semua Waktu</option>
+                      <option value="today">Hari Ini</option>
+                      <option value="7d">7 Hari Terakhir</option>
+                      <option value="30d">30 Hari Terakhir</option>
+                      <option value="month">Bulan Ini</option>
+                    </select>
                     <button class="btn btn-secondary btn-sm" id="btnRefreshOverview" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">Muat Ulang Data</button>
                     <button class="btn btn-primary btn-sm" id="btnQuickExportCSV" style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #c39860; border: none; color: #fff;">Unduh Rekap</button>
+                  </div>
+                </div>
+
+                <!-- Quick Actions Bar (PRD Req #2) -->
+                <div class="admin-card" style="padding: 0.85rem 1.15rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                  <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Aksi Cepat CMS:</span>
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickWriteArticle" style="font-size: 0.78rem;">+ Tulis Artikel</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickManualDonation" style="font-size: 0.78rem;">+ Catat Donasi Manual</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickNewCampaign" style="font-size: 0.78rem;">+ Campaign Baru</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickManageProgram" style="font-size: 0.78rem;">Kelola Program</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickMediaLibrary" style="font-size: 0.78rem;">Pustaka Media</button>
                   </div>
                 </div>
 
@@ -1256,7 +1275,7 @@
                 <div class="cockpit-welcome-banner">
                   <div class="cockpit-banner-text">
                     <h2 class="cockpit-banner-title">Welcome back, <span id="welcomeUserName">Dr. Muhammad Zaki</span></h2>
-                    <p class="cockpit-banner-subtitle">Sistem operasional dan verifikasi santri berjalan optimal.</p>
+                    <p class="cockpit-banner-subtitle" id="welcomeBannerSubtitle">Sistem operasional dan verifikasi santri berjalan optimal berdasarkan data riil database.</p>
                     <div class="cockpit-banner-actions">
                       <a href="#admin-donasi" class="cockpit-pill-btn">Verifikasi Donasi &rarr;</a>
                       <a href="#admin-akademik" class="cockpit-pill-btn cockpit-pill-secondary">Data PPDB</a>
@@ -1265,7 +1284,7 @@
                   <div class="cockpit-banner-avatar-wrap">
                     <div class="cockpit-avatar-ring">
                       <div class="cockpit-ring-arc">
-                        <span class="cockpit-ring-percent">85%</span>
+                        <span class="cockpit-ring-percent" id="overviewRingPercent">100%</span>
                       </div>
                       <img src="/assets/images/mudir.jpg" alt="Mudir RTM" class="cockpit-avatar-img" />
                     </div>
@@ -1274,11 +1293,11 @@
 
                 <!-- Section Title for Mobile Bento Cards -->
                 <div class="cockpit-section-row">
-                  <h3 class="cockpit-section-heading">Ringkasan Metrik</h3>
-                  <span class="cockpit-section-date">Hari Ini</span>
+                  <h3 class="cockpit-section-heading">Ringkasan Metrik Terverifikasi</h3>
+                  <span class="cockpit-section-date" id="overviewPeriodLabel">Semua Waktu</span>
                 </div>
 
-                <!-- 3. The 4 Real KPI Stat Cards Row (Bento Grid Style from Reference) -->
+                <!-- 3. The 4 Real KPI Stat Cards Row (Zero Fabricated Metrics - PRD Req #2) -->
                 <div class="cockpit-stat-row bento-stat-grid">
                   <!-- KPI 1: Total Donasi (White Card) -->
                   <div class="cockpit-stat-card bento-card-white">
@@ -1286,9 +1305,9 @@
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>
                     </div>
                     <div class="cockpit-card-content">
-                      <div class="cockpit-stat-lbl">Total Wakaf</div>
-                      <div class="cockpit-stat-num" id="kpiTotalDonasi">Rp 494.050.000</div>
-                      <div class="cockpit-stat-sub">▲ +18.4%</div>
+                      <div class="cockpit-stat-lbl">Total Wakaf Terkonfirmasi</div>
+                      <div class="cockpit-stat-num" id="kpiTotalDonasi">Rp 2.750.000</div>
+                      <div class="cockpit-stat-sub" id="kpiSubDonasi">2 Transaksi Sukses</div>
                     </div>
                   </div>
 
@@ -1299,8 +1318,8 @@
                     </div>
                     <div class="cockpit-card-content">
                       <div class="cockpit-stat-lbl">Pendaftar PPDB</div>
-                      <div class="cockpit-stat-num" id="kpiTotalPPDB">38 Santri</div>
-                      <div class="cockpit-stat-sub" style="color: #2563eb;">● Gel. 1 Buka</div>
+                      <div class="cockpit-stat-num" id="kpiTotalPPDB">8 Santri</div>
+                      <div class="cockpit-stat-sub" id="kpiSubPPDB" style="color: #2563eb;">● 5 Program Buka</div>
                     </div>
                   </div>
 
@@ -1310,9 +1329,9 @@
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     </div>
                     <div class="cockpit-card-content">
-                      <div class="cockpit-stat-lbl">Campaign Wakaf</div>
+                      <div class="cockpit-stat-lbl">Campaign & Konten Aktif</div>
                       <div class="cockpit-stat-num" id="kpiActiveCampaigns">3 Program</div>
-                      <div class="cockpit-stat-sub" style="color: #059669;">● 1 Sukses</div>
+                      <div class="cockpit-stat-sub" id="kpiSubCampaigns" style="color: #059669;">● 6 Artikel & 12 Galeri</div>
                     </div>
                   </div>
 
@@ -1324,7 +1343,7 @@
                     <div class="cockpit-card-content">
                       <div class="cockpit-stat-lbl">Struk Pending</div>
                       <div class="cockpit-stat-num" id="kpiPendingReceipts">2 Transaksi</div>
-                      <div class="cockpit-stat-sub" style="color: #f5a623;">Verifikasi &rarr;</div>
+                      <div class="cockpit-stat-sub" id="kpiSubReceipts" style="color: #f5a623;">Verifikasi &rarr;</div>
                     </div>
                   </div>
                 </div>
@@ -1384,6 +1403,29 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- 5. Recent Administrative Activity (Audit Trail - PRD Req #2 & #9) -->
+                <div class="admin-card" style="margin-top: 1.25rem;">
+                  <div class="admin-card-header">
+                    <span class="admin-card-title">Aktivitas Administratif Terbaru (Audit Log Sistem)</span>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);" id="overviewContentSummaryBadge">Konten Terpublikasi: 6 Artikel • 12 Galeri • 6 Program</span>
+                  </div>
+                  <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                      <thead>
+                        <tr>
+                          <th class="col-desktop-only">Waktu</th>
+                          <th>Pelaku (Staf)</th>
+                          <th>Modul & Aksi</th>
+                          <th>Ringkasan Aktivitas</th>
+                        </tr>
+                      </thead>
+                      <tbody id="overviewAuditLogTableBody">
+                        <!-- Populated by JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1393,10 +1435,13 @@
             <div id="admin-panel-akademik" class="admin-panel">
               <div class="panel-header">
                 <div>
-                  <h2>Kelola Akademik & Status PPDB</h2>
-                  <p>Atur saklar buka/tutup pendaftaran gelombang santri baru dan silabus kurikulum per jenjang.</p>
+                  <h2>Kelola Akademik, Program & Pendaftaran PPDB</h2>
+                  <p>Kelola informasi publik program pendidikan, skema formulir registrasi, silabus PDF, dan seleksi calon santri.</p>
                 </div>
-                <div class="panel-header-actions">
+                <div class="panel-header-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <button class="btn btn-secondary btn-sm" id="btnCreateNewProgram">
+                    <span>+ Tambah Program Pendidikan</span>
+                  </button>
                   <button class="btn btn-primary btn-sm" id="btnUploadSyllabus">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     <span>Unggah Silabus PDF Baru</span>
@@ -1407,8 +1452,8 @@
               <!-- Programs Table with Toggle Switches -->
               <div class="admin-card">
                 <div class="admin-card-header">
-                  <span class="admin-card-title">Katalog 6 Program & Saklar Penerimaan Santri</span>
-                  <span style="font-size: 0.8rem; color: var(--text-muted);">Perubahan saklar langsung aktif secara real-time</span>
+                  <span class="admin-card-title">Katalog Program Pendidikan & Konfigurasi Formulir Pendaftaran</span>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Perubahan saklar & skema form langsung terhubung ke form publik</span>
                 </div>
                 <div class="admin-table-wrapper">
                   <table class="admin-table">
@@ -1443,7 +1488,7 @@
                 </div>
 
                 <!-- Table Search & Filters Toolbar -->
-                <div class="admin-table-toolbar" style="display: flex; flex-wrap: wrap; gap: 0.75rem; padding: 0.85rem 1.25rem; background: var(--bg-surface-soft);  align-items: center; justify-content: space-between;">
+                <div class="admin-table-toolbar" style="display: flex; flex-wrap: wrap; gap: 0.75rem; padding: 0.85rem 1.25rem; background: var(--bg-surface-soft); align-items: center; justify-content: space-between;">
                   <div style="display: flex; gap: 0.5rem; align-items: center; flex: 1; min-width: 260px;">
                     <span style="font-size: 1rem; color: var(--text-muted);"></span>
                     <input type="text" id="filterPPDBSearch" class="form-input" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;" placeholder="Cari nama santri, wali, nomor WA, ID..." />
@@ -1462,8 +1507,16 @@
                       <option value="all">Semua Status Seleksi</option>
                       <option value="pending">Menunggu</option>
                       <option value="verified">Terverifikasi</option>
+                      <option value="needs_correction">Perlu Perbaikan Berkas</option>
                       <option value="accepted">Diterima</option>
                       <option value="rejected">Ditolak</option>
+                    </select>
+                    <select id="filterPPDBDateRange" class="form-input" style="padding: 0.45rem 0.75rem; font-size: 0.85rem; width: auto;">
+                      <option value="all">Semua Tanggal</option>
+                      <option value="today">Hari Ini</option>
+                      <option value="7d">7 Hari Terakhir</option>
+                      <option value="30d">30 Hari Terakhir</option>
+                      <option value="month">Bulan Ini</option>
                     </select>
                   </div>
                 </div>
@@ -1497,12 +1550,15 @@
               <div class="panel-header">
                 <div>
                   <h2>Modul Wakaf & Donasi (CMS Finansial)</h2>
-                  <p>Pengelolaan program campaign, verifikasi bukti transfer donatur, dan pembukuan akuntabel.</p>
+                  <p>Pengelolaan program campaign, pencatatan transaksi mandiri, verifikasi bukti transfer, dan jejak audit keuangan.</p>
                 </div>
-                <div class="panel-header-actions">
+                <div class="panel-header-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                   <button class="btn btn-secondary btn-sm" id="btnExportDonationCSV">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     <span>Ekspor CSV Laporan</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm" id="btnOpenManualTransaction">
+                    <span>+ Catat Transaksi Manual</span>
                   </button>
                   <button class="btn btn-primary btn-sm" id="btnCreateCampaign">
                     <span>+ Buat Campaign Baru</span>
@@ -1525,15 +1581,23 @@
               <div class="admin-card" style="margin-top: 1.5rem;">
                 <div class="admin-card-header">
                   <span class="admin-card-title">Rekap Transaksi Donatur & Verifikasi Struk Transfer</span>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Total campaign hanya dihitung dari transaksi berstatus Sukses Terverifikasi</span>
                 </div>
 
                 <!-- Filter Toolbar -->
-                <div class="admin-toolbar">
-                  <input type="text" id="donationSearchInput" class="admin-search-input" placeholder="Cari invoice / nama donatur..." />
-                  <div style="display: flex; gap: 0.5rem;">
+                <div class="admin-toolbar" style="flex-wrap: wrap; gap: 0.75rem;">
+                  <div style="display: flex; gap: 0.5rem; flex: 1; min-width: 240px;">
+                    <input type="text" id="donationSearchInput" class="admin-search-input" placeholder="Cari invoice / nama donatur / referensi..." />
+                    <select id="donationCampaignFilter" class="form-input" style="width: auto; font-size: 0.82rem; padding: 0.4rem 0.75rem;">
+                      <option value="all">Semua Program / Umum</option>
+                      <option value="general">Infaq / Donasi Umum</option>
+                    </select>
+                  </div>
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                     <button class="filter-pill-btn donation-filter-btn active" data-status="all">Semua</button>
                     <button class="filter-pill-btn donation-filter-btn" data-status="pending">Menunggu Verifikasi (2)</button>
                     <button class="filter-pill-btn donation-filter-btn" data-status="success">Sukses Terverifikasi</button>
+                    <button class="filter-pill-btn donation-filter-btn" data-status="rejected">Ditolak / Void</button>
                   </div>
                 </div>
 
@@ -1552,6 +1616,31 @@
                       </tr>
                     </thead>
                     <tbody id="adminDonationTableBody">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Immutable Financial Audit Trail Card (PRD Req #7) -->
+              <div class="admin-card" style="margin-top: 1.5rem;">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">Jurnal Audit Verifikasi & Koreksi Keuangan (Immutable Audit Trail)</span>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Mencatat setiap verifikasi dan koreksi nominal/status beserta alasan wajib</span>
+                </div>
+                <div class="admin-table-wrapper">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th class="col-desktop-only">Waktu</th>
+                        <th>Invoice</th>
+                        <th>Tindakan</th>
+                        <th class="col-desktop-only">Perubahan Nilai</th>
+                        <th>Alasan / Catatan Audit</th>
+                        <th class="col-desktop-only">Petugas</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminFinancialAuditTableBody">
                       <!-- Populated by JS -->
                     </tbody>
                   </table>
@@ -1617,7 +1706,10 @@
 
                   <div class="form-group">
                     <label class="form-label" style="font-weight: 600; color: #374151;">URL Foto Cover Program *</label>
-                    <input type="text" id="campaignFormImage" class="form-input" value="/assets/images/campus.jpg" required style="padding: 0.7rem 1rem;" />
+                    <div style="display: flex; gap: 0.5rem;">
+                      <input type="text" id="campaignFormImage" class="form-input" value="/assets/images/campus.jpg" required style="padding: 0.7rem 1rem; flex: 1;" />
+                      <button type="button" class="btn btn-secondary btn-sm" id="btnPickMediaForCampaign" style="white-space: nowrap;">Pilih dari Pustaka Media</button>
+                    </div>
                   </div>
 
                   <div class="form-group">
@@ -1626,11 +1718,13 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label" style="font-weight: 600; color: #374151;">Status Program</label>
+                    <label class="form-label" style="font-weight: 600; color: #374151;">Status Publikasi Campaign</label>
                     <select id="campaignFormStatus" class="form-input" style="padding: 0.7rem 1rem;">
                       <option value="active">Aktif (Published)</option>
-                      <option value="draft">Draft (Simpan Saja)</option>
-                      <option value="completed">Selesai (Completed)</option>
+                      <option value="draft">Draft (Simpan Internal)</option>
+                      <option value="closed">Ditutup (Closed)</option>
+                      <option value="completed">Selesai / Tercapai (Completed)</option>
+                      <option value="archived">Diarsipkan (Archived)</option>
                     </select>
                   </div>
 
@@ -1648,10 +1742,11 @@
             <div id="admin-panel-galeri" class="admin-panel">
               <div class="panel-header">
                 <div>
-                  <h2>Kelola Galeri Media & Log Kunjungan</h2>
-                  <p>Manajemen album foto kegiatan santri dan konfirmasi permohonan kunjungan rombongan tamu.</p>
+                  <h2>Kelola Galeri Media, Pustaka Aset & Log Kunjungan</h2>
+                  <p>Manajemen album dokumentasi, metadata alt-text, urutan tampil, pustaka media bersama, dan jadwal kunjungan.</p>
                 </div>
-                <div class="panel-header-actions">
+                <div class="panel-header-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <button class="btn btn-secondary btn-sm" id="btnOpenMediaLibrary">Pustaka Media Bersama</button>
                   <button class="btn btn-primary btn-sm" id="btnAddGalleryMedia">+ Tambah Media Galeri</button>
                 </div>
               </div>
@@ -1685,8 +1780,24 @@
 
               <!-- Media Albums Overview -->
               <div class="admin-card" style="margin-top: 1.5rem;">
-                <div class="admin-card-header">
-                  <span class="admin-card-title">Koleksi Media Dokumentasi Terpublikasi (12 Foto)</span>
+                <div class="admin-card-header" style="flex-wrap: wrap; gap: 0.75rem;">
+                  <span class="admin-card-title" id="adminGalleryHeaderTitle">Koleksi Media Dokumentasi Terpublikasi (12 Foto)</span>
+                  <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <select id="adminGalleryCategoryFilter" class="form-input" style="font-size: 0.8rem; padding: 0.35rem 0.65rem; width: auto;">
+                      <option value="all">Semua Kategori Album</option>
+                      <option value="gedung">Fasilitas & Kampus</option>
+                      <option value="tahfidz">Halaqoh Tahfidz</option>
+                      <option value="kegiatan_santri">Kegiatan Santri</option>
+                      <option value="event">Prestasi & Wisuda</option>
+                      <option value="ekstrakurikuler">Ekstrakurikuler</option>
+                    </select>
+                    <select id="adminGalleryStatusFilter" class="form-input" style="font-size: 0.8rem; padding: 0.35rem 0.65rem; width: auto;">
+                      <option value="all">Semua Status</option>
+                      <option value="published">Published</option>
+                      <option value="draft">Draft</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                  </div>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;" id="adminMediaMiniGrid">
                   <!-- Populated by JS -->
@@ -1701,7 +1812,7 @@
               <div class="panel-header">
                 <div>
                   <h2>Kelola Artikel & Berita (CMS Blog)</h2>
-                  <p>Tulis artikel baru, kelola publikasi berita pesantren, dan optimasi SEO judul meta.</p>
+                  <p>Tulis artikel baru, pratinjau konten, validasi slug unik, kelola publikasi/arsip, dan optimasi SEO meta.</p>
                 </div>
                 <div class="panel-header-actions">
                   <button class="btn btn-primary btn-sm" id="btnCreateArticle">
@@ -1712,8 +1823,23 @@
               </div>
 
               <div class="admin-card">
-                <div class="admin-toolbar">
-                  <input type="text" id="adminArticleSearchInput" class="admin-search-input" placeholder="Cari artikel berita..." />
+                <div class="admin-toolbar" style="flex-wrap: wrap; gap: 0.75rem;">
+                  <div style="display: flex; gap: 0.5rem; flex: 1; min-width: 240px; flex-wrap: wrap;">
+                    <input type="text" id="adminArticleSearchInput" class="admin-search-input" placeholder="Cari judul, slug, atau isi artikel..." />
+                    <select id="adminArticleCategoryFilter" class="form-input" style="width: auto; font-size: 0.82rem; padding: 0.4rem 0.75rem;">
+                      <option value="all">Semua Kategori</option>
+                      <option value="Prestasi">Prestasi & Event</option>
+                      <option value="PPDB">Info PPDB</option>
+                      <option value="Parenting">Parenting Qur'ani</option>
+                      <option value="Keislaman">Artikel Keislaman</option>
+                    </select>
+                    <select id="adminArticleStatusFilter" class="form-input" style="width: auto; font-size: 0.82rem; padding: 0.4rem 0.75rem;">
+                      <option value="all">Semua Status</option>
+                      <option value="published">Published (Tayang)</option>
+                      <option value="draft">Draft (Konsep)</option>
+                      <option value="archived">Archived (Diarsipkan)</option>
+                    </select>
+                  </div>
                   <div style="font-size: 0.82rem; color: var(--text-muted);" id="adminArticleCountBadge">
                     6 Berita Terdaftar
                   </div>
@@ -1746,10 +1872,12 @@
             <div id="admin-panel-tampilan" class="admin-panel">
               <div class="panel-header">
                 <div>
-                  <h2>Kelola Tampilan & Identitas Lembaga</h2>
-                  <p>Pengaturan identitas yayasan, pimpinan mudir, nomor layanan WhatsApp, dan nomor rekening resmi.</p>
+                  <h2>Kelola Tampilan, Konten Beranda & Identitas Lembaga</h2>
+                  <p>Konfigurasi identitas lembaga, beranda, tentang kami, visi-misi, kontak, navigasi & footer dengan fitur Draft & Pratinjau.</p>
                 </div>
-                <div class="panel-header-actions">
+                <div class="panel-header-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <button class="btn btn-secondary btn-sm" id="btnPreviewSiteSettings">Pratinjau Website</button>
+                  <button class="btn btn-secondary btn-sm" id="btnSaveSettingsDraft">Simpan sebagai Draft</button>
                   <button class="btn btn-primary btn-sm" id="btnSaveAppearanceSettings">Simpan Perubahan Identitas</button>
                 </div>
               </div>
@@ -1758,24 +1886,31 @@
                 <!-- Identity Card -->
                 <div class="admin-card">
                   <div class="admin-card-header">
-                    <span class="admin-card-title">Identitas Yayasan & Lembaga</span>
+                    <span class="admin-card-title">Identitas Yayasan & Logo Lembaga</span>
                   </div>
                   <form id="formAppearanceIdentity" style="display: flex; flex-direction: column; gap: 1rem;">
                     <div class="form-group">
-                      <label class="form-label">Nama Lembaga Lengkap</label>
-                      <input type="text" id="settingInstitutionName" class="form-input" value="Rumah Tahfidz Al-Qur'an & Pesantren Modern" />
+                      <label class="form-label">Nama Lembaga Lengkap *</label>
+                      <input type="text" id="settingInstitutionName" class="form-input" value="Rumah Tahfidz Al-Qur'an & Pesantren Modern" required />
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Nama Ringkas (Header & Footer)</label>
-                      <input type="text" id="settingShortName" class="form-input" value="Rumah Tahfidz" />
+                      <label class="form-label">Nama Ringkas (Header & Footer) *</label>
+                      <input type="text" id="settingShortName" class="form-input" value="Rumah Tahfidz" required />
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Tagline Lembaga</label>
+                      <label class="form-label">Tagline Lembaga *</label>
                       <textarea id="settingTagline" class="form-input" rows="2">Mencetak Generasi Qur'ani yang Mutqin, Berkarakter, dan Berwawasan Global</textarea>
                     </div>
                     <div class="form-group">
                       <label class="form-label">Nama Mudir / Pengasuh Pesantren</label>
                       <input type="text" id="settingMudir" class="form-input" value="KH. Dr. Muhammad Zaki Al-Hafizh, M.A." />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">URL Logo Header Utama</label>
+                      <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="settingLogoUrl" class="form-input" value="/assets/images/logo-header-RTM.png" style="flex: 1;" />
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnPickMediaForLogo">Pilih Media</button>
+                      </div>
                     </div>
                   </form>
                 </div>
@@ -1787,22 +1922,78 @@
                   </div>
                   <form id="formAppearanceContact" style="display: flex; flex-direction: column; gap: 1rem;">
                     <div class="form-group">
-                      <label class="form-label">WhatsApp Center PPDB</label>
+                      <label class="form-label">WhatsApp Center PPDB *</label>
                       <input type="text" id="settingWhatsappPPDB" class="form-input" value="6281234567890" />
                     </div>
                     <div class="form-group">
-                      <label class="form-label">WhatsApp Khusus Konfirmasi Donasi</label>
+                      <label class="form-label">WhatsApp Khusus Konfirmasi Donasi *</label>
                       <input type="text" id="settingWhatsappDonasi" class="form-input" value="6281298765432" />
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Email Lembaga</label>
+                      <label class="form-label">Email Lembaga *</label>
                       <input type="email" id="settingEmail" class="form-input" value="info@rumahtahfidz.sch.id" />
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Alamat Kampus Utama</label>
+                      <label class="form-label">Alamat Kampus Utama *</label>
                       <input type="text" id="settingAddress" class="form-input" value="Jl. Peradaban Qur'ani No. 99, Ciburial, Dago Atas, Bandung, Jawa Barat 40198" />
                     </div>
+                    <div class="form-group">
+                      <label class="form-label">Rekening Resmi Wakaf & Donasi</label>
+                      <input type="text" id="settingBankAccountInfo" class="form-input" value="BSI 7123 4567 89 a.n. Yayasan Cahaya Hati Bening" />
+                    </div>
                   </form>
+                </div>
+
+                <!-- Homepage Hero & About / Vision-Mission Card (PRD Req #8) -->
+                <div class="admin-card">
+                  <div class="admin-card-header">
+                    <span class="admin-card-title">Konten Beranda (Hero), Tentang Kami & Visi Misi</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label">Judul Utama Hero Beranda</label>
+                      <input type="text" id="settingHeroTitle" class="form-input" value="Membangun Generasi Penghafal Al-Qur'an Bersanad & Berakhlak Mulia" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Ringkasan Sejarah / Tentang Kami</label>
+                      <textarea id="settingAboutSummary" class="form-input" rows="2">Didirikan pada tahun 2012 oleh KH. Dr. Muhammad Zaki Al-Hafizh, Rumah Tahfidz berkembang menjadi kawasan pendidikan pesantren modern terakreditasi A Unggul.</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Visi Lembaga</label>
+                      <textarea id="settingVision" class="form-input" rows="2">Menjadi pusat peradaban Al-Qur'an terkemuka di Asia Tenggara yang melahirkan generasi penghafal Al-Qur'an mutqin, berakhlak mulia, berwawasan ilmiah, dan mandiri.</textarea>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Misi Utama (Pisahkan dengan baris baru)</label>
+                      <textarea id="settingMission" class="form-input" rows="3">Menyelenggarakan pembelajaran Al-Qur'an bersanad muttashil.
+Mengintegrasikan kurikulum agama dan kurikulum sains nasional.
+Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Social Links, Navigation & Footer Card (PRD Req #8) -->
+                <div class="admin-card">
+                  <div class="admin-card-header">
+                    <span class="admin-card-title">Tautan Sosial Media, Navigasi CTA & Footer</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label">Tautan Instagram Resmi</label>
+                      <input type="url" id="settingSocialInstagram" class="form-input" value="https://instagram.com/rumahtahfidz" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Tautan YouTube Resmi</label>
+                      <input type="url" id="settingSocialYoutube" class="form-input" value="https://youtube.com/@rumahtahfidz" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Teks Tombol CTA Navigasi Header</label>
+                      <input type="text" id="settingNavCtaLabel" class="form-input" value="Daftar PPDB" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Deskripsi Singkat Footer & Legalitas</label>
+                      <textarea id="settingFooterCopyright" class="form-input" rows="2">© 2026 Rumah Tahfidz Al-Qur'an. Izin Kemenag RI No. Kd.10.04/PP.00.7/3492/2018 • NPSN: 69982341 (Akreditasi A)</textarea>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1814,7 +2005,7 @@
               <div class="panel-header">
                 <div>
                   <h2>Manajemen Pengguna & Hak Akses (RBAC)</h2>
-                  <p>Daftar akun staf yayasan dengan aturan pembagian wewenang peran (Admin, Content, Finance).</p>
+                  <p>Daftar akun staf yayasan dengan pembuatan, pengeditan, aktivasi/deaktivasi akun, dan pembagian wewenang peran.</p>
                 </div>
                 <div class="panel-header-actions">
                   <button class="btn btn-primary btn-sm" id="btnCreateUser">+ Tambah Pengguna Baru</button>
@@ -1878,7 +2069,7 @@
                         <td><strong style="color: #b45309;">Finance</strong></td>
                         <td class="col-desktop-only"><code>#admin-donasi</code></td>
                         <td>Modul Wakaf & Donasi, Verifikasi Bank, Ekspor CSV</td>
-                        <td><span style="color: #dc2626;">Artikel Berita, Akademik, Manajemen Pengguna</span></td>
+                        <td><span style="color: #dc2626;">Artikel Berita, Akademik & Data Pribadi Santri, Manajemen Pengguna</span></td>
                       </tr>
                     </tbody>
                   </table>
@@ -1901,9 +2092,12 @@
                       Tulis Berita / Artikel Baru
                     </h2>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0 0;">
-                      Publikasikan artikel dakwah, prestasi santri, atau pengumuman resmi yayasan.
+                      Publikasikan artikel dakwah, prestasi santri, atau pengumuman resmi yayasan dengan optimasi SEO.
                     </p>
                   </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnPreviewArticle">Pratinjau Artikel</button>
                 </div>
               </div>
 
@@ -1914,6 +2108,18 @@
                   <div class="form-group">
                     <label class="form-label" style="font-weight: 600; color: #374151;">Judul Artikel / Berita *</label>
                     <input type="text" id="articleFormTitle" class="form-input" placeholder="Masukkan judul artikel yang informatif dan menarik..." required style="font-size: 1.05rem; padding: 0.75rem 1rem;" />
+                  </div>
+
+                  <!-- URL Slug & Validation (PRD Req #3) -->
+                  <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Slug URL Artikel (Unik) *</label>
+                      <span id="articleSlugFeedback" style="font-size: 0.78rem; color: #059669; font-weight: 600;">✓ Slug siap digunakan</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <input type="text" id="articleFormSlug" class="form-input" placeholder="contoh: wisuda-akbar-tahfidz-30-juz" style="padding: 0.65rem 1rem; font-family: monospace; flex: 1;" />
+                      <button type="button" class="btn btn-secondary btn-sm" id="btnGenerateSlug" style="white-space: nowrap;">Buat Otomatis</button>
+                    </div>
                   </div>
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
@@ -1937,19 +2143,57 @@
                     <textarea id="articleFormExcerpt" class="form-input" rows="2" placeholder="Cuplikan 1-2 kalimat pengantar berita..." required style="padding: 0.75rem 1rem;"></textarea>
                   </div>
 
+                  <!-- Rich-Text Content Editor with Formatting Toolbar (PRD Req #3) -->
                   <div class="form-group">
-                    <label class="form-label" style="font-weight: 600; color: #374151;">Isi Konten Artikel Lengkap *</label>
-                    <textarea id="articleFormBody" class="form-input" rows="7" placeholder="Tuliskan isi berita selengkapnya di sini..." required style="padding: 0.75rem 1rem; line-height: 1.6;"></textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.5rem;">
+                      <label class="form-label" style="font-weight: 600; color: #374151; margin: 0;">Isi Konten Artikel Lengkap (Rich-Text Editor) *</label>
+                      <div class="rte-toolbar" style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-secondary btn-sm btn-rte-format" data-format="h2" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">H2</button>
+                        <button type="button" class="btn btn-secondary btn-sm btn-rte-format" data-format="h3" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">H3</button>
+                        <button type="button" class="btn btn-secondary btn-sm btn-rte-format" data-format="bold" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; font-weight: 800;">B</button>
+                        <button type="button" class="btn btn-secondary btn-sm btn-rte-format" data-format="italic" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; font-style: italic;">I</button>
+                        <button type="button" class="btn btn-secondary btn-sm btn-rte-format" data-format="quote" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">“ Kutipan</button>
+                        <button type="button" class="btn btn-secondary btn-sm btn-rte-format" data-format="list" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">• List</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnInsertMediaToArticle" style="padding: 0.2rem 0.55rem; font-size: 0.75rem;">+ Sisipkan Media</button>
+                      </div>
+                    </div>
+                    <textarea id="articleFormBody" class="form-input" rows="8" placeholder="Tuliskan isi berita selengkapnya di sini..." required style="padding: 0.75rem 1rem; line-height: 1.65;"></textarea>
                   </div>
 
                   <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.25rem;">
                     <div class="form-group">
-                      <label class="form-label" style="font-weight: 600; color: #374151;">Foto Thumbnail URL *</label>
-                      <input type="text" id="articleFormImage" class="form-input" value="/assets/images/wisuda.jpg" required style="padding: 0.7rem 1rem;" />
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Foto Thumbnail / Cover URL *</label>
+                      <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="articleFormImage" class="form-input" value="/assets/images/wisuda.jpg" required style="padding: 0.7rem 1rem; flex: 1;" />
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnPickMediaForArticle" style="white-space: nowrap;">Pustaka Media</button>
+                      </div>
                     </div>
                     <div class="form-group">
                       <label class="form-label" style="font-weight: 600; color: #374151;">Tagar (Pisahkan Koma)</label>
                       <input type="text" id="articleFormTags" class="form-input" value="#tahfidz, #prestasi, #santri" style="padding: 0.7rem 1rem;" />
+                    </div>
+                  </div>
+
+                  <!-- SEO Metadata Box (PRD Req #3) -->
+                  <div style="padding: 1rem 1.15rem; background: #faf8fe; border-radius: var(--radius-md); border: 1px dashed rgba(129, 28, 229, 0.22); display: flex; flex-direction: column; gap: 0.85rem;">
+                    <div style="font-weight: 700; font-size: 0.88rem; color: #111827;">Metadata SEO & Mesin Pencari</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                      <div class="form-group" style="margin: 0;">
+                        <label class="form-label" style="font-size: 0.82rem;">Meta Title SEO (Maks. 60 Karakter)</label>
+                        <input type="text" id="articleFormSeoTitle" class="form-input" placeholder="Otomatis mengikuti judul artikel jika dikosongkan..." style="font-size: 0.88rem; padding: 0.55rem 0.85rem;" />
+                      </div>
+                      <div class="form-group" style="margin: 0;">
+                        <label class="form-label" style="font-size: 0.82rem;">Status Publikasi Artikel</label>
+                        <select id="articleFormStatusSelect" class="form-input" style="font-size: 0.88rem; padding: 0.55rem 0.85rem;">
+                          <option value="published">Published (Tayang di Web Publik)</option>
+                          <option value="draft">Draft (Simpan Konsep Internal)</option>
+                          <option value="archived">Archived (Arsipkan dari Web Publik)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" style="font-size: 0.82rem;">Meta Description SEO (Maks. 160 Karakter)</label>
+                      <textarea id="articleFormSeoDesc" class="form-input" rows="2" placeholder="Otomatis mengikuti ringkasan excerpt jika dikosongkan..." style="font-size: 0.88rem; padding: 0.55rem 0.85rem;"></textarea>
                     </div>
                   </div>
 
@@ -1963,7 +2207,7 @@
                     </label>
                   </div>
 
-                  <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                  <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
                     <a href="#admin-berita" class="btn btn-secondary" id="btnCancelArticle" style="padding: 0.7rem 1.25rem;">Batal</a>
                     <button type="submit" class="btn btn-primary" id="btnSubmitArticle" style="padding: 0.7rem 1.5rem;">Simpan Artikel</button>
                   </div>
@@ -1986,7 +2230,7 @@
                       Tambah Pengguna Baru
                     </h2>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0 0;">
-                      Atur data akun staf dan penetapan role hak akses (Admin, Content, Finance).
+                      Atur data akun staf, status aktif/nonaktif, dan penetapan role hak akses (Admin, Content, Finance).
                     </p>
                   </div>
                 </div>
@@ -2011,13 +2255,22 @@
                     <input type="password" id="userFormPassword" class="form-input" placeholder="Min. 6 Karakter..." required style="font-size: 1rem; padding: 0.75rem 1rem;" />
                   </div>
 
-                  <div class="form-group">
-                    <label class="form-label" style="font-weight: 600; color: #374151;">Peran (Role Hak Akses Modul) *</label>
-                    <select id="userFormRole" class="form-input" required style="font-size: 1rem; padding: 0.75rem 1rem;">
-                      <option value="superadmin">Admin (Akses Penuh Seluruh Sistem)</option>
-                      <option value="editor">Content (Kelola Berita, Akademik, Galeri)</option>
-                      <option value="finance">Finance (Modul Wakaf & Donasi)</option>
-                    </select>
+                  <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Peran (Role Hak Akses Modul) *</label>
+                      <select id="userFormRole" class="form-input" required style="font-size: 1rem; padding: 0.75rem 1rem;">
+                        <option value="superadmin">Admin (Akses Penuh Seluruh Sistem)</option>
+                        <option value="editor">Content (Kelola Berita, Akademik, Galeri)</option>
+                        <option value="finance">Finance (Modul Wakaf & Donasi)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Status Akun</label>
+                      <select id="userFormActiveStatus" class="form-input" style="font-size: 1rem; padding: 0.75rem 1rem;">
+                        <option value="1">Aktif (Diizinkan Login)</option>
+                        <option value="0">Nonaktif (Akses Diblokir)</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
@@ -2043,7 +2296,7 @@
                       Detail Informasi Akun Pengguna
                     </h2>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0 0;">
-                      Profil lengkap staf, hak wewenang akses, dan riwayat aktivitas akun.
+                      Profil lengkap staf, hak wewenang akses, status aktif/nonaktif, dan riwayat aktivitas akun.
                     </p>
                   </div>
                 </div>
@@ -2061,7 +2314,7 @@
                         Nama Pengguna
                       </h3>
                       <span id="userDetailRoleBadge" class="user-role-badge superadmin">Admin</span>
-                      <span class="status-pill status-success">Aktif</span>
+                      <span id="userDetailActiveStatusPill" class="status-pill status-success">Aktif</span>
                     </div>
                     <div id="userDetailEmailSubtitle" style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">
                       admin@rumahtahfidz.sch.id
@@ -2101,12 +2354,15 @@
                   </div>
                   <div class="user-detail-row" style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: var(--bg-surface-soft); border-radius: var(--radius-md);">
                     <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Status Operasional Akun</span>
-                    <span class="status-pill status-success">Aktif Terverifikasi</span>
+                    <span id="userDetailOperationalStatus" class="status-pill status-success">Aktif Terverifikasi</span>
                   </div>
                 </div>
 
-                <!-- Action Buttons: Edit & Delete -->
+                <!-- Action Buttons: Toggle Active, Edit & Delete -->
                 <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; flex-wrap: wrap;">
+                  <button type="button" class="btn btn-secondary" id="btnDetailToggleUserActive" style="padding: 0.65rem 1.15rem;">
+                    <span>Nonaktifkan / Aktifkan Akun</span>
+                  </button>
                   <button type="button" class="btn btn-secondary" id="btnDetailDeleteUser" style="color: #dc2626; border-color: rgba(220, 38, 38, 0.3); padding: 0.65rem 1.25rem;">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 0.35rem;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     <span>Hapus Akun Ini</span>
@@ -2120,7 +2376,7 @@
             </div>
 
             <!-- ================================================================
-                 PANEL 4B: HALAMAN TAMBAH MEDIA GALERI (#admin-panel-gallery-form)
+                 PANEL 4B: HALAMAN TAMBAH / EDIT MEDIA GALERI (#admin-panel-gallery-form)
                  ================================================================ -->
             <div id="admin-panel-gallery-form" class="admin-panel">
               <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
@@ -2130,11 +2386,11 @@
                     <span>Kembali ke Galeri Kegiatan</span>
                   </a>
                   <div>
-                    <h2 style="font-size: 1.45rem; font-weight: 700; color: #111827; margin: 0;">
+                    <h2 id="galleryFormModalTitle" style="font-size: 1.45rem; font-weight: 700; color: #111827; margin: 0;">
                       Tambah Media Dokumentasi Galeri
                     </h2>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0 0;">
-                      Publikasikan foto kegiatan, fasilitas sarana, atau prestasi santri ke galeri resmi yayasan.
+                      Kelola foto dokumentasi, alt-text aksesibilitas, urutan tampil, album koleksi, dan status publikasi.
                     </p>
                   </div>
                 </div>
@@ -2142,6 +2398,8 @@
 
               <div class="admin-form-page-card" data-ui="admin-form" style="max-width: 760px;">
                 <form id="adminGalleryForm" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                  <input type="hidden" id="galleryFormId" value="" />
+
                   <div class="form-group">
                     <label class="form-label" style="font-weight: 600; color: #374151;">Judul Foto / Dokumentasi *</label>
                     <input type="text" id="galleryFormTitle" class="form-input" placeholder="Contoh: Kunjungan Edukasi Santri ke Masjid Raya" required style="font-size: 1rem; padding: 0.75rem 1rem;" />
@@ -2159,14 +2417,36 @@
                       </select>
                     </div>
                     <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Nama Koleksi / Event Album</label>
+                      <input type="text" id="galleryFormAlbum" class="form-input" placeholder="Misal: Wisuda Akbar 2026" style="font-size: 1rem; padding: 0.75rem 1rem;" />
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
                       <label class="form-label" style="font-weight: 600; color: #374151;">Tanggal Dokumentasi</label>
-                      <input type="date" id="galleryFormDate" class="form-input" style="font-size: 1rem; padding: 0.75rem 1rem;" />
+                      <input type="date" id="galleryFormDate" class="form-input" style="font-size: 0.95rem; padding: 0.7rem 0.85rem;" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Urutan Tampil (Order)</label>
+                      <input type="number" id="galleryFormSortOrder" class="form-input" value="0" min="0" style="font-size: 0.95rem; padding: 0.7rem 0.85rem;" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Status Publikasi</label>
+                      <select id="galleryFormStatus" class="form-input" style="font-size: 0.95rem; padding: 0.7rem 0.85rem;">
+                        <option value="published">Published (Tayang)</option>
+                        <option value="draft">Draft (Sembunyikan)</option>
+                        <option value="archived">Archived (Arsip)</option>
+                      </select>
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label" style="font-weight: 600; color: #374151;">URL Media Gambar *</label>
-                    <input type="text" id="galleryFormUrl" class="form-input" placeholder="/assets/images/campus.jpg atau https://..." required style="font-size: 1rem; padding: 0.75rem 1rem;" />
+                    <label class="form-label" style="font-weight: 600; color: #374151;">URL Media Gambar atau Unggah File *</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <input type="text" id="galleryFormUrl" class="form-input" placeholder="/assets/images/campus.jpg atau https://..." required style="font-size: 1rem; padding: 0.75rem 1rem; flex: 1;" />
+                      <button type="button" class="btn btn-secondary btn-sm" id="btnPickMediaForGallery" style="white-space: nowrap;">Pilih / Unggah dari Pustaka Media</button>
+                    </div>
                     <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.6rem; align-items: center;">
                       <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Pilihan Cepat Gambar:</span>
                       <button type="button" class="btn btn-secondary btn-sm btn-quick-gal-img" data-img="/assets/images/campus.jpg" style="font-size: 0.75rem; padding: 0.2rem 0.55rem;">Kampus</button>
@@ -2175,6 +2455,11 @@
                       <button type="button" class="btn btn-secondary btn-sm btn-quick-gal-img" data-img="/assets/images/archery.jpg" style="font-size: 0.75rem; padding: 0.2rem 0.55rem;">Panahan</button>
                       <button type="button" class="btn btn-secondary btn-sm btn-quick-gal-img" data-img="/assets/images/wisuda.jpg" style="font-size: 0.75rem; padding: 0.2rem 0.55rem;">Wisuda</button>
                     </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" style="font-weight: 600; color: #374151;">Teks Alternatif Aksesibilitas (Alt Text) *</label>
+                    <input type="text" id="galleryFormAltText" class="form-input" placeholder="Deskripsi gambar bagi pembaca layar (Screen Reader)..." style="font-size: 0.95rem; padding: 0.7rem 1rem;" />
                   </div>
 
                   <div class="form-group">
@@ -2316,6 +2601,121 @@
                   <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
                     <a href="#admin-overview" class="btn btn-secondary" id="btnCancelProfile" style="padding: 0.7rem 1.25rem;">Batal</a>
                     <button type="submit" class="btn btn-primary" id="btnSubmitProfile" style="padding: 0.7rem 1.5rem;">Simpan Perubahan Profil</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- ================================================================
+                 PANEL 2C: HALAMAN EDITOR PROGRAM AKADEMIK & FORM DINAMIS (#admin-panel-program-form)
+                 (PRD Req #5 & #6: Academic Program Management + Connected Registration Form Schema)
+                 ================================================================ -->
+            <div id="admin-panel-program-form" class="admin-panel">
+              <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                  <a href="#admin-akademik" class="btn btn-secondary btn-sm" id="btnBackToProgramList" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    <span>Kembali ke Akademik & PPDB</span>
+                  </a>
+                  <div>
+                    <h2 id="programFormModalTitle" style="font-size: 1.45rem; font-weight: 700; color: #111827; margin: 0;">
+                      Kelola Informasi Program & Skema Formulir Pendaftaran
+                    </h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0 0;">
+                      Atur deskripsi, persyaratan, jadwal, kurikulum, instruksi pendaftaran, dan field kustom formulir PPDB.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-form-page-card" data-ui="admin-form" style="max-width: 920px;">
+                <form id="adminProgramEditForm" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                  <input type="hidden" id="programFormMode" value="edit" />
+
+                  <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.25rem;">
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Kode / Slug Program *</label>
+                      <input type="text" id="programFormIdInput" class="form-input" placeholder="e.g. smp, sma, takhassus" required style="padding: 0.7rem 1rem; font-family: monospace;" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Nama Program Pendidikan *</label>
+                      <input type="text" id="programFormTitle" class="form-input" placeholder="e.g. SMP Tahfidz Al-Qur'an (Boarding)" required style="padding: 0.7rem 1rem;" />
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Kategori Jenjang *</label>
+                      <input type="text" id="programFormCategory" class="form-input" placeholder="Formal / Non-Formal / Takhassus" required style="padding: 0.7rem 1rem;" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Target Capaian Hafalan *</label>
+                      <input type="text" id="programFormTarget" class="form-input" placeholder="15 Juz Mutqin / 30 Juz" required style="padding: 0.7rem 1rem;" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Durasi Pendidikan *</label>
+                      <input type="text" id="programFormDuration" class="form-input" placeholder="3 Tahun (6 Semester)" required style="padding: 0.7rem 1rem;" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" style="font-weight: 600; color: #374151;">Deskripsi & Kurikulum Singkat Program *</label>
+                    <textarea id="programFormSubtitle" class="form-input" rows="2" placeholder="Ringkasan keunggulan kurikulum dan metode pembelajaran..." required style="padding: 0.75rem 1rem;"></textarea>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Kriteria Kelayakan / Persyaratan (Eligibility)</label>
+                      <textarea id="programFormEligibility" class="form-input" rows="2" placeholder="Misal: Lulusan SD/MI, mampu membaca Al-Qur'an lancar..." style="padding: 0.7rem 1rem;"></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Jadwal Belajar & Kegiatan Utama</label>
+                      <textarea id="programFormSchedule" class="form-input" rows="2" placeholder="Misal: Senin - Sabtu (Asrama Penuh / Halaqoh Subuh & Maghrib)..." style="padding: 0.7rem 1rem;"></textarea>
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">Instruksi Pendaftaran & Seleksi</label>
+                      <textarea id="programFormInstructions" class="form-input" rows="2" placeholder="Petunjuk pengisian formulir dan persiapan tes talaqqi..." style="padding: 0.7rem 1rem;"></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-weight: 600; color: #374151;">URL Gambar Cover Program</label>
+                      <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="programFormImage" class="form-input" value="/assets/images/halaqoh.jpg" style="padding: 0.7rem 1rem; flex: 1;" />
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnPickMediaForProgram">Media</button>
+                      </div>
+                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                        <select id="programFormPubStatus" class="form-input" style="font-size: 0.85rem; padding: 0.45rem 0.75rem;">
+                          <option value="published">Status Web: Published</option>
+                          <option value="draft">Status Web: Draft</option>
+                          <option value="archived">Status Web: Archived</option>
+                        </select>
+                        <select id="programFormIsOpen" class="form-input" style="font-size: 0.85rem; padding: 0.45rem 0.75rem;">
+                          <option value="1">PPDB: Pendaftaran Buka</option>
+                          <option value="0">PPDB: Kuota Penuh / Tutup</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Registration Form Builder (PRD Req #5 & #6) -->
+                  <div style="padding: 1.15rem; background: #faf8fe; border-radius: var(--radius-md); border: 1px dashed rgba(129, 28, 229, 0.25);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
+                      <div>
+                        <strong style="font-size: 0.92rem; color: #111827;">Skema Pertanyaan Kustom Formulir Pendaftaran Program Ini</strong>
+                        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.15rem 0 0;">Pertanyaan di bawah ini otomatis muncul saat calon santri memilih program ini pada Formulir PPDB Publik.</p>
+                      </div>
+                      <button type="button" class="btn btn-secondary btn-sm" id="btnAddProgramCustomField">+ Tambah Pertanyaan Kustom</button>
+                    </div>
+                    <div id="programCustomFieldsContainer" style="display: flex; flex-direction: column; gap: 0.6rem;">
+                      <!-- Rendered by JS -->
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                    <a href="#admin-akademik" class="btn btn-secondary" id="btnCancelProgramEdit" style="padding: 0.7rem 1.25rem;">Batal</a>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitProgramEdit" style="padding: 0.7rem 1.5rem;">Simpan Program & Skema Form</button>
                   </div>
                 </form>
               </div>
@@ -2619,7 +3019,7 @@
        ADMIN MODAL 1: BUKTI TRANSFER & APPROVAL VERIFIKASI (PRD Section 5.2)
        ========================================================================== -->
   <div class="modal-backdrop" id="adminReceiptModal" role="dialog" aria-modal="true">
-    <div class="modal-card" style="max-width: 780px;">
+    <div class="modal-card" style="max-width: 820px;">
       <button class="modal-close-btn" id="btnCloseReceiptModal" aria-label="Tutup Modal">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18" />
@@ -2627,10 +3027,11 @@
         </svg>
       </button>
 
-      <div style="margin-bottom: 1.25rem;">
+      <div style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
         <h3 style="font-size: 1.4rem; color: var(--midnight-blue); margin-top: 0.2rem;">
-          Pemeriksaan Bukti Struk Transfer Bank
+          Detail Transaksi Keuangan & Verifikasi Struk
         </h3>
+        <span class="status-pill status-pending" id="receiptModalStatusPill">Menunggu Verifikasi</span>
       </div>
 
       <div class="receipt-modal-grid">
@@ -2640,7 +3041,7 @@
             <img id="adminReceiptImg" src="/assets/images/dormitory.jpg" alt="Bukti Transfer Donasi" />
           </div>
           <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 0.5rem;">
-            Struk diunggah langsung oleh donatur melalui formulir konfirmasi.
+            Struk / bukti pembayaran transaksi donatur.
           </div>
         </div>
 
@@ -2664,8 +3065,12 @@
               <strong id="receiptModalAmount" style="font-size: 1.25rem; color: #059669;">Rp 10.000.000</strong>
             </div>
             <div class="receipt-detail-item">
-              <span class="label">Metode Pembayaran</span>
+              <span class="label">Sumber & Metode Bayar</span>
               <span id="receiptModalMethod">Transfer Manual (BSI - 7123 4567 89)</span>
+            </div>
+            <div class="receipt-detail-item">
+              <span class="label">Nomor Referensi Bank</span>
+              <code id="receiptModalRef" style="font-size: 0.84rem; font-weight: 700;">-</code>
             </div>
             <div class="receipt-detail-item">
               <span class="label">Waktu Transaksi</span>
@@ -2673,8 +3078,13 @@
             </div>
           </div>
 
+          <div class="form-group" style="margin-top: 0.85rem;">
+            <label class="form-label" style="font-size: 0.8rem;">Catatan Verifikasi / Alasan Penolakan:</label>
+            <input type="text" id="receiptModalNotesInput" class="form-input" placeholder="Opsional saat setuju, wajib saat tolak..." style="font-size: 0.85rem; padding: 0.5rem 0.75rem;" />
+          </div>
+
           <!-- Action Buttons -->
-          <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1.5rem;">
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
             <button class="btn btn-primary" id="btnApproveReceiptAction" style="background: #10b981; border-color: #10b981;">
               Setujui & Verifikasi Dana Masuk
             </button>
@@ -2684,6 +3094,43 @@
             <a id="btnSendWAReceipt" href="#" target="_blank" class="btn btn-secondary" style="font-size: 0.84rem; text-align: center;">
               Kirim Kwitansi via WhatsApp
             </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Correction & Audit Trail Section (PRD Req #7) -->
+      <div id="receiptCorrectionSection" style="margin-top: 1.35rem; padding-top: 1.15rem; border-top: 1px solid #e5e7eb;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+          <strong style="font-size: 0.9rem; color: #111827;">Koreksi Pembukuan Transaksi (Wajib Alasan Audit)</strong>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Perubahan otomatis menghitung ulang saldo campaign</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.65rem; margin-bottom: 0.65rem;">
+          <div>
+            <label class="form-label" style="font-size: 0.76rem;">Nominal Baru (Rp)</label>
+            <input type="number" id="correctTrxAmount" class="form-input" style="font-size: 0.84rem; padding: 0.45rem 0.65rem;" />
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 0.76rem;">No. Referensi</label>
+            <input type="text" id="correctTrxRef" class="form-input" style="font-size: 0.84rem; padding: 0.45rem 0.65rem;" />
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 0.76rem;">Status Pembayaran</label>
+            <select id="correctTrxStatus" class="form-input" style="font-size: 0.84rem; padding: 0.45rem 0.65rem;">
+              <option value="success">Sukses Terverifikasi</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Ditolak / Void</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="text" id="correctTrxReason" class="form-input" placeholder="Alasan koreksi wajib diisi (min. 5 karakter, misal: Penyesuaian mutasi rekening BSI)..." style="font-size: 0.84rem; padding: 0.45rem 0.75rem; flex: 1;" />
+          <button type="button" class="btn btn-secondary btn-sm" id="btnSubmitTrxCorrection" style="white-space: nowrap;">Simpan Koreksi & Audit</button>
+        </div>
+
+        <div style="margin-top: 0.85rem;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem;">Riwayat Jejak Audit Transaksi Ini:</div>
+          <div id="receiptModalAuditList" style="font-size: 0.8rem; max-height: 110px; overflow-y: auto; background: #f9fafb; padding: 0.6rem 0.85rem; border-radius: var(--radius-md);">
+            Belum ada riwayat perubahan pada transaksi ini.
           </div>
         </div>
       </div>
@@ -2799,7 +3246,7 @@
           </div>
         </div>
 
-        <!-- Step 2: Data Santri & Wali -->
+        <!-- Step 2: Data Santri & Wali + Dynamic Program Fields -->
         <div class="wizard-step" id="wizardStep2" style="display: none;">
           <div class="form-grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div class="form-group">
@@ -2829,6 +3276,11 @@
               <label class="form-label">Email Aktif *</label>
               <input type="email" id="modalEmail" name="email" class="form-input" placeholder="wali.santri@gmail.com" required />
             </div>
+          </div>
+
+          <!-- Dynamic Program-Specific Fields (PRD Req #5 & #6) -->
+          <div id="modalDynamicProgramFields" style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px dashed #e5e7eb;">
+            <!-- Injected dynamically based on selected program's form_schema -->
           </div>
 
           <div style="display: flex; justify-content: space-between; margin-top: 1.5rem;">
@@ -2981,7 +3433,7 @@
        ADMIN MODAL 6: PPDB CANDIDATE DOSSIER MODAL (PRD Section 5.4 & 6)
        ========================================================================== -->
   <div class="modal-backdrop" id="adminPPDBDetailModal" role="dialog" aria-modal="true">
-    <div class="modal-card" style="max-width: 740px;">
+    <div class="modal-card" style="max-width: 760px;">
       <button class="modal-close-btn" id="btnClosePPDBDetail" aria-label="Tutup Modal">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18" />
@@ -3004,7 +3456,7 @@
       </div>
 
       <!-- 2 Column Dossier Grid -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; background: var(--bg-surface-soft); padding: 1.25rem; border-radius: var(--radius-lg); margin-bottom: 1.25rem;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; background: var(--bg-surface-soft); padding: 1.25rem; border-radius: var(--radius-lg); margin-bottom: 1rem;">
         <div>
           <h5 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary-700); margin-bottom: 0.5rem;">
             Biodata Calon Santri
@@ -3016,7 +3468,7 @@
         </div>
         <div>
           <h5 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary-700); margin-bottom: 0.5rem;">
-            Kontak Orang Tua / Wali
+            Kontak Orang Tua / Wali (Data Terlindungi)
           </h5>
           <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>Nama Orang Tua:</strong> <span id="dossierParentName">-</span></p>
           <p style="font-size: 0.88rem; margin-bottom: 0.35rem;"><strong>WhatsApp:</strong> <a href="#" id="dossierPhoneLink" target="_blank" style="color: #059669; font-weight: 600;"> <span id="dossierPhone">-</span></a></p>
@@ -3026,22 +3478,38 @@
         </div>
       </div>
 
+      <!-- Custom Program Form Answers (PRD Req #6) -->
+      <div style="margin-bottom: 1rem;">
+        <label class="form-label" style="font-size: 0.82rem;">Jawaban Pertanyaan Kustom Program:</label>
+        <div id="dossierCustomAnswersBox" style="font-size: 0.85rem; background: #faf8fe; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid rgba(129, 28, 229, 0.15);">
+          -
+        </div>
+      </div>
+
       <!-- Motivation Box -->
-      <div style="margin-bottom: 1.25rem;">
-        <label class="form-label">Motivasi & Target Calon Santri:</label>
+      <div style="margin-bottom: 1rem;">
+        <label class="form-label" style="font-size: 0.82rem;">Motivasi & Target Calon Santri:</label>
         <div id="dossierMotivation" style="font-size: 0.88rem; background: var(--bg-surface-soft); padding: 0.85rem; border-radius: var(--radius-md); color: var(--text-dark); line-height: 1.5;">
           -
         </div>
       </div>
 
       <!-- Admin Notes -->
-      <div style="margin-bottom: 1.25rem;">
-        <label class="form-label">Catatan Panitia PPDB / Hasil Observasi & Tes Lisan:</label>
-        <textarea id="dossierNotesInput" class="form-textarea" rows="3" placeholder="Tuliskan catatan internal: hasil tes baca Al-Qur'an, tajwid, adab, rekomendasi asrama..."></textarea>
+      <div style="margin-bottom: 1rem;">
+        <label class="form-label" style="font-size: 0.82rem;">Catatan Panitia PPDB / Instruksi Perbaikan Berkas (Wajib saat minta koreksi):</label>
+        <textarea id="dossierNotesInput" class="form-textarea" rows="2" placeholder="Tuliskan hasil observasi, tes baca Al-Qur'an, atau rincian berkas yang perlu diperbaiki pendaftar..."></textarea>
+      </div>
+
+      <!-- Submission & Status History (PRD Req #6) -->
+      <div style="margin-bottom: 1rem;">
+        <label class="form-label" style="font-size: 0.78rem; color: var(--text-muted);">Riwayat Perubahan Status & Catatan Administrasi:</label>
+        <div id="dossierStatusHistoryList" style="font-size: 0.8rem; max-height: 95px; overflow-y: auto; background: #f9fafb; padding: 0.6rem 0.85rem; border-radius: var(--radius-md);">
+          Belum ada riwayat perubahan status.
+        </div>
       </div>
 
       <!-- Action Buttons -->
-      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem;  padding-top: 1rem;">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb;">
         <div style="display: flex; gap: 0.5rem;">
           <button type="button" class="btn btn-secondary btn-sm" id="btnDossierDelete" style="color: #dc2626;" title="Hapus Data Santri">
             Hapus
@@ -3051,9 +3519,12 @@
           </a>
         </div>
 
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
           <button type="button" class="btn btn-secondary btn-sm" id="btnDossierSaveNotes">
             Simpan Catatan
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnDossierRequestCorrection" style="color: #d97706; border-color: #d97706;">
+            Minta Koreksi Berkas
           </button>
           <button type="button" class="btn btn-secondary btn-sm" id="btnDossierVerify" style="color: #2563eb; border-color: #2563eb;">
             Verifikasi Berkas
@@ -3065,6 +3536,115 @@
             Tolak
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN MODAL 7: INPUT TRANSAKSI KEUANGAN MANUAL (PRD Req #7)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="adminManualDonationModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 620px;">
+      <button class="modal-close-btn" id="btnCloseManualDonationModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <h3 style="font-size: 1.35rem; color: var(--midnight-blue); margin-bottom: 0.25rem;">Catat Transaksi Keuangan Mandiri</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.15rem;">Catat pemasukan donasi/wakaf baik yang terhubung ke campaign maupun infaq operasional umum.</p>
+      <form id="adminManualDonationForm" style="display: flex; flex-direction: column; gap: 0.9rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Nama Donatur / Hamba Allah *</label>
+            <input type="text" id="manualTrxDonor" class="form-input" placeholder="Misal: H. Abdullah" required />
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">No. WhatsApp Donatur</label>
+            <input type="text" id="manualTrxPhone" class="form-input" placeholder="0812..." />
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 0.85rem;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Alokasi Campaign / Umum *</label>
+            <select id="manualTrxCampaign" class="form-input" required>
+              <option value="general">Infaq / Donasi Umum (Non-Campaign)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Nominal (Rp) *</label>
+            <input type="number" id="manualTrxAmount" class="form-input" placeholder="500000" min="1000" required />
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Sumber Pembayaran *</label>
+            <select id="manualTrxSource" class="form-input">
+              <option value="bank_transfer">Transfer Bank (BSI)</option>
+              <option value="qris">QRIS / E-Wallet</option>
+              <option value="cash">Tunai / Kas</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">No. Referensi Mutasi</label>
+            <input type="text" id="manualTrxRef" class="form-input" placeholder="BSI-2026..." />
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Tanggal Transaksi</label>
+            <input type="date" id="manualTrxDate" class="form-input" />
+          </div>
+        </div>
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label">Catatan Pembukuan</label>
+          <input type="text" id="manualTrxNotes" class="form-input" placeholder="Catatan bendahara..." />
+        </div>
+        <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.86rem; font-weight: 600;">
+          <input type="checkbox" id="manualTrxVerifyNow" checked />
+          <span>Langsung tandai Terverifikasi (Sukses) & hitung ke saldo campaign</span>
+        </label>
+        <div style="display: flex; justify-content: flex-end; gap: 0.65rem; margin-top: 0.5rem;">
+          <button type="button" class="btn btn-secondary" id="btnCancelManualDonation">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN MODAL 8: PUSTAKA MEDIA BERSAMA / REUSABLE MEDIA LIBRARY (PRD Req #4 & #9)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="mediaLibraryPickerModal" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 820px;">
+      <button class="modal-close-btn" id="btnCloseMediaLibraryModal" aria-label="Tutup Pustaka Media">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div style="margin-bottom: 1rem;">
+        <h3 style="font-size: 1.35rem; color: var(--midnight-blue); margin: 0;">Pustaka Media Bersama (Reusable Media Library)</h3>
+        <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0.2rem 0 0;">Unggah gambar baru (JPG/PNG/WebP maks. 5MB) atau pilih aset gambar yang sudah ada untuk artikel, galeri, dan program.</p>
+      </div>
+
+      <!-- Secure Upload Form -->
+      <form id="mediaLibraryUploadForm" style="background: #faf8fe; padding: 0.95rem 1.15rem; border-radius: var(--radius-md); border: 1px dashed rgba(129, 28, 229, 0.25); margin-bottom: 1rem; display: grid; grid-template-columns: 1.3fr 1fr 1fr auto; gap: 0.65rem; align-items: end;">
+        <div>
+          <label class="form-label" style="font-size: 0.78rem;">Pilih File Gambar (JPG/PNG/WebP)</label>
+          <input type="file" id="mediaUploadFileInput" accept="image/jpeg,image/png,image/webp,image/gif" class="form-input" style="font-size: 0.8rem; padding: 0.4rem;" required />
+        </div>
+        <div>
+          <label class="form-label" style="font-size: 0.78rem;">Alt Text Aksesibilitas *</label>
+          <input type="text" id="mediaUploadAltText" class="form-input" placeholder="Deskripsi gambar..." style="font-size: 0.82rem; padding: 0.48rem 0.65rem;" required />
+        </div>
+        <div>
+          <label class="form-label" style="font-size: 0.78rem;">Keterangan / Caption</label>
+          <input type="text" id="mediaUploadCaption" class="form-input" placeholder="Caption opsional..." style="font-size: 0.82rem; padding: 0.48rem 0.65rem;" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm" id="btnUploadMediaAsset" style="padding: 0.55rem 0.95rem; white-space: nowrap;">+ Unggah Aset</button>
+      </form>
+
+      <div id="mediaLibraryGridContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 0.75rem; max-height: 340px; overflow-y: auto; padding: 0.25rem;">
+        <!-- Populated by JS -->
       </div>
     </div>
   </div>

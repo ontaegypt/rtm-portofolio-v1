@@ -45,7 +45,11 @@ class ApiClient {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.message || `Request failed with status ${response.status}`);
+        const err = new Error(data.message || `Request failed with status ${response.status}`);
+        err.status = response.status;
+        err.code = data.code || null;
+        err.suggested_slug = data.suggested_slug || null;
+        throw err;
       }
 
       return data;
@@ -106,13 +110,18 @@ export const authApi = {
 };
 
 export const statsApi = {
-  getOverview: () => client.get('/stats'),
+  getOverview: (params) => client.get('/stats', params),
   getHealth: () => client.get('/health')
 };
 
+export const auditApi = {
+  getAll: (params) => client.get('/audit-logs', params)
+};
+
 export const programsApi = {
-  getAll: () => client.get('/programs'),
+  getAll: (params) => client.get('/programs', params),
   getById: (id) => client.get(`/programs/${id}`),
+  create: (data) => client.post('/programs', data),
   update: (id, data) => client.put(`/programs/${id}`, data),
   toggleStatus: (id) => client.patch(`/programs/${id}/toggle`)
 };
@@ -122,14 +131,21 @@ export const articlesApi = {
   getById: (idOrSlug) => client.get(`/articles/${idOrSlug}`),
   create: (data) => client.post('/articles', data),
   update: (id, data) => client.put(`/articles/${id}`, data),
-  toggleStatus: (id) => client.patch(`/articles/${id}/toggle`),
+  toggleStatus: (id, status) => client.patch(`/articles/${id}/toggle`, status ? { status } : {}),
   delete: (id) => client.delete(`/articles/${id}`)
 };
 
 export const galleriesApi = {
-  getAll: (category) => client.get('/galleries', category ? { category } : null),
+  getAll: (params) => client.get('/galleries', typeof params === 'string' ? { category: params } : params),
   create: (data) => client.post('/galleries', data),
+  update: (id, data) => client.put(`/galleries/${id}`, data),
   delete: (id) => client.delete(`/galleries/${id}`)
+};
+
+export const mediaApi = {
+  getAll: () => client.get('/media'),
+  upload: (data) => client.post('/media', data),
+  delete: (id) => client.delete(`/media/${id}`)
 };
 
 export const reservationsApi = {
@@ -139,7 +155,7 @@ export const reservationsApi = {
 };
 
 export const campaignsApi = {
-  getAll: () => client.get('/campaigns'),
+  getAll: (params) => client.get('/campaigns', params),
   create: (data) => client.post('/campaigns', data),
   update: (id, data) => client.put(`/campaigns/${id}`, data)
 };
@@ -148,6 +164,8 @@ export const donationsApi = {
   getAll: (params) => client.get('/donations', params),
   submit: (data) => client.post('/donations', data),
   verify: (id, payment_status, notes) => client.patch(`/donations/${id}/status`, { payment_status, notes }),
+  correct: (id, data) => client.patch(`/donations/${id}/correct`, data),
+  getAuditLogs: (params) => client.get('/finance/audit-logs', params),
   exportCsvUrl: `${API_BASE}/donations/export`
 };
 
@@ -164,12 +182,15 @@ export const usersApi = {
   getAll: () => client.get('/users'),
   create: (data) => client.post('/users', data),
   update: (id, data) => client.patch(`/users/${id}`, data),
+  toggleStatus: (id, is_active) => client.patch(`/users/${id}/status`, { is_active }),
   delete: (id) => client.delete(`/users/${id}`)
 };
 
 export const settingsApi = {
   get: () => client.get('/settings'),
-  update: (data) => client.put('/settings', data)
+  update: (data) => client.put('/settings', data),
+  saveDraft: (data) => client.put('/settings', { ...data, mode: 'draft' }),
+  publish: (data) => client.put('/settings', { ...data, mode: 'publish' })
 };
 
 export const leadsApi = {

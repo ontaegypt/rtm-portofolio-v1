@@ -34,6 +34,8 @@ import {
 import {
   authApi,
   statsApi,
+  auditApi,
+  mediaApi,
   programsApi,
   articlesApi,
   galleriesApi,
@@ -57,10 +59,17 @@ const state = {
   newsSearchQuery: '',
   currentLightboxIndex: 0,
   activeAdminModule: 'overview',
+  overviewRange: 'all',
   activeDonationStatusFilter: 'all',
+  donationCampaignFilter: 'all',
   donationSearchQuery: '',
   adminArticleSearchQuery: '',
-  selectedReceiptTrx: null
+  adminArticleCategoryFilter: 'all',
+  adminArticleStatusFilter: 'all',
+  adminGalleryCategoryFilter: 'all',
+  adminGalleryStatusFilter: 'all',
+  selectedReceiptTrx: null,
+  mediaPickerCallback: null
 };
 
 // Mutable CMS Stores (Synchronized with Backend SQLite Database)
@@ -71,26 +80,43 @@ let visitsState = JSON.parse(JSON.stringify(VISIT_RESERVATIONS));
 let articlesState = JSON.parse(JSON.stringify(NEWS_ARTICLES));
 let galleriesState = JSON.parse(JSON.stringify(GALLERIES));
 let usersState = JSON.parse(JSON.stringify(ADMIN_USERS));
-let programsState = PROGRAMS.map(p => ({ ...p, ppdbOpen: true }));
+let programsState = PROGRAMS.map(p => ({ ...p, ppdbOpen: true, publicationStatus: 'published', formSchema: [] }));
+let mediaState = [];
+let financialAuditState = [];
+let systemAuditState = [];
+let settingsState = {};
 
 // Normalizers for full database-to-UI compatibility
 function normalizeDonation(d) {
   return {
     ...d,
     invoiceNumber: d.invoice_number || d.invoiceNumber || d.invoice,
-    campaignId: d.campaign_id || d.campaignId,
-    campaignTitle: d.campaign_title || d.campaignTitle,
+    campaignId: d.campaign_id || d.campaignId || 'general',
+    campaignTitle: d.campaign_title || d.campaignTitle || 'Infaq & Wakaf Umum Yayasan',
     donorName: d.donor_name || d.donorName,
     donorPhone: d.donor_phone || d.donorPhone || '',
     donorEmail: d.donor_email || d.donorEmail || '',
-    paymentMethod: d.payment_method || d.paymentMethod,
-    paymentStatus: d.payment_status || d.paymentStatus || d.status,
+    paymentMethod: d.payment_method || d.paymentMethod || 'Transfer Bank BSI',
+    paymentSource: d.payment_source || d.paymentSource || d.payment_method || 'Transfer Bank BSI',
+    referenceNumber: d.reference_number || d.referenceNumber || '',
+    paymentStatus: d.payment_status || d.paymentStatus || d.status || 'pending',
     receiptUrl: d.proof_image || d.receiptUrl || d.proofUrl || '',
+    notes: d.notes || '',
     paidAt: d.paid_at || d.paidAt || '-'
   };
 }
 
 function normalizeLead(l) {
+  let parsedAnswers = {};
+  if (l.custom_answers) {
+    try {
+      parsedAnswers = typeof l.custom_answers === 'string' ? JSON.parse(l.custom_answers) : l.custom_answers;
+    } catch {
+      parsedAnswers = {};
+    }
+  } else if (l.customAnswers) {
+    parsedAnswers = l.customAnswers;
+  }
   return {
     ...l,
     id: l.id,
@@ -106,6 +132,8 @@ function normalizeLead(l) {
     infoSource: l.info_source || l.infoSource || 'Website Resmi',
     motivation: l.motivation || '',
     paymentMethod: l.payment_method || l.paymentMethod || 'Transfer Bank BSI',
+    customAnswers: parsedAnswers,
+    statusHistory: l.status_history || l.statusHistory || [],
     status: l.status || 'pending',
     notes: l.notes || '',
     registeredAt: l.created_at || l.registeredAt || 'Baru Saja'
@@ -137,12 +165,28 @@ function normalizeCampaign(c) {
 }
 
 function normalizeArticle(a) {
+  let tagsArr = [];
+  if (Array.isArray(a.tags)) {
+    tagsArr = a.tags;
+  } else if (typeof a.tags === 'string' && a.tags.trim()) {
+    try {
+      const parsed = JSON.parse(a.tags);
+      tagsArr = Array.isArray(parsed) ? parsed : a.tags.split(',').map(t => t.trim()).filter(Boolean);
+    } catch {
+      tagsArr = a.tags.split(',').map(t => t.trim()).filter(Boolean);
+    }
+  }
   return {
     ...a,
-    image: a.thumbnail_url || a.image || a.thumbnail,
-    readTime: a.read_time || a.readTime,
-    author: a.author_name || a.author,
-    date: a.published_at || a.date
+    slug: a.slug || a.id,
+    image: a.thumbnail_url || a.image || a.thumbnail || '/assets/images/wisuda.jpg',
+    readTime: a.read_time || a.readTime || '3 Menit',
+    author: a.author_name || a.author || 'Humas Rumah Tahfidz',
+    date: a.published_at || a.date || 'Baru Saja',
+    tags: tagsArr,
+    seoTitle: a.seo_title || a.seoTitle || '',
+    seoDescription: a.seo_description || a.seoDescription || '',
+    status: a.status || 'published'
   };
 }
 
@@ -153,7 +197,57 @@ function normalizeGallery(g) {
     category: g.category || 'gedung',
     image: g.media_url || g.image || '/assets/images/campus.jpg',
     caption: g.caption || g.title,
+    altText: g.alt_text || g.altText || g.title || '',
+    albumName: g.album_name || g.albumName || '',
+    sortOrder: g.sort_order !== undefined ? Number(g.sort_order) : (g.sortOrder || 0),
+    status: g.status || 'published',
     date: g.date || 'Terbaru'
+  };
+}
+
+function normalizeProgram(p) {
+  const staticProg = PROGRAMS.find(sp => sp.id === p.id) || PROGRAMS[0];
+  let parsedSchema = [];
+  if (Array.isArray(p.form_schema)) {
+    parsedSchema = p.form_schema;
+  } else if (typeof p.form_schema === 'string' && p.form_schema.trim()) {
+    try {
+      parsedSchema = JSON.parse(p.form_schema);
+    } catch {
+      parsedSchema = [];
+    }
+  } else if (Array.isArray(p.formSchema)) {
+    parsedSchema = p.formSchema;
+  }
+
+  let parsedStats = staticProg ? { ...staticProg.stats } : { durasi: '3 Tahun', targetHafalan: '30 Juz', rasioUstadz: '1 : 10', ijazah: 'Syahadah' };
+  if (p.stats) {
+    try {
+      const sObj = typeof p.stats === 'string' ? JSON.parse(p.stats) : p.stats;
+      parsedStats = { ...parsedStats, ...sObj };
+    } catch {
+      // ignore
+    }
+  }
+  if (p.duration) parsedStats.durasi = p.duration;
+  if (p.target_hafalan) parsedStats.targetHafalan = p.target_hafalan;
+
+  return {
+    ...(staticProg || {}),
+    ...p,
+    id: p.id,
+    name: p.title || p.name || (staticProg ? staticProg.name : 'Program Tahfidz'),
+    shortTitle: p.shortTitle || (staticProg ? staticProg.shortTitle : (p.title || p.name || 'Program')),
+    headline: p.subtitle || p.headline || (staticProg ? staticProg.headline : ''),
+    summary: p.description || p.summary || (staticProg ? staticProg.summary : ''),
+    image: p.hero_image || p.image || (staticProg ? staticProg.image : '/assets/images/classroom.jpg'),
+    stats: parsedStats,
+    eligibilityCriteria: p.eligibility_criteria || p.eligibilityCriteria || (staticProg?.about?.target || ''),
+    scheduleInfo: p.schedule_info || p.scheduleInfo || '',
+    applicationInstructions: p.application_instructions || p.applicationInstructions || '',
+    publicationStatus: p.publication_status || p.publicationStatus || 'published',
+    ppdbOpen: p.is_active !== undefined ? p.is_active === 1 : (p.ppdbOpen !== false),
+    formSchema: parsedSchema
   };
 }
 
@@ -165,6 +259,7 @@ function normalizeUser(u) {
   };
   return {
     ...u,
+    isActive: u.is_active !== undefined ? u.is_active !== 0 : (u.isActive !== false),
     roleTitle: roleNameMap[u.role] || u.role_title || u.roleTitle || 'Admin',
     lastLogin: u.last_login_at || u.lastLogin || 'Baru Saja'
   };
@@ -173,7 +268,7 @@ function normalizeUser(u) {
 // Synchronize all CMS stores with Backend SQLite Database
 export async function syncDatabaseState() {
   try {
-    const [progRes, artRes, galRes, campRes, donRes, visRes, leadRes, userRes] = await Promise.allSettled([
+    const [progRes, artRes, galRes, campRes, donRes, visRes, leadRes, userRes, setRes] = await Promise.allSettled([
       programsApi.getAll(),
       articlesApi.getAll(),
       galleriesApi.getAll(),
@@ -181,14 +276,12 @@ export async function syncDatabaseState() {
       donationsApi.getAll(),
       reservationsApi.getAll(),
       ppdbApi.getAll(),
-      usersApi.getAll()
+      usersApi.getAll(),
+      settingsApi.get()
     ]);
 
     if (progRes.status === 'fulfilled' && progRes.value.data) {
-      programsState = progRes.value.data.map(p => ({
-        ...p,
-        ppdbOpen: p.is_active === 1
-      }));
+      programsState = progRes.value.data.map(normalizeProgram);
     }
     if (artRes.status === 'fulfilled' && artRes.value.data) {
       articlesState = artRes.value.data.map(normalizeArticle);
@@ -210,6 +303,10 @@ export async function syncDatabaseState() {
     }
     if (userRes.status === 'fulfilled' && userRes.value.data) {
       usersState = userRes.value.data.map(normalizeUser);
+    }
+    if (setRes.status === 'fulfilled' && setRes.value.data) {
+      settingsState = setRes.value.data;
+      applySiteSettingsToDOM(settingsState.site_identity || settingsState);
     }
   } catch (err) {
     console.warn('[Sync] Falling back to initial cache:', err);
@@ -389,6 +486,7 @@ async function verifyAndSyncSession() {
             'user-detail': 'users',
             'gallery-form': 'galeri',
             'syllabus-form': 'akademik',
+            'program-form': 'akademik',
             'campaign-form': 'donasi',
             'profile': 'overview'
           };
@@ -461,6 +559,7 @@ function initRouter() {
         'user-detail': 'users',
         'gallery-form': 'galeri',
         'syllabus-form': 'akademik',
+        'program-form': 'akademik',
         'campaign-form': 'donasi',
         'profile': 'overview'
       };
@@ -490,7 +589,7 @@ function initRouter() {
       view = 'akademik';
       const parts = rawHash.split('-');
       if (parts.length > 1) {
-        programParam = parts[1];
+        programParam = parts.slice(1).join('-');
       }
     }
 
@@ -503,7 +602,7 @@ function initRouter() {
 
 export function navigateTo(viewName, programId = null) {
   state.currentView = viewName;
-  if (programId && PROGRAMS.some(p => p.id === programId)) {
+  if (programId && programsState.some(p => p.id === programId)) {
     state.activeProgramId = programId;
   }
 
@@ -583,6 +682,7 @@ export function navigateToAdmin(moduleName) {
     'user-detail': 'users',
     'gallery-form': 'galeri',
     'syllabus-form': 'akademik',
+    'program-form': 'akademik',
     'campaign-form': 'donasi',
     'profile': 'overview'
   };
@@ -602,6 +702,7 @@ export function navigateToAdmin(moduleName) {
     'user-detail': 'Manajemen Pengguna > Detail Informasi Akun',
     'gallery-form': 'Kelola Galeri > Form Media Dokumentasi',
     'syllabus-form': 'Kelola Akademik > Unggah Silabus',
+    'program-form': 'Kelola Akademik > Editor Program & Skema PPDB',
     'campaign-form': 'Modul Wakaf & Donasi > Form Program Campaign',
     'profile': 'Pengaturan Akun > Ubah Data Profil'
   };
@@ -1225,6 +1326,12 @@ function initAkademikInteractions(program) {
 
       try {
         const formData = new FormData(form);
+        const customAnswers = {};
+        form.querySelectorAll('[data-custom-field-label]').forEach(el => {
+          const label = el.getAttribute('data-custom-field-label');
+          if (label) customAnswers[label] = el.value?.trim() || '';
+        });
+
         const payload = {
           program_id: formData.get('programId') || program.id,
           batch_id: formData.get('batchId') || 'Gelombang 1 - TA 2026/2027',
@@ -1236,7 +1343,8 @@ function initAkademikInteractions(program) {
           email: (formData.get('email') || '').trim(),
           info_source: formData.get('infoSource') || 'Website',
           motivation: (formData.get('motivation') || '').trim(),
-          payment_method: formData.get('paymentMethod') || 'Transfer Bank BSI'
+          payment_method: formData.get('paymentMethod') || 'Transfer Bank BSI',
+          custom_answers: customAnswers
         };
 
         const res = await ppdbApi.submit(payload);
@@ -1265,13 +1373,14 @@ function renderGalleryGrid() {
   const container = document.getElementById('galleryGridContainer');
   if (!container) return;
 
+  const publishedGalleries = galleriesState.filter(g => g.status !== 'draft');
   const filtered = state.galleryFilter === 'all'
-    ? galleriesState
-    : galleriesState.filter(g => g.category === state.galleryFilter);
+    ? publishedGalleries
+    : publishedGalleries.filter(g => g.category === state.galleryFilter);
 
   container.innerHTML = filtered.map((item, idx) => `
     <div class="gallery-card-item" data-index="${idx}" data-id="${item.id}">
-      <img src="${item.image}" alt="${item.title}" loading="lazy" />
+      <img src="${item.image}" alt="${item.altText || item.title}" loading="lazy" />
       <div class="gallery-overlay">
         <span class="gallery-overlay-badge">${formatCategoryName(item.category)}</span>
         <h5 class="gallery-overlay-title">${item.title}</h5>
@@ -1282,7 +1391,7 @@ function renderGalleryGrid() {
   container.querySelectorAll('.gallery-card-item').forEach(card => {
     card.addEventListener('click', (e) => {
       const id = e.currentTarget.getAttribute('data-id');
-      const item = galleriesState.find(g => g.id === id);
+      const item = galleriesState.find(g => String(g.id) === String(id));
       if (item) {
         openLightbox(item);
       }
@@ -1318,8 +1427,8 @@ function renderNewsGrid() {
   const container = document.getElementById('newsGridContainer');
   if (!container) return;
 
-  // Only show non-draft articles on the public website
-  let filtered = articlesState.filter(a => a.status !== 'draft');
+  // Only show published articles on the public website (exclude draft and archived)
+  let filtered = articlesState.filter(a => a.status !== 'draft' && a.status !== 'archived');
 
   if (state.newsCategory !== 'all') {
     filtered = filtered.filter(a => a.category.toLowerCase().includes(state.newsCategory.toLowerCase()));
@@ -1381,14 +1490,14 @@ function openArticleReader(article) {
 
   modal.querySelector('#articleModalTitle').textContent = article.title;
   modal.querySelector('#articleModalMeta').innerHTML = `
-    <span>${article.category}</span> • <span>${article.date}</span> • <span>Waktu baca: ${article.readTime}</span>
+    <span>${article.category}</span> • <span>${article.date}</span> • <span>Waktu baca: ${article.readTime || '3 Menit'}</span>
   `;
   modal.querySelector('#articleModalImg').src = article.image;
   modal.querySelector('#articleModalBody').innerHTML = article.content;
 
   const tagsContainer = modal.querySelector('#articleModalTags');
   if (tagsContainer) {
-    tagsContainer.innerHTML = article.tags.map(t => `<span class="badge-tag-pill">#${t}</span>`).join(' ');
+    tagsContainer.innerHTML = (article.tags || []).map(t => `<span class="badge-tag-pill">#${t}</span>`).join(' ');
   }
 
   modal.classList.add('open');
@@ -1403,7 +1512,8 @@ let currentViewingLead = null;
 const adminPPDBFilter = {
   search: '',
   program: 'all',
-  status: 'all'
+  status: 'all',
+  dateRange: 'all'
 };
 
 export function openPPDBModal(preselectedProgramId = null) {
@@ -1441,10 +1551,11 @@ function updatePPDBWizardSteps() {
 }
 
 function updateProgramQuickPreview(progId) {
-  const prog = PROGRAMS.find(p => p.id === progId) || PROGRAMS[0];
+  const prog = programsState.find(p => p.id === progId) || PROGRAMS.find(p => p.id === progId) || PROGRAMS[0];
   const title = document.getElementById('pqpTitle');
   const desc = document.getElementById('pqpDesc');
   const batchSelect = document.getElementById('modalBatchId');
+  const dynamicBox = document.getElementById('modalDynamicProgramFields');
 
   if (title) title.textContent = prog.name;
   if (desc) desc.textContent = prog.headline || prog.summary;
@@ -1453,6 +1564,52 @@ function updateProgramQuickPreview(progId) {
     batchSelect.innerHTML = prog.batches.map(b => `
       <option value="${b.name}">${b.name} (${b.remaining})</option>
     `).join('');
+  }
+
+  // Render dynamic form_schema fields configured for this program (Req #5 & #6)
+  if (dynamicBox) {
+    const schema = Array.isArray(prog.formSchema) ? prog.formSchema : [];
+    if (schema.length === 0) {
+      dynamicBox.innerHTML = '';
+    } else {
+      dynamicBox.innerHTML = `
+        <div style="border-top: 1px dashed rgba(129, 28, 229, 0.25); padding-top: 0.85rem; margin-top: 0.25rem;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary-purple); text-transform: uppercase; margin-bottom: 0.65rem;">
+            Pertanyaan Khusus Program (${prog.shortTitle || prog.name})
+          </div>
+          ${schema.map((field, idx) => {
+            const labelText = field.label || `Pertanyaan ${idx + 1}`;
+            const reqAttr = field.required ? 'required' : '';
+            const reqStar = field.required ? ' *' : '';
+            if (field.type === 'textarea') {
+              return `
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label">${labelText}${reqStar}</label>
+                  <textarea class="form-textarea modal-custom-schema-input" data-custom-field-label="${labelText}" rows="2" placeholder="${field.placeholder || ''}" ${reqAttr}></textarea>
+                </div>
+              `;
+            } else if (field.type === 'select') {
+              const opts = (field.options || '').split(',').map(o => o.trim()).filter(Boolean);
+              return `
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label">${labelText}${reqStar}</label>
+                  <select class="form-select modal-custom-schema-input" data-custom-field-label="${labelText}" ${reqAttr}>
+                    ${opts.map(o => `<option value="${o}">${o}</option>`).join('')}
+                  </select>
+                </div>
+              `;
+            } else {
+              return `
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label">${labelText}${reqStar}</label>
+                  <input type="${field.type === 'number' ? 'number' : 'text'}" class="form-input modal-custom-schema-input" data-custom-field-label="${labelText}" placeholder="${field.placeholder || ''}" ${reqAttr} />
+                </div>
+              `;
+            }
+          }).join('')}
+        </div>
+      `;
+    }
   }
 }
 
@@ -1473,7 +1630,7 @@ export function openPPDBSuccessModal(leadData) {
 
   const regId = leadData.id || leadData.registration_number || `REG-2026-${Math.floor(1000 + Math.random() * 9000)}`;
   const studentName = leadData.full_name || leadData.studentName || 'Calon Santri';
-  const prog = PROGRAMS.find(p => p.id === (leadData.program_id || leadData.programId));
+  const prog = programsState.find(p => p.id === (leadData.program_id || leadData.programId)) || PROGRAMS.find(p => p.id === (leadData.program_id || leadData.programId));
   const progName = leadData.program_name || leadData.programName || (prog ? prog.name : 'Program Tahfidz');
   const parentName = leadData.parent_name || leadData.parentName || 'Orang Tua / Wali';
   const phone = leadData.phone_whatsapp || leadData.phone || '-';
@@ -1504,8 +1661,24 @@ export function openPPDBSuccessModal(leadData) {
   modal.classList.add('open');
 }
 
-export function openAdminPPDBDetailModal(leadId) {
-  const lead = ppdbState.find(l => l.id === leadId);
+function getPPDBStatusLabel(status) {
+  if (status === 'accepted') return 'Diterima';
+  if (status === 'verified') return 'Terverifikasi';
+  if (status === 'needs_correction') return 'Perlu Revisi Berkas';
+  if (status === 'rejected') return 'Ditolak';
+  return 'Menunggu';
+}
+
+function getPPDBStatusClass(status) {
+  if (status === 'accepted') return 'status-success';
+  if (status === 'verified') return 'status-active';
+  if (status === 'needs_correction') return 'status-pending';
+  if (status === 'rejected') return 'status-draft';
+  return 'status-pending';
+}
+
+export async function openAdminPPDBDetailModal(leadId) {
+  let lead = ppdbState.find(l => l.id === leadId);
   if (!lead) return;
 
   currentViewingLead = lead;
@@ -1528,13 +1701,16 @@ export function openAdminPPDBDetailModal(leadId) {
   const sourceEl = document.getElementById('dossierSource');
   const motivEl = document.getElementById('dossierMotivation');
   const notesEl = document.getElementById('dossierNotesInput');
+  const customBox = document.getElementById('dossierCustomAnswersBox');
+  const customList = document.getElementById('dossierCustomAnswersList');
+  const historyList = document.getElementById('dossierStatusHistoryList');
 
   if (nameEl) nameEl.textContent = lead.studentName;
   if (regEl) regEl.textContent = lead.id;
   if (dateEl) dateEl.textContent = lead.registeredAt;
   if (pillEl) {
-    pillEl.textContent = lead.status === 'accepted' ? 'Diterima' : (lead.status === 'verified' ? 'Terverifikasi' : (lead.status === 'rejected' ? 'Ditolak' : 'Menunggu'));
-    pillEl.className = `status-pill ${lead.status === 'accepted' ? 'status-success' : (lead.status === 'verified' ? 'status-active' : (lead.status === 'rejected' ? 'status-draft' : 'status-pending'))}`;
+    pillEl.textContent = getPPDBStatusLabel(lead.status);
+    pillEl.className = `status-pill ${getPPDBStatusClass(lead.status)}`;
   }
   if (genderEl) genderEl.textContent = lead.gender || 'Laki-laki';
   if (birthEl) birthEl.textContent = lead.birthDate || '-';
@@ -1560,6 +1736,45 @@ export function openAdminPPDBDetailModal(leadId) {
   }
 
   modal.classList.add('open');
+
+  // Fetch authoritative dossier details (custom_answers + status_history) from backend
+  try {
+    const res = await ppdbApi.getById(leadId);
+    if (res && res.data) {
+      lead = normalizeLead(res.data);
+      currentViewingLead = lead;
+    }
+  } catch {
+    // fallback to local lead
+  }
+
+  if (customBox && customList) {
+    const entries = Object.entries(lead.customAnswers || {});
+    if (entries.length === 0) {
+      customBox.style.display = 'none';
+      customList.innerHTML = '';
+    } else {
+      customBox.style.display = 'block';
+      customList.innerHTML = entries.map(([k, v]) => `
+        <div><strong>${k}:</strong> ${v || '-'}</div>
+      `).join('');
+    }
+  }
+
+  if (historyList) {
+    const history = Array.isArray(lead.statusHistory) ? lead.statusHistory : [];
+    if (history.length === 0) {
+      historyList.innerHTML = `<div>• <strong>${getPPDBStatusLabel(lead.status)}</strong> (${lead.registeredAt}) ${lead.notes ? `— ${lead.notes}` : ''}</div>`;
+    } else {
+      historyList.innerHTML = history.map(h => `
+        <div style="padding: 0.25rem 0; border-bottom: 1px dashed rgba(0,0,0,0.06);">
+          <strong>${getPPDBStatusLabel(h.previous_status || 'pending')} → ${getPPDBStatusLabel(h.new_status)}</strong>
+          <span style="color: var(--text-muted);"> oleh ${h.changed_by_name || 'Admin'} (${h.created_at || 'Baru saja'})</span>
+          ${h.notes ? `<div style="color: var(--text-dark); margin-top: 2px;">Catatan: "${h.notes}"</div>` : ''}
+        </div>
+      `).join('');
+    }
+  }
 }
 
 export function initPPDBModalEvents() {
@@ -1636,6 +1851,12 @@ export function initPPDBModalEvents() {
         const infoSource = document.getElementById('modalInfoSource').value;
         const motivation = document.getElementById('modalMotivation').value.trim();
 
+        const customAnswers = {};
+        modalForm.querySelectorAll('.modal-custom-schema-input').forEach(el => {
+          const label = el.getAttribute('data-custom-field-label');
+          if (label) customAnswers[label] = el.value?.trim() || '';
+        });
+
         const payload = {
           program_id: progId,
           batch_id: batchId,
@@ -1647,7 +1868,8 @@ export function initPPDBModalEvents() {
           email,
           payment_method: paymentMethod,
           info_source: infoSource,
-          motivation
+          motivation,
+          custom_answers: customAnswers
         };
 
         const res = await ppdbApi.submit(payload);
@@ -1703,6 +1925,29 @@ export function initPPDBModalEvents() {
         renderAdminAkademik();
       } catch (err) {
         showToast('Gagal menyimpan catatan: ' + err.message, 'error');
+      }
+    });
+  }
+
+  const btnRequestCorrection = document.getElementById('btnDossierRequestCorrection');
+  if (btnRequestCorrection) {
+    btnRequestCorrection.addEventListener('click', async () => {
+      if (!currentViewingLead) return;
+      const notes = (document.getElementById('dossierNotesInput')?.value || '').trim();
+      if (!notes) {
+        showToast('Catatan perbaikan berkas wajib diisi pada kolom Catatan sebelum meminta koreksi.', 'warning');
+        document.getElementById('dossierNotesInput')?.focus();
+        return;
+      }
+      try {
+        await ppdbApi.updateStatus(currentViewingLead.id, 'needs_correction', notes);
+        showToast(`Permintaan revisi berkas untuk ${currentViewingLead.studentName} telah disimpan!`, 'success');
+        document.getElementById('adminPPDBDetailModal')?.classList.remove('open');
+        await syncDatabaseState();
+        renderAdminAkademik();
+        renderAdminOverview();
+      } catch (err) {
+        showToast('Gagal mengirim permintaan revisi: ' + err.message, 'error');
       }
     });
   }
@@ -2094,25 +2339,26 @@ function renderHomeProgramCards(category) {
   const container = document.getElementById('homeProgramCardsContainer');
   if (!container) return;
 
-  let list = PROGRAMS;
+  let list = programsState.filter(p => p.publicationStatus !== 'draft' && p.publicationStatus !== 'archived');
+  if (list.length === 0) list = PROGRAMS;
   if (category !== 'all') {
-    list = PROGRAMS.filter(p => p.category === category);
+    list = list.filter(p => p.category === category);
   }
 
   container.innerHTML = list.map(p => `
     <div class="program-card">
       <div class="program-card-thumb">
         <img src="${p.image}" alt="${p.name}" loading="lazy" />
-        <span class="program-card-badge">${p.badge}</span>
+        <span class="program-card-badge">${p.badge || 'Program Unggulan'}</span>
       </div>
       <div class="program-card-body">
         <h4 class="program-card-title">${p.name}</h4>
-        <span class="program-card-claim">${p.headline}</span>
-        <p class="program-card-summary">${p.summary}</p>
+        <span class="program-card-claim">${p.headline || ''}</span>
+        <p class="program-card-summary">${p.summary || ''}</p>
         
         <div class="program-card-specs">
-          <span class="spec-item">⏱️ ${p.stats.durasi}</span>
-          <span class="spec-item">${p.stats.targetHafalan}</span>
+          <span class="spec-item">⏱️ ${p.stats?.durasi || '3 Tahun'}</span>
+          <span class="spec-item">${p.stats?.targetHafalan || '30 Juz'}</span>
         </div>
 
         <a href="#akademik-${p.id}" class="btn-detail-link">
@@ -2203,35 +2449,64 @@ export function getShortJenjang(programName, programId) {
   return words[0].length <= 3 && words[1] ? `${words[0]} ${words[1]}` : words[0];
 }
 
-// 2. Render Overview Panel (Sprint 3 Live SQLite DB Stats)
+// 2. Render Overview Panel (Sprint 3 Live SQLite DB Stats - Zero Fabricated Metrics)
 async function renderAdminOverview() {
+  const rangeSelect = document.getElementById('overviewDateFilter');
+  const rangeVal = rangeSelect ? rangeSelect.value : (state.overviewRange || 'all');
+
   try {
-    const statsRes = await statsApi.getOverview();
+    const statsRes = await statsApi.getOverview({ range: rangeVal });
     if (statsRes && statsRes.data) {
       const s = statsRes.data;
       const kpiDonasi = document.getElementById('kpiTotalDonasi');
       if (kpiDonasi) kpiDonasi.textContent = `Rp ${Number(s.totalDonations || 0).toLocaleString('id-ID')}`;
 
+      const kpiSubDonasi = document.getElementById('kpiSubDonasi');
+      if (kpiSubDonasi) kpiSubDonasi.textContent = `${s.verifiedDonationsCount || 0} transaksi terverifikasi`;
+
       const kpiPPDB = document.getElementById('kpiTotalPPDB');
-      if (kpiPPDB) kpiPPDB.textContent = `${s.totalLeads} Santri`;
+      if (kpiPPDB) kpiPPDB.textContent = `${s.totalLeads || 0} Santri`;
+
+      const kpiSubPPDB = document.getElementById('kpiSubPPDB');
+      if (kpiSubPPDB && s.ppdbBreakdown) {
+        kpiSubPPDB.textContent = `${s.ppdbBreakdown.accepted || 0} Diterima • ${s.ppdbBreakdown.pending || 0} Menunggu`;
+      }
 
       const kpiCamp = document.getElementById('kpiActiveCampaigns');
-      if (kpiCamp) kpiCamp.textContent = `${s.activePrograms} Program`;
+      if (kpiCamp) kpiCamp.textContent = `${s.activeCampaignsCount !== undefined ? s.activeCampaignsCount : s.activePrograms} Program`;
+
+      const kpiSubCamp = document.getElementById('kpiSubCampaigns');
+      if (kpiSubCamp) kpiSubCamp.textContent = `${s.activePrograms || 0} Program Akademik Aktif`;
 
       const kpiPending = document.getElementById('kpiPendingReceipts');
-      if (kpiPending) kpiPending.textContent = `${s.pendingDonationsCount} Transaksi`;
+      if (kpiPending) kpiPending.textContent = `${s.pendingDonationsCount || 0} Transaksi`;
+
+      const ringPctEl = document.getElementById('overviewRingPercent');
+      const totalCamps = Math.max(1, campaignsState.length);
+      const activeCamps = s.activeCampaignsCount !== undefined ? s.activeCampaignsCount : campaignsState.filter(c => c.status === 'active').length;
+      if (ringPctEl) ringPctEl.textContent = `${Math.round((activeCamps / totalCamps) * 100)}%`;
+
+      const contentBadge = document.getElementById('overviewContentSummaryBadge');
+      if (contentBadge) {
+        contentBadge.textContent = `${s.publishedArticles || 0} Artikel Terbit (${s.draftArticles || 0} Draft) • ${s.publishedGalleries || 0} Galeri • ${s.activePrograms || 0} Program`;
+      }
+
+      if (Array.isArray(s.recentAuditLogs)) {
+        systemAuditState = s.recentAuditLogs;
+      }
     }
   } catch (err) {
-    const totalDonations = donationsState
-      .filter(d => (d.paymentStatus || d.status) === 'success')
-      .reduce((sum, d) => sum + d.amount, 0);
-
+    const verifiedTrx = donationsState.filter(d => (d.paymentStatus || d.status) === 'success');
+    const totalDonations = verifiedTrx.reduce((sum, d) => sum + d.amount, 0);
     const pendingDonations = donationsState.filter(d => (d.paymentStatus || d.status) === 'pending');
     const activeCampaigns = campaignsState.filter(c => c.status === 'active').length;
     const totalPPDB = ppdbState.length;
 
     const kpiDonasi = document.getElementById('kpiTotalDonasi');
     if (kpiDonasi) kpiDonasi.textContent = `Rp ${totalDonations.toLocaleString('id-ID')}`;
+
+    const kpiSubDonasi = document.getElementById('kpiSubDonasi');
+    if (kpiSubDonasi) kpiSubDonasi.textContent = `${verifiedTrx.length} transaksi terverifikasi`;
 
     const kpiPPDB = document.getElementById('kpiTotalPPDB');
     if (kpiPPDB) kpiPPDB.textContent = `${totalPPDB} Santri`;
@@ -2241,6 +2516,24 @@ async function renderAdminOverview() {
 
     const kpiPending = document.getElementById('kpiPendingReceipts');
     if (kpiPending) kpiPending.textContent = `${pendingDonations.length} Transaksi`;
+  }
+
+  // Render Recent Administrative Activity Table (#overviewAuditLogTableBody)
+  const auditBody = document.getElementById('overviewAuditLogTableBody');
+  if (auditBody) {
+    if (!systemAuditState || systemAuditState.length === 0) {
+      auditBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.25rem;">Belum ada log aktivitas administratif terbaru.</td></tr>`;
+    } else {
+      auditBody.innerHTML = systemAuditState.slice(0, 8).map(log => `
+        <tr>
+          <td style="font-size: 0.78rem; color: var(--text-muted); white-space: nowrap;">${log.created_at || 'Baru Saja'}</td>
+          <td><strong>${log.actor_name || 'Admin'}</strong> <span style="font-size: 0.72rem; color: var(--text-muted);">(${log.actor_role || 'admin'})</span></td>
+          <td><span class="badge-tag-pill" style="font-size: 0.7rem;">${log.module || 'system'}</span></td>
+          <td><code style="font-size: 0.75rem; color: var(--primary-purple);">${log.action || '-'}</code></td>
+          <td style="font-size: 0.8rem;">${log.summary || '-'}</td>
+        </tr>
+      `).join('');
+    }
   }
 
   const pendingDonations = donationsState.filter(d => (d.paymentStatus || d.status) === 'pending');
@@ -2257,7 +2550,7 @@ async function renderAdminOverview() {
             <strong>${t.donorName}</strong>
             <div style="font-size: 0.75rem; color: var(--text-muted);">${t.invoiceNumber}</div>
           </td>
-          <td class="col-desktop-only">${t.campaignTitle.substring(0, 24)}...</td>
+          <td class="col-desktop-only">${(t.campaignTitle || '').substring(0, 24)}...</td>
           <td><strong style="color: #059669;">Rp ${t.amount.toLocaleString('id-ID')}</strong></td>
           <td class="col-desktop-only"><span class="status-pill status-pending">Menunggu Verifikasi</span></td>
           <td>
@@ -2293,8 +2586,8 @@ async function renderAdminOverview() {
           <td class="col-desktop-only">${p.parentName}</td>
           <td class="col-desktop-only">${p.registeredAt}</td>
           <td style="white-space: nowrap; text-align: right;">
-            <span class="status-pill ${p.status === 'accepted' ? 'status-success' : (p.status === 'verified' ? 'status-active' : (p.status === 'rejected' ? 'status-draft' : 'status-pending'))}" style="white-space: nowrap; font-size: 0.72rem;">
-              ${p.status === 'accepted' ? 'Diterima' : (p.status === 'verified' ? 'Terverifikasi' : (p.status === 'rejected' ? 'Ditolak' : 'Menunggu'))}
+            <span class="status-pill ${getPPDBStatusClass(p.status)}" style="white-space: nowrap; font-size: 0.72rem;">
+              ${getPPDBStatusLabel(p.status)}
             </span>
           </td>
           <td class="col-desktop-only">
@@ -2304,9 +2597,8 @@ async function renderAdminOverview() {
       `;
     }).join('');
 
-    // Clicking anywhere on the row opens the detail dossier modal
     ppdbTable.querySelectorAll('.ppdb-overview-row').forEach(row => {
-      row.addEventListener('click', (e) => {
+      row.addEventListener('click', () => {
         const id = row.getAttribute('data-id');
         openAdminPPDBDetailModal(id);
       });
@@ -2322,7 +2614,7 @@ async function renderAdminOverview() {
   }
 }
 
-// 3. Render Akademik Panel
+// 3. Render Akademik Panel & Program Editor
 function renderAdminAkademik() {
   const tbody = document.getElementById('adminProgramsTableBody');
   if (tbody) {
@@ -2330,11 +2622,11 @@ function renderAdminAkademik() {
       <tr>
         <td>
           <strong>${p.name}</strong>
-          <div style="font-size: 0.75rem; color: var(--text-muted);">${p.shortTitle}</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">${p.shortTitle || p.id} • <span style="color: ${p.publicationStatus === 'draft' ? '#d97706' : '#059669'};">${p.publicationStatus || 'published'}</span></div>
         </td>
         <td class="col-desktop-only"><span class="badge-tag-pill" style="font-size: 0.72rem;">${p.category === 'formal' ? 'Formal' : 'Non-Formal'}</span></td>
-        <td class="col-desktop-only">${p.stats.targetHafalan}</td>
-        <td class="col-desktop-only">${p.stats.durasi}</td>
+        <td class="col-desktop-only">${p.stats?.targetHafalan || '30 Juz'}</td>
+        <td class="col-desktop-only">${p.stats?.durasi || '3 Tahun'}</td>
         <td>
           <label class="switch-label">
             <div class="switch-toggle">
@@ -2350,24 +2642,39 @@ function renderAdminAkademik() {
           </a>
         </td>
         <td>
-          <button class="btn-icon-action btn-upload-single-syllabus" data-id="${p.id}" title="Unggah Revisi Silabus">
-            ${getIconSvg('download', 14)}
-          </button>
+          <div class="table-action-btns">
+            <button class="btn-icon-action btn-edit-program-detail" data-id="${p.id}" title="Kelola Detail Program & Skema Form PPDB">✏️</button>
+            <button class="btn-icon-action btn-upload-single-syllabus" data-id="${p.id}" title="Unggah Revisi Silabus">
+              ${getIconSvg('download', 14)}
+            </button>
+          </div>
         </td>
       </tr>
     `).join('');
 
-    // Toggle switch listeners
+    // Toggle switch listeners (wired to backend API)
     tbody.querySelectorAll('.program-ppdb-switch').forEach(toggle => {
-      toggle.addEventListener('change', (e) => {
+      toggle.addEventListener('change', async (e) => {
         const id = e.target.getAttribute('data-id');
         const prog = programsState.find(p => p.id === id);
         if (prog) {
           prog.ppdbOpen = e.target.checked;
           const label = e.target.closest('.switch-label').querySelector('.switch-text');
           if (label) label.textContent = prog.ppdbOpen ? 'Buka (Open)' : 'Tutup (Closed)';
+          try {
+            await programsApi.toggleStatus(id);
+          } catch {
+            // offline fallback
+          }
           showToast(`Status PPDB ${prog.name} berhasil diubah menjadi: ${prog.ppdbOpen ? 'DIBUKA (OPEN)' : 'DITUTUP (CLOSED)'}`, 'success');
         }
+      });
+    });
+
+    tbody.querySelectorAll('.btn-edit-program-detail').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.getAttribute('data-id');
+        openProgramEditPage(id);
       });
     });
 
@@ -2395,12 +2702,85 @@ function renderAdminAkademik() {
   renderAdminPPDBTable();
 }
 
+function renderCustomSchemaRowHtml(field = {}) {
+  const label = field.label || '';
+  const type = field.type || 'text';
+  const required = field.required !== false;
+  const options = field.options || '';
+  return `
+    <div class="program-custom-field-row" style="display: grid; grid-template-columns: 2fr 1fr 1.5fr auto auto; gap: 0.5rem; align-items: center; background: #fff; padding: 0.55rem; border-radius: 6px; border: 1px solid rgba(0,0,0,0.08);">
+      <input type="text" class="form-input custom-field-label" placeholder="Label Pertanyaan (misal: Hafalan Saat Ini)" value="${label}" required style="padding: 0.4rem 0.6rem; font-size: 0.82rem;" />
+      <select class="form-select custom-field-type" style="padding: 0.4rem 0.6rem; font-size: 0.82rem;">
+        <option value="text" ${type === 'text' ? 'selected' : ''}>Teks Singkat</option>
+        <option value="textarea" ${type === 'textarea' ? 'selected' : ''}>Teks Panjang</option>
+        <option value="select" ${type === 'select' ? 'selected' : ''}>Pilihan Dropdown</option>
+        <option value="number" ${type === 'number' ? 'selected' : ''}>Angka</option>
+      </select>
+      <input type="text" class="form-input custom-field-options" placeholder="Opsi koma (jika dropdown)" value="${options}" style="padding: 0.4rem 0.6rem; font-size: 0.82rem;" />
+      <label style="font-size: 0.78rem; display: flex; align-items: center; gap: 0.25rem; white-space: nowrap;">
+        <input type="checkbox" class="custom-field-required" ${required ? 'checked' : ''} /> Wajib
+      </label>
+      <button type="button" class="btn-icon-action btn-remove-custom-field" title="Hapus Pertanyaan" style="color: #dc2626;">✕</button>
+    </div>
+  `;
+}
+
+export function openProgramEditPage(programId = null) {
+  const form = document.getElementById('adminProgramEditForm');
+  const titleHeading = document.getElementById('programFormTitleHeading');
+  const idInput = document.getElementById('programFormIdInput');
+  const customContainer = document.getElementById('programCustomFieldsContainer');
+  if (!form) return;
+
+  if (programId) {
+    const p = programsState.find(item => item.id === programId) || PROGRAMS.find(item => item.id === programId);
+    if (p) {
+      if (titleHeading) titleHeading.textContent = `Edit Program Akademik: ${p.name}`;
+      if (idInput) {
+        idInput.value = p.id;
+        idInput.readOnly = true;
+      }
+      document.getElementById('programFormTitle').value = p.name || '';
+      document.getElementById('programFormCategory').value = p.category || 'formal';
+      document.getElementById('programFormTarget').value = p.stats?.targetHafalan || '30 Juz';
+      document.getElementById('programFormDuration').value = p.stats?.durasi || '3 Tahun';
+      document.getElementById('programFormSubtitle').value = p.headline || p.summary || '';
+      document.getElementById('programFormEligibility').value = p.eligibilityCriteria || p.about?.target || '';
+      document.getElementById('programFormSchedule').value = p.scheduleInfo || '';
+      document.getElementById('programFormInstructions').value = p.applicationInstructions || '';
+      document.getElementById('programFormImage').value = p.image || '/assets/images/classroom.jpg';
+      document.getElementById('programFormPubStatus').value = p.publicationStatus || 'published';
+      document.getElementById('programFormIsOpen').value = p.ppdbOpen !== false ? '1' : '0';
+
+      if (customContainer) {
+        const schema = Array.isArray(p.formSchema) ? p.formSchema : [];
+        customContainer.innerHTML = schema.map(f => renderCustomSchemaRowHtml(f)).join('');
+        customContainer.querySelectorAll('.btn-remove-custom-field').forEach(btn => {
+          btn.addEventListener('click', (e) => e.currentTarget.closest('.program-custom-field-row')?.remove());
+        });
+      }
+    }
+  } else {
+    if (titleHeading) titleHeading.textContent = 'Tambah Program Akademik Baru';
+    form.reset();
+    if (idInput) {
+      idInput.value = '';
+      idInput.readOnly = false;
+    }
+    document.getElementById('programFormImage').value = '/assets/images/classroom.jpg';
+    if (customContainer) customContainer.innerHTML = '';
+  }
+
+  window.location.hash = '#admin-program-form';
+}
+
 function renderAdminPPDBTable() {
   const ppdbBody = document.getElementById('adminPPDBTableBody');
   const countBadge = document.getElementById('adminPPDBCountBadge');
   const searchInput = document.getElementById('filterPPDBSearch');
   const progFilter = document.getElementById('filterPPDBProgram');
   const statusFilter = document.getElementById('filterPPDBStatus');
+  const dateFilter = document.getElementById('filterPPDBDateRange');
   const btnExport = document.getElementById('btnExportPPDB');
 
   if (btnExport && !btnExport.dataset.initialized) {
@@ -2430,6 +2810,13 @@ function renderAdminPPDBTable() {
     statusFilter.dataset.initialized = 'true';
     statusFilter.addEventListener('change', (e) => {
       adminPPDBFilter.status = e.target.value;
+      renderAdminPPDBTable();
+    });
+  }
+  if (dateFilter && !dateFilter.dataset.initialized) {
+    dateFilter.dataset.initialized = 'true';
+    dateFilter.addEventListener('change', (e) => {
+      adminPPDBFilter.dateRange = e.target.value;
       renderAdminPPDBTable();
     });
   }
@@ -2494,8 +2881,8 @@ function renderAdminPPDBTable() {
         </td>
         <td class="col-desktop-only">${lead.registeredAt}</td>
         <td>
-          <span class="status-pill ${lead.status === 'accepted' ? 'status-success' : (lead.status === 'verified' ? 'status-active' : (lead.status === 'rejected' ? 'status-draft' : 'status-pending'))}">
-            ${lead.status === 'accepted' ? 'Diterima' : (lead.status === 'verified' ? 'Terverifikasi' : (lead.status === 'rejected' ? 'Ditolak' : 'Menunggu'))}
+          <span class="status-pill ${getPPDBStatusClass(lead.status)}">
+            ${getPPDBStatusLabel(lead.status)}
           </span>
         </td>
         <td>
@@ -2589,16 +2976,44 @@ function renderAdminPPDBTable() {
   });
 }
 
-// 4. Render Modul Wakaf & Donasi Panel
+// 4. Render Modul Wakaf & Donasi Panel (Independent Financial Ledger + Audit Trail)
 function renderAdminDonasi() {
+  // Populate Campaign Filter Dropdown & Manual Donation Campaign Select
+  const campFilterSelect = document.getElementById('donationCampaignFilter');
+  if (campFilterSelect) {
+    const currentVal = state.donationCampaignFilter || 'all';
+    campFilterSelect.innerHTML = `
+      <option value="all">Semua Campaign & Infaq</option>
+      <option value="general">Infaq & Wakaf Umum (Tanpa Campaign)</option>
+      ${campaignsState.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+    `;
+    campFilterSelect.value = currentVal;
+  }
+
+  const manualCampSelect = document.getElementById('manualTrxCampaign');
+  if (manualCampSelect) {
+    manualCampSelect.innerHTML = `
+      <option value="general">Infaq & Wakaf Umum (Non-Campaign)</option>
+      ${campaignsState.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+    `;
+  }
+
   // Render Campaign Cards Grid
   const campGrid = document.getElementById('adminCampaignsGrid');
   const campBadge = document.getElementById('campaignsCountBadge');
   if (campBadge) campBadge.textContent = `${campaignsState.length} Program Terdaftar`;
 
+  const campStatusLabel = (st) => {
+    if (st === 'active') return 'Aktif';
+    if (st === 'completed') return 'Selesai';
+    if (st === 'closed') return 'Ditutup';
+    if (st === 'archived') return 'Diarsipkan';
+    return 'Draft';
+  };
+
   if (campGrid) {
     campGrid.innerHTML = campaignsState.map(c => {
-      const pct = Math.min(100, (c.collectedAmount / c.targetAmount * 100)).toFixed(1);
+      const pct = Math.min(100, (c.collectedAmount / Math.max(1, c.targetAmount) * 100)).toFixed(1);
       return `
         <div class="admin-campaign-card" data-id="${c.id}" style="cursor: pointer;">
           <div class="campaign-card-thumb">
@@ -2609,7 +3024,7 @@ function renderAdminDonasi() {
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="badge-tag-pill" style="font-size: 0.72rem; text-transform: uppercase;">${c.type}</span>
               <span class="status-pill ${c.status === 'active' ? 'status-active' : (c.status === 'completed' ? 'status-success' : 'status-draft')}">
-                ${c.status === 'active' ? 'Aktif' : (c.status === 'completed' ? 'Selesai' : 'Draft')}
+                ${campStatusLabel(c.status)}
               </span>
             </div>
             <h4 class="campaign-card-title">${c.title}</h4>
@@ -2635,7 +3050,7 @@ function renderAdminDonasi() {
     }).join('');
 
     campGrid.querySelectorAll('.admin-campaign-card').forEach(card => {
-      card.addEventListener('click', (e) => {
+      card.addEventListener('click', () => {
         const id = card.getAttribute('data-id');
         openCampaignModal(id);
       });
@@ -2650,8 +3065,51 @@ function renderAdminDonasi() {
     });
   }
 
-  // Render Donations Table
+  // Render Donations Table & Financial Audit Trail
   renderDonationTransactionsTable();
+  renderFinancialAuditTable();
+}
+
+async function renderFinancialAuditTable() {
+  const tbody = document.getElementById('adminFinancialAuditTableBody');
+  if (!tbody) return;
+
+  try {
+    const res = await donationsApi.getAuditLogs();
+    if (res && Array.isArray(res.data)) {
+      financialAuditState = res.data;
+    }
+  } catch {
+    // offline fallback
+  }
+
+  if (!financialAuditState || financialAuditState.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 1.25rem;">Belum ada riwayat verifikasi atau koreksi finansial.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = financialAuditState.slice(0, 15).map(log => {
+    let prevStr = '-';
+    let newStr = '-';
+    try {
+      const p = typeof log.previous_value === 'string' ? JSON.parse(log.previous_value) : (log.previous_value || {});
+      const n = typeof log.new_value === 'string' ? JSON.parse(log.new_value) : (log.new_value || {});
+      prevStr = p.payment_status ? `${p.payment_status} (Rp ${Number(p.amount || 0).toLocaleString('id-ID')})` : JSON.stringify(p);
+      newStr = n.payment_status ? `${n.payment_status} (Rp ${Number(n.amount || 0).toLocaleString('id-ID')})` : JSON.stringify(n);
+    } catch {
+      // ignore
+    }
+    return `
+      <tr>
+        <td style="font-size: 0.76rem; color: var(--text-muted); white-space: nowrap;">${log.created_at || 'Baru Saja'}</td>
+        <td><code style="font-size: 0.75rem;">${log.invoice_number || log.donation_id}</code></td>
+        <td><span class="badge-tag-pill" style="font-size: 0.7rem;">${log.action_type}</span></td>
+        <td style="font-size: 0.76rem;">${prevStr} → <strong>${newStr}</strong></td>
+        <td style="font-size: 0.78rem;">${log.reason || '-'}</td>
+        <td style="font-size: 0.78rem;"><strong>${log.actor_name || 'Admin'}</strong></td>
+      </tr>
+    `;
+  }).join('');
 }
 
 function renderDonationTransactionsTable() {
@@ -2661,15 +3119,24 @@ function renderDonationTransactionsTable() {
   let filtered = donationsState;
 
   if (state.activeDonationStatusFilter !== 'all') {
-    filtered = filtered.filter(d => d.paymentStatus === state.activeDonationStatusFilter);
+    if (state.activeDonationStatusFilter === 'rejected') {
+      filtered = filtered.filter(d => d.paymentStatus === 'rejected' || d.paymentStatus === 'failed' || d.paymentStatus === 'voided');
+    } else {
+      filtered = filtered.filter(d => d.paymentStatus === state.activeDonationStatusFilter);
+    }
+  }
+
+  if (state.donationCampaignFilter && state.donationCampaignFilter !== 'all') {
+    filtered = filtered.filter(d => (d.campaignId || 'general') === state.donationCampaignFilter);
   }
 
   if (state.donationSearchQuery.trim()) {
     const q = state.donationSearchQuery.toLowerCase();
-    filtered = filtered.filter(d => 
-      d.invoiceNumber.toLowerCase().includes(q) ||
-      d.donorName.toLowerCase().includes(q) ||
-      d.campaignTitle.toLowerCase().includes(q)
+    filtered = filtered.filter(d =>
+      (d.invoiceNumber || '').toLowerCase().includes(q) ||
+      (d.donorName || '').toLowerCase().includes(q) ||
+      (d.campaignTitle || '').toLowerCase().includes(q) ||
+      (d.referenceNumber || '').toLowerCase().includes(q)
     );
   }
 
@@ -2678,21 +3145,28 @@ function renderDonationTransactionsTable() {
     return;
   }
 
+  const getDonStatusLabel = (st) => {
+    if (st === 'success') return 'Sukses';
+    if (st === 'pending') return 'Menunggu';
+    if (st === 'voided') return 'Void / Batal';
+    return 'Ditolak / Gagal';
+  };
+
   tbody.innerHTML = filtered.map(t => `
     <tr class="donation-table-row" data-id="${t.id}" style="cursor: pointer;">
       <td class="col-desktop-only"><code>${t.invoiceNumber}</code></td>
       <td>
         <strong>${t.donorName}</strong>
         ${t.isAnonymous ? '<span class="badge-tag-pill" style="font-size: 0.65rem; margin-left: 0.25rem;">Hamba Allah</span>' : ''}
-        <div style="font-size: 0.74rem; color: var(--text-muted);">${t.donorPhone}</div>
+        <div style="font-size: 0.74rem; color: var(--text-muted);">${t.donorPhone}${t.referenceNumber ? ` • Ref: ${t.referenceNumber}` : ''}</div>
       </td>
       <td class="col-desktop-only">${t.campaignTitle.substring(0, 28)}...</td>
       <td><strong style="color: #059669; font-size: 0.95rem;">Rp ${t.amount.toLocaleString('id-ID')}</strong></td>
-      <td class="col-desktop-only"><span style="font-size: 0.82rem;">${t.paymentMethod}</span></td>
+      <td class="col-desktop-only"><span style="font-size: 0.82rem;">${t.paymentSource || t.paymentMethod}</span></td>
       <td class="col-desktop-only"><span style="font-size: 0.78rem; color: var(--text-muted);">${t.paidAt}</span></td>
       <td>
         <span class="status-pill ${t.paymentStatus === 'success' ? 'status-success' : (t.paymentStatus === 'pending' ? 'status-pending' : 'status-failed')}">
-          ${t.paymentStatus === 'success' ? 'Sukses' : (t.paymentStatus === 'pending' ? 'Menunggu' : 'Gagal')}
+          ${getDonStatusLabel(t.paymentStatus)}
         </span>
       </td>
       <td>
@@ -2702,7 +3176,9 @@ function renderDonationTransactionsTable() {
               Periksa Struk
             </button>
           ` : `
-            <span style="font-size: 0.78rem; color: #059669; font-weight: 700;">✓ Lunas</span>
+            <button class="btn btn-secondary btn-sm btn-inspect-receipt" data-id="${t.id}" style="font-size: 0.72rem; padding: 0.25rem 0.55rem;">
+              Detail / Koreksi
+            </button>
           `}
           <button class="btn-icon-action btn-send-wa-receipt" data-id="${t.id}" title="Kirim Kwitansi Donasi WA">
             💬
@@ -2736,13 +3212,13 @@ function renderDonationTransactionsTable() {
       const trx = donationsState.find(d => d.id === id);
       if (trx) {
         const text = encodeURIComponent(`Assalamu'alaikum wr. wb. Terima kasih kepada Bapak/Ibu ${trx.donorName} atas donasi wakaf sebesar Rp ${trx.amount.toLocaleString('id-ID')} (${trx.invoiceNumber}) untuk ${trx.campaignTitle}. Jazakumullah Khairan Katsiran.`);
-        window.open(`https://wa.me/${trx.donorPhone.replace(/^0/, '62')}?text=${text}`, '_blank');
+        window.open(`https://wa.me/${(trx.donorPhone || '').replace(/^0/, '62')}?text=${text}`, '_blank');
       }
     });
   });
 }
 
-// 5. Render Galeri & Kunjungan Panel
+// 5. Render Galeri & Kunjungan Panel + Shared Media Library
 function renderAdminGaleri() {
   const visitBody = document.getElementById('adminVisitTableBody');
   if (visitBody) {
@@ -2750,7 +3226,7 @@ function renderAdminGaleri() {
       <tr>
         <td><strong>${v.groupName}</strong></td>
         <td class="col-desktop-only">${v.leaderName}</td>
-        <td class="col-desktop-only"><a href="https://wa.me/${v.phone.replace(/^0/, '62')}" target="_blank" style="color: #059669; font-weight: 600;">${v.phone}</a></td>
+        <td class="col-desktop-only"><a href="https://wa.me/${(v.phone || '').replace(/^0/, '62')}" target="_blank" style="color: #059669; font-weight: 600;">${v.phone}</a></td>
         <td><strong>${v.date}</strong></td>
         <td class="col-desktop-only">${v.count} Orang</td>
         <td class="col-desktop-only" style="max-width: 220px; font-size: 0.8rem;">${v.goal}</td>
@@ -2788,11 +3264,22 @@ function renderAdminGaleri() {
   // Mini Media Grid in Admin Panel Galeri
   const mediaGrid = document.getElementById('adminMediaMiniGrid');
   if (mediaGrid) {
-    const items = (galleriesState && galleriesState.length > 0) ? galleriesState : GALLERIES;
+    let items = (galleriesState && galleriesState.length > 0) ? [...galleriesState] : [...GALLERIES];
+    if (state.adminGalleryCategoryFilter && state.adminGalleryCategoryFilter !== 'all') {
+      items = items.filter(g => g.category === state.adminGalleryCategoryFilter);
+    }
+    if (state.adminGalleryStatusFilter && state.adminGalleryStatusFilter !== 'all') {
+      items = items.filter(g => (g.status || 'published') === state.adminGalleryStatusFilter);
+    }
+    items.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
     mediaGrid.innerHTML = items.map(g => `
       <div class="admin-media-card" style="border-radius: var(--radius-md); overflow: hidden; border: 1px solid rgba(0,0,0,0.08); background: #000; height: 120px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <img src="${g.image}" alt="${g.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/assets/images/campus.jpg';" />
+        <img src="${g.image}" alt="${g.altText || g.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/assets/images/campus.jpg';" />
         <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 40%, rgba(0,0,0,0.85) 100%); pointer-events: none;"></div>
+        <button type="button" class="btn-edit-gal-item" data-id="${g.id}" title="Edit Metadata & Urutan" style="position: absolute; top: 6px; left: 6px; background: rgba(15, 23, 42, 0.78); color: #fff; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.72rem;">
+          ✏️
+        </button>
         <button type="button" class="btn-delete-gal-item" data-id="${g.id}" title="Hapus Media Galeri" style="position: absolute; top: 6px; right: 6px; background: rgba(220, 38, 38, 0.85); color: #fff; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='rgba(220,38,38,0.85)'">
           🗑️
         </button>
@@ -2800,12 +3287,33 @@ function renderAdminGaleri() {
           <span style="color: #fff; font-size: 0.7rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">
             ${g.title}
           </span>
-          <span style="background: rgba(16, 185, 129, 0.85); color: #fff; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 3px; font-weight: 600; text-transform: uppercase;">
-            ${g.category || 'Galeri'}
+          <span style="background: ${g.status === 'draft' ? 'rgba(217, 119, 6, 0.9)' : 'rgba(16, 185, 129, 0.85)'}; color: #fff; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 3px; font-weight: 600; text-transform: uppercase;">
+            ${g.status === 'draft' ? 'Draft' : (g.category || 'Galeri')}
           </span>
         </div>
       </div>
     `).join('');
+
+    mediaGrid.querySelectorAll('.btn-edit-gal-item').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const gId = e.currentTarget.getAttribute('data-id');
+        const gItem = (galleriesState || []).find(item => String(item.id) === String(gId));
+        if (!gItem) return;
+        const galleryModal = document.getElementById('adminGalleryModal');
+        document.getElementById('galleryFormId').value = gItem.id;
+        document.getElementById('galleryFormTitle').value = gItem.title || '';
+        document.getElementById('galleryFormCategory').value = gItem.category || 'gedung';
+        document.getElementById('galleryFormAlbum').value = gItem.albumName || '';
+        document.getElementById('galleryFormSortOrder').value = gItem.sortOrder || 0;
+        document.getElementById('galleryFormStatus').value = gItem.status || 'published';
+        document.getElementById('galleryFormDate').value = gItem.date || '';
+        document.getElementById('galleryFormUrl').value = gItem.image || '';
+        document.getElementById('galleryFormAltText').value = gItem.altText || gItem.title || '';
+        document.getElementById('galleryFormCaption').value = gItem.caption || '';
+        if (galleryModal) galleryModal.classList.add('open');
+        window.location.hash = '#admin-gallery-form';
+      });
+    });
 
     mediaGrid.querySelectorAll('.btn-delete-gal-item').forEach(btn => {
       btn.addEventListener('click', async (e) => {
@@ -2836,6 +3344,78 @@ function renderAdminGaleri() {
   }
 }
 
+export async function openMediaLibraryModal(onSelectCallback = null) {
+  state.mediaPickerCallback = onSelectCallback;
+  const modal = document.getElementById('mediaLibraryPickerModal');
+  const grid = document.getElementById('mediaLibraryGrid');
+  if (!modal || !grid) return;
+
+  modal.classList.add('open');
+  grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-muted);">Memuat pustaka media...</div>`;
+
+  try {
+    const res = await mediaApi.getAll();
+    if (res && Array.isArray(res.data)) {
+      mediaState = res.data;
+    }
+  } catch {
+    // fallback
+  }
+
+  const defaultAssets = [
+    { id: 'def-1', file_name: 'Campus RTM', file_url: '/assets/images/campus.jpg', alt_text: 'Kampus Rumah Tahfidz' },
+    { id: 'def-2', file_name: 'Halaqoh Classroom', file_url: '/assets/images/classroom.jpg', alt_text: 'Suasana Halaqoh' },
+    { id: 'def-3', file_name: 'Asrama Santri', file_url: '/assets/images/dormitory.jpg', alt_text: 'Asrama Tahfidz' },
+    { id: 'def-4', file_name: 'Wisuda Akbar', file_url: '/assets/images/wisuda.jpg', alt_text: 'Wisuda Tahfidz' }
+  ];
+  const allMedia = [...mediaState, ...defaultAssets.filter(d => !mediaState.some(m => m.file_url === d.file_url))];
+
+  grid.innerHTML = allMedia.map(m => `
+    <div class="media-lib-item" data-url="${m.file_url}" data-alt="${m.alt_text || m.file_name}" style="border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; background: #fff; display: flex; flex-direction: column;">
+      <div style="height: 100px; background: #0f172a; position: relative;">
+        <img src="${m.file_url}" alt="${m.alt_text || m.file_name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/assets/images/campus.jpg';" />
+      </div>
+      <div style="padding: 0.5rem; font-size: 0.74rem; display: flex; flex-direction: column; gap: 0.35rem; flex: 1; justify-content: space-between;">
+        <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${m.file_name}">${m.file_name}</div>
+        <div style="display: flex; gap: 0.25rem;">
+          <button type="button" class="btn btn-primary btn-sm btn-select-media-asset" data-url="${m.file_url}" data-alt="${m.alt_text || m.file_name}" style="flex: 1; font-size: 0.7rem; padding: 0.25rem 0.4rem;">
+            ${onSelectCallback ? 'Pilih' : 'Salin URL'}
+          </button>
+          ${!String(m.id).startsWith('def-') ? `<button type="button" class="btn btn-secondary btn-sm btn-delete-media-asset" data-id="${m.id}" style="font-size: 0.7rem; padding: 0.25rem 0.4rem; color: #dc2626;">🗑️</button>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.btn-select-media-asset').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const url = e.currentTarget.getAttribute('data-url');
+      const alt = e.currentTarget.getAttribute('data-alt');
+      if (typeof state.mediaPickerCallback === 'function') {
+        state.mediaPickerCallback(url, alt);
+        modal.classList.remove('open');
+        showToast('Media berhasil dipilih!', 'success');
+      } else {
+        navigator.clipboard?.writeText(url);
+        showToast(`URL Media disalin: ${url}`, 'success');
+      }
+    });
+  });
+
+  grid.querySelectorAll('.btn-delete-media-asset').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const id = e.currentTarget.getAttribute('data-id');
+      try {
+        await mediaApi.delete(id);
+        showToast('Aset media berhasil dihapus.', 'info');
+        openMediaLibraryModal(state.mediaPickerCallback);
+      } catch (err) {
+        showToast('Gagal menghapus media: ' + err.message, 'warning');
+      }
+    });
+  });
+}
+
 // 6. Render Artikel / Berita Panel
 function renderAdminBerita() {
   const tbody = document.getElementById('adminArticlesTableBody');
@@ -2845,9 +3425,19 @@ function renderAdminBerita() {
   if (!tbody) return;
 
   let filtered = articlesState;
+  if (state.adminArticleCategoryFilter && state.adminArticleCategoryFilter !== 'all') {
+    filtered = filtered.filter(a => (a.category || '').toLowerCase() === state.adminArticleCategoryFilter.toLowerCase());
+  }
+  if (state.adminArticleStatusFilter && state.adminArticleStatusFilter !== 'all') {
+    filtered = filtered.filter(a => (a.status || 'published') === state.adminArticleStatusFilter);
+  }
   if (state.adminArticleSearchQuery.trim()) {
     const q = state.adminArticleSearchQuery.toLowerCase();
-    filtered = filtered.filter(a => a.title.toLowerCase().includes(q) || a.category.toLowerCase().includes(q));
+    filtered = filtered.filter(a =>
+      (a.title || '').toLowerCase().includes(q) ||
+      (a.category || '').toLowerCase().includes(q) ||
+      (a.slug || '').toLowerCase().includes(q)
+    );
   }
 
   tbody.innerHTML = filtered.map(art => `
@@ -2859,7 +3449,7 @@ function renderAdminBerita() {
       </td>
       <td>
         <strong>${art.title}</strong>
-        <div style="font-size: 0.74rem; color: var(--text-muted); font-family: monospace;">/${art.id}</div>
+        <div style="font-size: 0.74rem; color: var(--text-muted); font-family: monospace;">/${art.slug || art.id}</div>
       </td>
       <td class="col-desktop-only"><span class="badge-tag-pill" style="font-size: 0.72rem;">${art.category}</span></td>
       <td class="col-desktop-only">${art.author || 'Admin Media'}</td>
@@ -2867,10 +3457,10 @@ function renderAdminBerita() {
       <td>
         <label class="switch-label">
           <div class="switch-toggle">
-            <input type="checkbox" class="article-publish-toggle" data-id="${art.id}" ${art.status !== 'draft' ? 'checked' : ''} />
+            <input type="checkbox" class="article-publish-toggle" data-id="${art.id}" ${art.status === 'published' ? 'checked' : ''} />
             <span class="switch-slider"></span>
           </div>
-          <span class="switch-text">${art.status !== 'draft' ? 'Published' : 'Draft'}</span>
+          <span class="switch-text">${art.status === 'published' ? 'Published' : (art.status === 'archived' ? 'Archived' : 'Draft')}</span>
         </label>
       </td>
       <td>
@@ -2882,15 +3472,20 @@ function renderAdminBerita() {
     </tr>
   `).join('');
 
-  // Article publish toggle listener
+  // Article publish toggle listener (persisted via API)
   tbody.querySelectorAll('.article-publish-toggle').forEach(toggle => {
-    toggle.addEventListener('change', (e) => {
+    toggle.addEventListener('change', async (e) => {
       const id = e.target.getAttribute('data-id');
       const art = articlesState.find(a => a.id === id);
       if (art) {
         art.status = e.target.checked ? 'published' : 'draft';
         const label = e.target.closest('.switch-label').querySelector('.switch-text');
         if (label) label.textContent = art.status === 'published' ? 'Published' : 'Draft';
+        try {
+          await articlesApi.toggleStatus(id, art.status);
+        } catch {
+          // fallback
+        }
         showToast(`Status artikel "${art.title}" diubah menjadi: ${art.status.toUpperCase()}`, 'success');
         renderNewsGrid();
       }
@@ -2921,6 +3516,11 @@ function renderAdminBerita() {
         confirmBtnClass: 'btn-danger'
       });
       if (confirmed) {
+        try {
+          await articlesApi.delete(id);
+        } catch {
+          // fallback
+        }
         articlesState = articlesState.filter(a => a.id !== id);
         showToast('Artikel berhasil dihapus dari sistem.', 'success');
         renderAdminBerita();
@@ -2930,25 +3530,76 @@ function renderAdminBerita() {
   });
 }
 
-// 7. Render Tampilan & Identitas Panel
-function renderAdminTampilan() {
-  const nameInput = document.getElementById('settingInstitutionName');
-  const shortInput = document.getElementById('settingShortName');
-  const tagInput = document.getElementById('settingTagline');
-  const mudirInput = document.getElementById('settingMudir');
-  const waPPDB = document.getElementById('settingWhatsappPPDB');
-  const waDonasi = document.getElementById('settingWhatsappDonasi');
-  const emailInput = document.getElementById('settingEmail');
-  const addrInput = document.getElementById('settingAddress');
+// 7. Render Tampilan & Identitas Panel + Apply Published Settings to Public DOM
+function applySiteSettingsToDOM(siteConf = {}) {
+  if (!siteConf || typeof siteConf !== 'object') return;
+  if (siteConf.title) INSTITUTION.name = siteConf.title;
+  if (siteConf.shortTitle) INSTITUTION.shortName = siteConf.shortTitle;
+  if (siteConf.tagline) INSTITUTION.tagline = siteConf.tagline;
+  if (siteConf.mudir) INSTITUTION.mudir = siteConf.mudir;
+  if (siteConf.whatsappPPDB) INSTITUTION.whatsappPPDB = siteConf.whatsappPPDB;
+  if (siteConf.whatsappDonasi) INSTITUTION.whatsappDonasi = siteConf.whatsappDonasi;
+  if (siteConf.email) INSTITUTION.email = siteConf.email;
+  if (siteConf.address) INSTITUTION.address = siteConf.address;
 
-  if (nameInput) nameInput.value = INSTITUTION.name;
-  if (shortInput) shortInput.value = INSTITUTION.shortName;
-  if (tagInput) tagInput.value = INSTITUTION.tagline;
-  if (mudirInput) mudirInput.value = INSTITUTION.mudir;
-  if (waPPDB) waPPDB.value = INSTITUTION.whatsappPPDB;
-  if (waDonasi) waDonasi.value = INSTITUTION.whatsappDonasi;
-  if (emailInput) emailInput.value = INSTITUTION.email;
-  if (addrInput) addrInput.value = INSTITUTION.address;
+  const heroTitleEl = document.querySelector('#view-home .hero-title');
+  if (heroTitleEl && siteConf.heroTitle) {
+    heroTitleEl.textContent = siteConf.heroTitle;
+  }
+  const footerCopyEl = document.querySelector('.site-footer .footer-bottom p');
+  if (footerCopyEl && siteConf.footerCopyright) {
+    footerCopyEl.textContent = siteConf.footerCopyright;
+  }
+}
+
+function getAppearanceFormPayload() {
+  return {
+    title: document.getElementById('settingInstitutionName')?.value || INSTITUTION.name,
+    shortTitle: document.getElementById('settingShortName')?.value || INSTITUTION.shortName,
+    tagline: document.getElementById('settingTagline')?.value || INSTITUTION.tagline,
+    mudir: document.getElementById('settingMudir')?.value || INSTITUTION.mudir,
+    logoUrl: document.getElementById('settingLogoUrl')?.value || '/assets/images/logo-rtm.svg',
+    whatsappPPDB: document.getElementById('settingWhatsappPPDB')?.value || INSTITUTION.whatsappPPDB,
+    whatsappDonasi: document.getElementById('settingWhatsappDonasi')?.value || INSTITUTION.whatsappDonasi,
+    email: document.getElementById('settingEmail')?.value || INSTITUTION.email,
+    address: document.getElementById('settingAddress')?.value || INSTITUTION.address,
+    bankAccountInfo: document.getElementById('settingBankAccountInfo')?.value || 'BSI 7199 8822 11 a.n. Yayasan Rumah Tahfidz Al-Hikmah',
+    heroTitle: document.getElementById('settingHeroTitle')?.value || '',
+    aboutSummary: document.getElementById('settingAboutSummary')?.value || '',
+    vision: document.getElementById('settingVision')?.value || '',
+    mission: document.getElementById('settingMission')?.value || '',
+    socialInstagram: document.getElementById('settingSocialInstagram')?.value || '',
+    socialYoutube: document.getElementById('settingSocialYoutube')?.value || '',
+    navCtaLabel: document.getElementById('settingNavCtaLabel')?.value || 'Daftar PPDB Online',
+    footerCopyright: document.getElementById('settingFooterCopyright')?.value || '© 2026 Yayasan Rumah Tahfidz Al-Hikmah. Hak Cipta Dilindungi.'
+  };
+}
+
+function renderAdminTampilan() {
+  const draftOrLive = settingsState.site_identity_draft || settingsState.site_identity || {};
+  const setVal = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val !== undefined) el.value = val;
+  };
+
+  setVal('settingInstitutionName', draftOrLive.title || INSTITUTION.name);
+  setVal('settingShortName', draftOrLive.shortTitle || INSTITUTION.shortName);
+  setVal('settingTagline', draftOrLive.tagline || INSTITUTION.tagline);
+  setVal('settingMudir', draftOrLive.mudir || INSTITUTION.mudir);
+  setVal('settingLogoUrl', draftOrLive.logoUrl || '/assets/images/logo-rtm.svg');
+  setVal('settingWhatsappPPDB', draftOrLive.whatsappPPDB || INSTITUTION.whatsappPPDB);
+  setVal('settingWhatsappDonasi', draftOrLive.whatsappDonasi || INSTITUTION.whatsappDonasi);
+  setVal('settingEmail', draftOrLive.email || INSTITUTION.email);
+  setVal('settingAddress', draftOrLive.address || INSTITUTION.address);
+  setVal('settingBankAccountInfo', draftOrLive.bankAccountInfo || 'BSI 7199 8822 11 a.n. Yayasan Rumah Tahfidz Al-Hikmah');
+  if (draftOrLive.heroTitle) setVal('settingHeroTitle', draftOrLive.heroTitle);
+  if (draftOrLive.aboutSummary) setVal('settingAboutSummary', draftOrLive.aboutSummary);
+  if (draftOrLive.vision) setVal('settingVision', draftOrLive.vision);
+  if (draftOrLive.mission) setVal('settingMission', draftOrLive.mission);
+  if (draftOrLive.socialInstagram) setVal('settingSocialInstagram', draftOrLive.socialInstagram);
+  if (draftOrLive.socialYoutube) setVal('settingSocialYoutube', draftOrLive.socialYoutube);
+  if (draftOrLive.navCtaLabel) setVal('settingNavCtaLabel', draftOrLive.navCtaLabel);
+  if (draftOrLive.footerCopyright) setVal('settingFooterCopyright', draftOrLive.footerCopyright);
 }
 
 // 8. Render Users & RBAC Panel
@@ -2964,7 +3615,11 @@ function renderAdminUsers() {
     finance: 'Modul Wakaf & Donasi, Verifikasi Transfer Bank'
   };
 
-  tbody.innerHTML = usersState.map(u => `
+  tbody.innerHTML = usersState.map(u => {
+    const statusCellHtml = u.isActive === false
+      ? `<td class="col-desktop-only"><span class="status-pill status-draft">Nonaktif</span></td>`
+      : `<td class="col-desktop-only"><span class="status-pill status-success">Aktif</span></td>`;
+    return `
     <tr class="user-table-row" data-id="${u.id}" style="cursor: pointer;">
       <td>
         <div style="display: flex; align-items: center; gap: 0.6rem;">
@@ -2978,7 +3633,7 @@ function renderAdminUsers() {
       <td><span class="user-role-badge ${u.role}">${u.roleTitle || (u.role === 'superadmin' ? 'Admin' : (u.role === 'editor' ? 'Content' : 'Finance'))}</span></td>
       <td class="col-desktop-only" style="font-size: 0.78rem; color: var(--text-dark);">${roleDescriptions[u.role] || '-'}</td>
       <td class="col-desktop-only"><span style="font-size: 0.78rem; color: var(--text-muted);">${u.lastLogin}</span></td>
-      <td class="col-desktop-only"><span class="status-pill status-success">Aktif</span></td>
+      ${statusCellHtml}
       <td>
         <div class="table-action-btns" style="display: flex; gap: 0.35rem; align-items: center;">
           <button type="button" class="btn btn-secondary btn-sm btn-edit-user-action" data-id="${u.id}" title="Ubah Akun Pengguna" style="font-size: 0.75rem; padding: 0.2rem 0.55rem;">
@@ -2990,7 +3645,8 @@ function renderAdminUsers() {
         </div>
       </td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
   // Row click navigates to user detail page
   tbody.querySelectorAll('.user-table-row').forEach(row => {
@@ -3070,6 +3726,9 @@ export function renderUserDetailPage(userId) {
   const scopeEl = document.getElementById('userDetailScope');
   const forbiddenEl = document.getElementById('userDetailForbidden');
   const lastLoginEl = document.getElementById('userDetailLastLogin');
+  const activePillEl = document.getElementById('userDetailActiveStatusPill');
+  const opStatusEl = document.getElementById('userDetailOperationalStatus');
+  const toggleActiveBtn = document.getElementById('btnDetailToggleUserActive');
 
   if (avatarEl) avatarEl.textContent = user.avatar || user.name.substring(0, 2).toUpperCase();
   if (nameEl) nameEl.textContent = user.name;
@@ -3082,6 +3741,39 @@ export function renderUserDetailPage(userId) {
   if (emailEl) emailEl.textContent = user.email;
   if (roleNameEl) roleNameEl.textContent = `${roleConf.name} (${user.roleTitle || user.role})`;
 
+  const isUserActive = user.isActive !== false;
+  if (activePillEl) {
+    activePillEl.textContent = isUserActive ? 'Aktif' : 'Nonaktif';
+    activePillEl.className = `status-pill ${isUserActive ? 'status-success' : 'status-draft'}`;
+  }
+  if (opStatusEl) {
+    opStatusEl.textContent = isUserActive ? 'Aktif & Terverifikasi' : 'Dinonaktifkan Sementara';
+    opStatusEl.style.color = isUserActive ? '#059669' : '#d97706';
+  }
+  if (toggleActiveBtn) {
+    toggleActiveBtn.textContent = isUserActive ? '🔒 Nonaktifkan Akun' : '🔓 Aktifkan Akun';
+    toggleActiveBtn.onclick = async () => {
+      const currentUser = auth.getStoredUser() || usersState[0];
+      if (currentUser.role !== 'superadmin') {
+        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+        return;
+      }
+      if (user.id === 'usr-1' || user.id === currentUser.id) {
+        showToast('Akun Admin utama atau akun yang sedang login tidak dapat dinonaktifkan.', 'warning');
+        return;
+      }
+      try {
+        await usersApi.toggleStatus(user.id, !isUserActive);
+        showToast(`Status akun ${user.name} berhasil diubah menjadi ${!isUserActive ? 'AKTIF' : 'NONAKTIF'}.`, 'success');
+        await syncDatabaseState();
+        renderUserDetailPage(user.id);
+        renderAdminUsers();
+      } catch (err) {
+        showToast(err.message, 'warning');
+      }
+    };
+  }
+
   const scopeMap = {
     superadmin: 'Akses Penuh (Full Access) ke seluruh 7 modul sistem',
     editor: 'Modul Artikel Berita, Akademik & Silabus, Galeri & Kunjungan',
@@ -3090,7 +3782,7 @@ export function renderUserDetailPage(userId) {
   const forbiddenMap = {
     superadmin: 'Tidak ada batasan (Super Admin)',
     editor: 'Wakaf & Donasi Finansial, Manajemen Pengguna & RBAC',
-    finance: 'Artikel Berita, Akademik & PPDB, Manajemen Pengguna & RBAC'
+    finance: 'Artikel Berita, Akademik & PPDB (PII Santri), Manajemen Pengguna & RBAC'
   };
 
   if (scopeEl) scopeEl.textContent = scopeMap[user.role] || '-';
@@ -3151,12 +3843,14 @@ function openEditUserModal(user) {
   const emailInput = document.getElementById('userFormEmail');
   const passInput = document.getElementById('userFormPassword');
   const roleSelect = document.getElementById('userFormRole');
+  const activeSelect = document.getElementById('userFormActiveStatus');
 
   if (title) title.textContent = 'Ubah Akun Pengguna';
   if (idInput) idInput.value = user.id;
   if (nameInput) nameInput.value = user.name;
   if (emailInput) emailInput.value = user.email;
   if (roleSelect) roleSelect.value = user.role;
+  if (activeSelect) activeSelect.value = user.isActive === false ? '0' : '1';
   if (passInput) {
     passInput.value = '';
     passInput.required = false;
@@ -3191,8 +3885,8 @@ export function renderAdminProfile() {
   if (confirmPass) confirmPass.value = '';
 }
 
-// 9. Receipt Verification Modal Handlers
-function openReceiptModal(transactionId) {
+// 9. Receipt Verification & Financial Correction Modal Handlers
+async function openReceiptModal(transactionId) {
   const trx = donationsState.find(d => d.id === transactionId);
   if (!trx) return;
 
@@ -3203,27 +3897,65 @@ function openReceiptModal(transactionId) {
 
   const img = modal.querySelector('#adminReceiptImg');
   const inv = modal.querySelector('#receiptModalInvoice');
+  const statusPill = modal.querySelector('#receiptModalStatusPill');
   const donor = modal.querySelector('#receiptModalDonor');
   const camp = modal.querySelector('#receiptModalCampaign');
   const amount = modal.querySelector('#receiptModalAmount');
   const method = modal.querySelector('#receiptModalMethod');
+  const refEl = modal.querySelector('#receiptModalRef');
   const time = modal.querySelector('#receiptModalTime');
+  const notesInput = modal.querySelector('#receiptModalNotesInput');
   const waBtn = modal.querySelector('#btnSendWAReceipt');
+  const correctAmount = modal.querySelector('#correctTrxAmount');
+  const correctRef = modal.querySelector('#correctTrxRef');
+  const correctStatus = modal.querySelector('#correctTrxStatus');
+  const correctReason = modal.querySelector('#correctTrxReason');
+  const auditList = modal.querySelector('#receiptModalAuditList');
 
   if (img) img.src = trx.receiptUrl || '/assets/images/dormitory.jpg';
   if (inv) inv.textContent = trx.invoiceNumber;
+  if (statusPill) {
+    statusPill.textContent = trx.paymentStatus === 'success' ? 'Terverifikasi (Sukses)' : (trx.paymentStatus === 'pending' ? 'Menunggu Verifikasi' : `Status: ${trx.paymentStatus}`);
+    statusPill.className = `status-pill ${trx.paymentStatus === 'success' ? 'status-success' : (trx.paymentStatus === 'pending' ? 'status-pending' : 'status-failed')}`;
+  }
   if (donor) donor.textContent = trx.donorName;
   if (camp) camp.textContent = trx.campaignTitle;
   if (amount) amount.textContent = `Rp ${trx.amount.toLocaleString('id-ID')}`;
-  if (method) method.textContent = trx.paymentMethod;
+  if (method) method.textContent = trx.paymentSource || trx.paymentMethod;
+  if (refEl) refEl.textContent = trx.referenceNumber || '-';
   if (time) time.textContent = trx.paidAt;
+  if (notesInput) notesInput.value = trx.notes || '';
+  if (correctAmount) correctAmount.value = trx.amount || 0;
+  if (correctRef) correctRef.value = trx.referenceNumber || '';
+  if (correctStatus) correctStatus.value = trx.paymentStatus || 'success';
+  if (correctReason) correctReason.value = '';
 
   if (waBtn) {
     const text = encodeURIComponent(`Assalamu'alaikum. Konfirmasi penerimaan donasi ${trx.invoiceNumber} sebesar Rp ${trx.amount.toLocaleString('id-ID')} telah disetujui.`);
-    waBtn.href = `https://wa.me/${trx.donorPhone.replace(/^0/, '62')}?text=${text}`;
+    waBtn.href = `https://wa.me/${(trx.donorPhone || '').replace(/^0/, '62')}?text=${text}`;
   }
 
   modal.classList.add('open');
+
+  // Populate transaction-specific audit logs
+  if (auditList) {
+    try {
+      const res = await donationsApi.getAuditLogs(trx.id);
+      const logs = (res && Array.isArray(res.data)) ? res.data : [];
+      if (logs.length === 0) {
+        auditList.innerHTML = '<div>Belum ada koreksi atau log verifikasi pada transaksi ini.</div>';
+      } else {
+        auditList.innerHTML = logs.map(l => `
+          <div style="padding: 0.25rem 0; border-bottom: 1px dashed rgba(0,0,0,0.06);">
+            <strong>[${l.action_type}]</strong> oleh ${l.actor_name || 'Admin'} (${l.created_at || 'Baru saja'})
+            <div style="color: var(--text-dark);">Alasan: "${l.reason || '-'}"</div>
+          </div>
+        `).join('');
+      }
+    } catch {
+      auditList.innerHTML = '<div>Log audit tersimpan di server.</div>';
+    }
+  }
 }
 
 // 10. Campaign Modal Handlers
@@ -3258,12 +3990,27 @@ function openCampaignModal(campaignId = null) {
   window.location.hash = '#admin-campaign-form';
 }
 
-// 11. Article Modal Handlers
+// 11. Article Modal Handlers (with Slug, SEO Metadata, Status Select)
+export function generateSlugFromTitle(text) {
+  return String(text || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
 function openArticleModal(articleId = null) {
   const modal = document.getElementById('adminArticleModal');
   const titleEl = document.getElementById('adminArticleModalTitle');
   const form = document.getElementById('adminArticleForm');
+  const slugFeedback = document.getElementById('articleSlugFeedback');
   if (!modal || !form) return;
+
+  if (slugFeedback) {
+    slugFeedback.textContent = 'Slug unik digunakan sebagai URL permanen artikel.';
+    slugFeedback.style.color = 'var(--text-muted)';
+  }
 
   if (articleId) {
     const art = articlesState.find(a => a.id === articleId);
@@ -3271,19 +4018,31 @@ function openArticleModal(articleId = null) {
       if (titleEl) titleEl.textContent = 'Edit Artikel Berita';
       document.getElementById('articleFormId').value = art.id;
       document.getElementById('articleFormTitle').value = art.title;
+      const slugInput = document.getElementById('articleFormSlug');
+      if (slugInput) slugInput.value = art.slug || generateSlugFromTitle(art.title);
       document.getElementById('articleFormCategory').value = art.category;
       document.getElementById('articleFormAuthor').value = art.author || 'Humas Rumah Tahfidz';
       document.getElementById('articleFormExcerpt').value = art.excerpt;
-      document.getElementById('articleFormBody').value = art.content.replace(/<[^>]+>/g, '\n');
+      document.getElementById('articleFormBody').value = (art.content || '').replace(/<\/p>\s*<p>/gi, '\n\n').replace(/<[^>]+>/g, '');
       document.getElementById('articleFormImage').value = art.image;
       document.getElementById('articleFormTags').value = (art.tags || []).join(', ');
-      document.getElementById('articleFormPublishToggle').checked = art.status !== 'draft';
+      const seoTitle = document.getElementById('articleFormSeoTitle');
+      const seoDesc = document.getElementById('articleFormSeoDesc');
+      const statusSelect = document.getElementById('articleFormStatusSelect');
+      if (seoTitle) seoTitle.value = art.seoTitle || '';
+      if (seoDesc) seoDesc.value = art.seoDescription || '';
+      if (statusSelect) statusSelect.value = art.status || 'published';
+      document.getElementById('articleFormPublishToggle').checked = art.status === 'published';
     }
   } else {
     if (titleEl) titleEl.textContent = 'Tulis Artikel Berita Baru';
     form.reset();
     document.getElementById('articleFormId').value = '';
+    const slugInput = document.getElementById('articleFormSlug');
+    if (slugInput) slugInput.value = '';
     document.getElementById('articleFormImage').value = '/assets/images/wisuda.jpg';
+    const statusSelect = document.getElementById('articleFormStatusSelect');
+    if (statusSelect) statusSelect.value = 'published';
     document.getElementById('articleFormPublishToggle').checked = true;
   }
 
@@ -3485,17 +4244,19 @@ function initAdminUI() {
     });
   }
 
-  // F. Receipt Modal Approval & Rejection Handlers (Sprint 3 API Integration)
+  // F. Receipt Modal Approval, Rejection & Financial Correction Handlers (PRD Req #7)
   const btnApproveReceipt = document.getElementById('btnApproveReceiptAction');
   const btnRejectReceipt = document.getElementById('btnRejectReceiptAction');
+  const btnSubmitCorrection = document.getElementById('btnSubmitTrxCorrection');
   const btnCloseReceipt = document.getElementById('btnCloseReceiptModal');
   const receiptModal = document.getElementById('adminReceiptModal');
 
   if (btnApproveReceipt) {
     btnApproveReceipt.addEventListener('click', async () => {
       if (state.selectedReceiptTrx) {
+        const notes = document.getElementById('receiptModalNotesInput')?.value || '';
         try {
-          await donationsApi.verify(state.selectedReceiptTrx.id, 'success');
+          await donationsApi.verify(state.selectedReceiptTrx.id, 'success', notes);
           showToast(`Bukti transfer ${state.selectedReceiptTrx.invoiceNumber} berhasil diverifikasi! Tercatat di database.`, 'success');
           if (receiptModal) receiptModal.classList.remove('open');
           await syncDatabaseState();
@@ -3512,8 +4273,9 @@ function initAdminUI() {
   if (btnRejectReceipt) {
     btnRejectReceipt.addEventListener('click', async () => {
       if (state.selectedReceiptTrx) {
+        const notes = document.getElementById('receiptModalNotesInput')?.value || '';
         try {
-          await donationsApi.verify(state.selectedReceiptTrx.id, 'failed');
+          await donationsApi.verify(state.selectedReceiptTrx.id, 'rejected', notes);
           showToast(`Transaksi ${state.selectedReceiptTrx.invoiceNumber} telah ditolak.`, 'warning');
           if (receiptModal) receiptModal.classList.remove('open');
           await syncDatabaseState();
@@ -3523,6 +4285,39 @@ function initAdminUI() {
         } catch (err) {
           showToast(`Gagal menolak transaksi: ${err.message}`, 'warning');
         }
+      }
+    });
+  }
+
+  if (btnSubmitCorrection) {
+    btnSubmitCorrection.addEventListener('click', async () => {
+      if (!state.selectedReceiptTrx) return;
+      const amount = Number(document.getElementById('correctTrxAmount')?.value || 0);
+      const ref = (document.getElementById('correctTrxRef')?.value || '').trim();
+      const newStatus = document.getElementById('correctTrxStatus')?.value || 'success';
+      const reason = (document.getElementById('correctTrxReason')?.value || '').trim();
+
+      if (!reason || reason.length < 5) {
+        showToast('Alasan koreksi finansial wajib diisi (minimal 5 karakter) untuk jejak audit.', 'warning');
+        document.getElementById('correctTrxReason')?.focus();
+        return;
+      }
+
+      try {
+        await donationsApi.correct(state.selectedReceiptTrx.id, {
+          amount,
+          reference_number: ref,
+          payment_status: newStatus,
+          reason
+        });
+        showToast(`Koreksi transaksi ${state.selectedReceiptTrx.invoiceNumber} berhasil disimpan ke Financial Audit Log!`, 'success');
+        if (receiptModal) receiptModal.classList.remove('open');
+        await syncDatabaseState();
+        renderAdminDonasi();
+        await renderAdminOverview();
+        updateNotificationBell();
+      } catch (err) {
+        showToast(`Gagal menyimpan koreksi: ${err.message}`, 'warning');
       }
     });
   }
@@ -3537,9 +4332,19 @@ function initAdminUI() {
   const btnCreateCamp = document.getElementById('btnCreateCampaign');
   const btnCloseCamp = document.getElementById('btnCloseCampaignModal');
   const btnCancelCamp = document.getElementById('btnCancelCampaign');
+  const btnPickMediaCamp = document.getElementById('btnPickMediaForCampaign');
 
   if (btnCreateCamp) {
     btnCreateCamp.addEventListener('click', () => openCampaignModal());
+  }
+
+  if (btnPickMediaCamp) {
+    btnPickMediaCamp.addEventListener('click', () => {
+      openMediaLibraryModal((url) => {
+        const input = document.getElementById('campaignFormImage');
+        if (input) input.value = url;
+      });
+    });
   }
 
   if (btnCloseCamp) {
@@ -3586,10 +4391,12 @@ function initAdminUI() {
         } else {
           await campaignsApi.create({
             title,
+            type,
             category_name: category,
             target_amount: target,
             cover_image: image,
             description: desc,
+            status: campStatus,
             end_date: deadline
           });
           showToast(`Program campaign baru "${title}" berhasil disimpan di database!`, 'success');
@@ -3606,15 +4413,130 @@ function initAdminUI() {
     });
   }
 
-  // H. Article Create / Edit Modal Form
+  // H. Article Create / Edit Modal Form (with Slug, Rich-Text Toolbar, SEO, Preview)
   const articleForm = document.getElementById('adminArticleForm');
   const articleModal = document.getElementById('adminArticleModal');
   const btnCreateArt = document.getElementById('btnCreateArticle');
   const btnCloseArt = document.getElementById('btnCloseArticleModal');
   const btnCancelArt = document.getElementById('btnCancelArticle');
+  const btnGenSlug = document.getElementById('btnGenerateSlug');
+  const articleTitleInput = document.getElementById('articleFormTitle');
+  const articleSlugInput = document.getElementById('articleFormSlug');
+  const articleSlugFeedback = document.getElementById('articleSlugFeedback');
+  const articleStatusSelect = document.getElementById('articleFormStatusSelect');
+  const articlePublishToggle = document.getElementById('articleFormPublishToggle');
+  const btnPreviewArt = document.getElementById('btnPreviewArticle');
+  const btnPickMediaArt = document.getElementById('btnPickMediaForArticle');
+  const btnInsertMediaArt = document.getElementById('btnInsertMediaToArticle');
 
   if (btnCreateArt) {
     btnCreateArt.addEventListener('click', () => openArticleModal());
+  }
+
+  const checkSlugDuplicate = () => {
+    if (!articleSlugInput || !articleSlugFeedback) return;
+    const currentId = document.getElementById('articleFormId')?.value || '';
+    const candidate = generateSlugFromTitle(articleSlugInput.value || articleTitleInput?.value || '');
+    articleSlugInput.value = candidate;
+    if (!candidate) {
+      articleSlugFeedback.textContent = 'Slug akan dibuat otomatis dari judul artikel.';
+      articleSlugFeedback.style.color = 'var(--text-muted)';
+      return;
+    }
+    const conflict = articlesState.find(a => a.slug === candidate && String(a.id) !== String(currentId));
+    if (conflict) {
+      articleSlugFeedback.textContent = `⚠️ Slug "/${candidate}" sudah digunakan oleh artikel "${conflict.title}". Mohon ubah agar unik.`;
+      articleSlugFeedback.style.color = '#dc2626';
+    } else {
+      articleSlugFeedback.textContent = `✓ Slug "/${candidate}" tersedia dan unik.`;
+      articleSlugFeedback.style.color = '#059669';
+    }
+  };
+
+  if (btnGenSlug) {
+    btnGenSlug.addEventListener('click', () => {
+      if (articleSlugInput && articleTitleInput) {
+        articleSlugInput.value = generateSlugFromTitle(articleTitleInput.value);
+        checkSlugDuplicate();
+      }
+    });
+  }
+  if (articleTitleInput) {
+    articleTitleInput.addEventListener('input', () => {
+      const currentId = document.getElementById('articleFormId')?.value || '';
+      if (!currentId && articleSlugInput) {
+        articleSlugInput.value = generateSlugFromTitle(articleTitleInput.value);
+        checkSlugDuplicate();
+      }
+    });
+  }
+  if (articleSlugInput) {
+    articleSlugInput.addEventListener('change', checkSlugDuplicate);
+  }
+
+  // Sync status dropdown <-> checkbox toggle
+  if (articleStatusSelect && articlePublishToggle) {
+    articleStatusSelect.addEventListener('change', () => {
+      articlePublishToggle.checked = articleStatusSelect.value === 'published';
+    });
+    articlePublishToggle.addEventListener('change', () => {
+      articleStatusSelect.value = articlePublishToggle.checked ? 'published' : 'draft';
+    });
+  }
+
+  // Rich-Text Formatting Toolbar Buttons
+  document.querySelectorAll('.btn-rte-format').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const tag = e.currentTarget.getAttribute('data-tag');
+      const textarea = document.getElementById('articleFormBody');
+      if (!textarea || !tag) return;
+      const start = textarea.selectionStart || 0;
+      const end = textarea.selectionEnd || 0;
+      const selected = textarea.value.substring(start, end) || 'Teks di sini';
+      const replacement = `<${tag}>${selected}</${tag}>`;
+      textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+      textarea.focus();
+    });
+  });
+
+  if (btnPickMediaArt) {
+    btnPickMediaArt.addEventListener('click', () => {
+      openMediaLibraryModal((url) => {
+        const input = document.getElementById('articleFormImage');
+        if (input) input.value = url;
+      });
+    });
+  }
+
+  if (btnInsertMediaArt) {
+    btnInsertMediaArt.addEventListener('click', () => {
+      openMediaLibraryModal((url, alt) => {
+        const textarea = document.getElementById('articleFormBody');
+        if (textarea) {
+          textarea.value += `\n\n<figure><img src="${url}" alt="${alt || 'Dokumentasi RTM'}" style="max-width:100%; border-radius:8px;" /><figcaption>${alt || ''}</figcaption></figure>`;
+        }
+      });
+    });
+  }
+
+  if (btnPreviewArt) {
+    btnPreviewArt.addEventListener('click', () => {
+      const title = document.getElementById('articleFormTitle')?.value || 'Pratinjau Artikel';
+      const category = document.getElementById('articleFormCategory')?.value || 'Warta Utama';
+      const bodyRaw = document.getElementById('articleFormBody')?.value || '';
+      const image = document.getElementById('articleFormImage')?.value || '/assets/images/wisuda.jpg';
+      const tagsRaw = document.getElementById('articleFormTags')?.value || '';
+      const content = bodyRaw.includes('<p>') ? bodyRaw : bodyRaw.split('\n\n').map(p => `<p>${p}</p>`).join('');
+      openArticleReader({
+        title: `[PREVIEW] ${title}`,
+        category,
+        date: 'Pratinjau Draft',
+        readTime: '3 Menit',
+        image,
+        content,
+        tags: tagsRaw.split(',').map(t => t.trim()).filter(Boolean)
+      });
+    });
   }
 
   if (btnCloseArt) {
@@ -3636,38 +4558,45 @@ function initAdminUI() {
     articleForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('articleFormId').value;
-      const title = document.getElementById('articleFormTitle').value;
+      const title = document.getElementById('articleFormTitle').value.trim();
+      const slug = generateSlugFromTitle(document.getElementById('articleFormSlug')?.value || title);
       const category = document.getElementById('articleFormCategory').value;
-      const author = document.getElementById('articleFormAuthor').value;
-      const excerpt = document.getElementById('articleFormExcerpt').value;
+      const author = document.getElementById('articleFormAuthor').value.trim() || 'Humas Rumah Tahfidz';
+      const excerpt = document.getElementById('articleFormExcerpt').value.trim();
       const bodyContent = document.getElementById('articleFormBody').value;
-      const image = document.getElementById('articleFormImage').value;
+      const image = document.getElementById('articleFormImage').value.trim();
+      const tagsRaw = document.getElementById('articleFormTags')?.value || '';
+      const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+      const seoTitle = document.getElementById('articleFormSeoTitle')?.value?.trim() || title;
+      const seoDescription = document.getElementById('articleFormSeoDesc')?.value?.trim() || excerpt;
+      const statusSelectVal = document.getElementById('articleFormStatusSelect')?.value;
       const isPublished = document.getElementById('articleFormPublishToggle').checked;
+      const finalStatus = statusSelectVal || (isPublished ? 'published' : 'draft');
 
-      const paragraphs = bodyContent.split('\n\n').map(p => `<p>${p}</p>`).join('');
+      const paragraphs = bodyContent.includes('<p>') ? bodyContent : bodyContent.split('\n\n').map(p => `<p>${p}</p>`).join('');
+
+      const payload = {
+        title,
+        slug,
+        category,
+        author_name: author,
+        excerpt,
+        content: paragraphs,
+        thumbnail_url: image,
+        tags,
+        seo_title: seoTitle,
+        seo_description: seoDescription,
+        read_time: '3 Menit',
+        status: finalStatus
+      };
 
       try {
         if (id) {
-          await articlesApi.update(id, {
-            title,
-            category,
-            excerpt,
-            content: paragraphs,
-            thumbnail_url: image,
-            status: isPublished ? 'published' : 'draft'
-          });
+          await articlesApi.update(id, payload);
           showToast(`Artikel "${title}" berhasil diperbarui di database.`, 'success');
         } else {
-          await articlesApi.create({
-            title,
-            category,
-            excerpt,
-            content: paragraphs,
-            thumbnail_url: image,
-            read_time: '3 Menit',
-            status: isPublished ? 'published' : 'draft'
-          });
-          showToast(`Artikel baru "${title}" berhasil diterbitkan di database!`, 'success');
+          await articlesApi.create(payload);
+          showToast(`Artikel "${title}" (${finalStatus.toUpperCase()}) berhasil disimpan di database!`, 'success');
         }
 
         await syncDatabaseState();
@@ -3676,12 +4605,18 @@ function initAdminUI() {
         renderNewsGrid();
         window.location.hash = '#admin-berita';
       } catch (err) {
+        if (err.code === 'CONFLICT_SLUG' || (err.message && err.message.toLowerCase().includes('slug'))) {
+          if (articleSlugFeedback) {
+            articleSlugFeedback.textContent = `⚠️ ${err.message}`;
+            articleSlugFeedback.style.color = '#dc2626';
+          }
+        }
         showToast(err.message, 'warning');
       }
     });
   }
 
-  // I. Syllabus Upload Modal
+  // I. Syllabus Upload Modal & Academic Program Editor (#adminProgramEditForm)
   const syllabusModal = document.getElementById('adminSyllabusModal');
   const btnUploadSyllabus = document.getElementById('btnUploadSyllabus');
   const btnCloseSyllabus = document.getElementById('btnCloseSyllabusModal');
@@ -3718,6 +4653,100 @@ function initAdminUI() {
     });
   }
 
+  // Academic Program Editor Handlers
+  const btnCreateNewProgram = document.getElementById('btnCreateNewProgram');
+  const btnAddCustomField = document.getElementById('btnAddProgramCustomField');
+  const btnPickMediaProgram = document.getElementById('btnPickMediaForProgram');
+  const programEditForm = document.getElementById('adminProgramEditForm');
+
+  if (btnCreateNewProgram) {
+    btnCreateNewProgram.addEventListener('click', () => openProgramEditPage(null));
+  }
+
+  if (btnAddCustomField) {
+    btnAddCustomField.addEventListener('click', () => {
+      const container = document.getElementById('programCustomFieldsContainer');
+      if (!container) return;
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = renderCustomSchemaRowHtml({ label: '', type: 'text', required: true, options: '' });
+      const row = wrapper.firstElementChild;
+      row.querySelector('.btn-remove-custom-field')?.addEventListener('click', () => row.remove());
+      container.appendChild(row);
+    });
+  }
+
+  if (btnPickMediaProgram) {
+    btnPickMediaProgram.addEventListener('click', () => {
+      openMediaLibraryModal((url) => {
+        const input = document.getElementById('programFormImage');
+        if (input) input.value = url;
+      });
+    });
+  }
+
+  if (programEditForm) {
+    programEditForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const rawId = document.getElementById('programFormIdInput')?.value?.trim();
+      const title = document.getElementById('programFormTitle')?.value?.trim();
+      const category = document.getElementById('programFormCategory')?.value || 'formal';
+      const targetHafalan = document.getElementById('programFormTarget')?.value?.trim() || '30 Juz';
+      const duration = document.getElementById('programFormDuration')?.value?.trim() || '3 Tahun';
+      const subtitle = document.getElementById('programFormSubtitle')?.value?.trim() || '';
+      const eligibility = document.getElementById('programFormEligibility')?.value?.trim() || '';
+      const schedule = document.getElementById('programFormSchedule')?.value?.trim() || '';
+      const instructions = document.getElementById('programFormInstructions')?.value?.trim() || '';
+      const heroImage = document.getElementById('programFormImage')?.value?.trim() || '/assets/images/classroom.jpg';
+      const pubStatus = document.getElementById('programFormPubStatus')?.value || 'published';
+      const isOpen = document.getElementById('programFormIsOpen')?.value === '1' ? 1 : 0;
+
+      const formSchema = [];
+      document.querySelectorAll('#programCustomFieldsContainer .program-custom-field-row').forEach(row => {
+        const lbl = row.querySelector('.custom-field-label')?.value?.trim();
+        const tp = row.querySelector('.custom-field-type')?.value || 'text';
+        const opts = row.querySelector('.custom-field-options')?.value?.trim() || '';
+        const req = row.querySelector('.custom-field-required')?.checked || false;
+        if (lbl) {
+          formSchema.push({ label: lbl, type: tp, options: opts, required: req });
+        }
+      });
+
+      const payload = {
+        id: rawId || generateSlugFromTitle(title),
+        title,
+        subtitle,
+        category,
+        target_hafalan: targetHafalan,
+        duration,
+        description: subtitle,
+        hero_image: heroImage,
+        eligibility_criteria: eligibility,
+        schedule_info: schedule,
+        application_instructions: instructions,
+        publication_status: pubStatus,
+        is_active: isOpen,
+        form_schema: formSchema
+      };
+
+      try {
+        const existing = programsState.some(p => p.id === payload.id);
+        if (existing) {
+          await programsApi.update(payload.id, payload);
+          showToast(`Program akademik "${title}" & skema PPDB berhasil diperbarui!`, 'success');
+        } else {
+          await programsApi.create(payload);
+          showToast(`Program akademik baru "${title}" berhasil ditambahkan!`, 'success');
+        }
+        await syncDatabaseState();
+        renderAdminAkademik();
+        renderHomeProgramCards('all');
+        window.location.hash = '#admin-akademik';
+      } catch (err) {
+        showToast('Gagal menyimpan program: ' + err.message, 'warning');
+      }
+    });
+  }
+
   // J. User Creation & Edit Modal (Super Admin Only)
   const userModal = document.getElementById('adminUserModal');
   const btnCreateUser = document.getElementById('btnCreateUser');
@@ -3735,8 +4764,10 @@ function initAdminUI() {
       const title = document.getElementById('userModalTitle');
       const idInput = document.getElementById('userFormUserId');
       const passInput = document.getElementById('userFormPassword');
+      const activeSelect = document.getElementById('userFormActiveStatus');
       if (title) title.textContent = 'Tambah Pengguna Baru';
       if (idInput) idInput.value = '';
+      if (activeSelect) activeSelect.value = '1';
       if (passInput) {
         passInput.value = '';
         passInput.required = true;
@@ -3774,6 +4805,7 @@ function initAdminUI() {
       const email = document.getElementById('userFormEmail').value.trim();
       const pass = document.getElementById('userFormPassword').value;
       const role = document.getElementById('userFormRole').value;
+      const isActiveVal = document.getElementById('userFormActiveStatus')?.value !== '0';
 
       const roleTitles = {
         superadmin: 'Admin',
@@ -3787,7 +4819,8 @@ function initAdminUI() {
             name,
             email,
             role,
-            role_title: roleTitles[role] || role
+            role_title: roleTitles[role] || role,
+            is_active: isActiveVal ? 1 : 0
           };
           if (pass && pass.trim()) {
             payload.password = pass.trim();
@@ -3800,7 +4833,8 @@ function initAdminUI() {
             email,
             password: pass,
             role,
-            role_title: roleTitles[role] || role
+            role_title: roleTitles[role] || role,
+            is_active: isActiveVal ? 1 : 0
           });
           showToast(`Akun pengguna ${name} (${roleTitles[role] || role}) berhasil didaftarkan ke sistem!`, 'success');
         }
@@ -3815,21 +4849,87 @@ function initAdminUI() {
     });
   }
 
-  // K. Gallery Documentation Modal (#adminGalleryModal - Super Admin Only)
+  // K. Gallery Documentation Modal & Shared Media Library (#adminGalleryModal, #mediaLibraryPickerModal)
   const galleryModal = document.getElementById('adminGalleryModal');
   const btnAddGalleryMedia = document.getElementById('btnAddGalleryMedia');
   const btnCloseGalleryModal = document.getElementById('btnCloseGalleryModal');
   const btnCancelGallery = document.getElementById('btnCancelGallery');
   const adminGalleryForm = document.getElementById('adminGalleryForm');
+  const btnOpenMediaLib = document.getElementById('btnOpenMediaLibrary');
+  const btnPickMediaGal = document.getElementById('btnPickMediaForGallery');
+  const galCatFilter = document.getElementById('adminGalleryCategoryFilter');
+  const galStatusFilter = document.getElementById('adminGalleryStatusFilter');
+  const mediaUploadForm = document.getElementById('mediaLibraryUploadForm');
+
+  if (btnOpenMediaLib) {
+    btnOpenMediaLib.addEventListener('click', () => openMediaLibraryModal(null));
+  }
+
+  if (btnPickMediaGal) {
+    btnPickMediaGal.addEventListener('click', () => {
+      openMediaLibraryModal((url, alt) => {
+        const urlInput = document.getElementById('galleryFormUrl');
+        const altInput = document.getElementById('galleryFormAltText');
+        if (urlInput) urlInput.value = url;
+        if (altInput && !altInput.value) altInput.value = alt || '';
+      });
+    });
+  }
+
+  if (galCatFilter) {
+    galCatFilter.addEventListener('change', (e) => {
+      state.adminGalleryCategoryFilter = e.target.value;
+      renderAdminGaleri();
+    });
+  }
+
+  if (galStatusFilter) {
+    galStatusFilter.addEventListener('change', (e) => {
+      state.adminGalleryStatusFilter = e.target.value;
+      renderAdminGaleri();
+    });
+  }
+
+  if (mediaUploadForm) {
+    mediaUploadForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('mediaUploadFileInput');
+      const altText = document.getElementById('mediaUploadAltInput')?.value?.trim() || '';
+      const file = fileInput?.files?.[0];
+      if (!file) {
+        showToast('Pilih file gambar terlebih dahulu.', 'warning');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          await mediaApi.upload({
+            file_name: file.name,
+            file_data: reader.result,
+            alt_text: altText || file.name,
+            category: 'general'
+          });
+          showToast(`File media "${file.name}" berhasil diunggah ke Pustaka Media!`, 'success');
+          mediaUploadForm.reset();
+          openMediaLibraryModal(state.mediaPickerCallback);
+        } catch (err) {
+          showToast('Gagal mengunggah media: ' + err.message, 'warning');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
   if (btnAddGalleryMedia) {
     btnAddGalleryMedia.addEventListener('click', () => {
       const currentUser = auth.getStoredUser() || usersState[0];
-      if (currentUser.role !== 'superadmin') {
+      if (currentUser.role !== 'superadmin' && currentUser.role !== 'editor') {
         showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
         return;
       }
       if (adminGalleryForm) adminGalleryForm.reset();
+      const idInput = document.getElementById('galleryFormId');
+      if (idInput) idInput.value = '';
       const dateInput = document.getElementById('galleryFormDate');
       if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
       if (galleryModal) galleryModal.classList.add('open');
@@ -3867,15 +4967,20 @@ function initAdminUI() {
     adminGalleryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const currentUser = auth.getStoredUser() || usersState[0];
-      if (currentUser.role !== 'superadmin') {
+      if (currentUser.role !== 'superadmin' && currentUser.role !== 'editor') {
         showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
         return;
       }
 
+      const editId = document.getElementById('galleryFormId')?.value || '';
       const title = document.getElementById('galleryFormTitle').value.trim();
       const category = document.getElementById('galleryFormCategory').value;
+      const albumName = document.getElementById('galleryFormAlbum')?.value?.trim() || '';
+      const sortOrder = Number(document.getElementById('galleryFormSortOrder')?.value || 0);
+      const status = document.getElementById('galleryFormStatus')?.value || 'published';
       const date = document.getElementById('galleryFormDate').value || new Date().toISOString().split('T')[0];
       const image = document.getElementById('galleryFormUrl').value.trim();
+      const altText = document.getElementById('galleryFormAltText')?.value?.trim() || title;
       const caption = document.getElementById('galleryFormCaption')?.value.trim() || '';
 
       if (!title || !image) {
@@ -3883,16 +4988,27 @@ function initAdminUI() {
         return;
       }
 
+      const payload = {
+        title,
+        category,
+        album_name: albumName,
+        sort_order: sortOrder,
+        status,
+        date,
+        image,
+        media_url: image,
+        alt_text: altText,
+        caption
+      };
+
       try {
-        await galleriesApi.create({
-          title,
-          category,
-          date,
-          image,
-          media_url: image,
-          caption
-        });
-        showToast(`Foto galeri "${title}" berhasil ditambahkan ke database!`, 'success');
+        if (editId) {
+          await galleriesApi.update(editId, payload);
+          showToast(`Media galeri "${title}" berhasil diperbarui!`, 'success');
+        } else {
+          await galleriesApi.create(payload);
+          showToast(`Foto galeri "${title}" berhasil ditambahkan ke database!`, 'success');
+        }
         adminGalleryForm.reset();
         if (galleryModal) galleryModal.classList.remove('open');
         await syncDatabaseState();
@@ -3900,22 +5016,30 @@ function initAdminUI() {
         renderGalleryGrid();
         window.location.hash = '#admin-galeri';
       } catch (err) {
-        showToast('Gagal menambahkan galeri: ' + err.message, 'warning');
+        showToast('Gagal menyimpan galeri: ' + err.message, 'warning');
       }
     });
   }
 
-  // K. CSV Export Buttons
+  // K2. CSV Export Buttons
   const btnExportCSV = document.getElementById('btnExportDonationCSV');
   const btnQuickCSV = document.getElementById('btnQuickExportCSV');
   if (btnExportCSV) btnExportCSV.addEventListener('click', exportDonationsCSV);
   if (btnQuickCSV) btnQuickCSV.addEventListener('click', exportDonationsCSV);
 
-  // L. Donation Search & Filter Buttons
+  // L. Donation Search, Filter & Manual Transaction Entry (#adminManualDonationModal)
   const donSearch = document.getElementById('donationSearchInput');
   if (donSearch) {
     donSearch.addEventListener('input', (e) => {
       state.donationSearchQuery = e.target.value;
+      renderDonationTransactionsTable();
+    });
+  }
+
+  const donCampFilter = document.getElementById('donationCampaignFilter');
+  if (donCampFilter) {
+    donCampFilter.addEventListener('change', (e) => {
+      state.donationCampaignFilter = e.target.value;
       renderDonationTransactionsTable();
     });
   }
@@ -3929,33 +5053,126 @@ function initAdminUI() {
     });
   });
 
-  // M. Article Search in Admin
+  const btnOpenManualTrx = document.getElementById('btnOpenManualTransaction');
+  const manualDonModal = document.getElementById('adminManualDonationModal');
+  const manualDonForm = document.getElementById('adminManualDonationForm');
+
+  if (btnOpenManualTrx && manualDonModal) {
+    btnOpenManualTrx.addEventListener('click', () => {
+      renderAdminDonasi();
+      manualDonModal.classList.add('open');
+    });
+  }
+
+  if (manualDonForm) {
+    manualDonForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const donorName = document.getElementById('manualTrxDonorName')?.value?.trim();
+      const donorPhone = document.getElementById('manualTrxDonorPhone')?.value?.trim() || '';
+      const campaignId = document.getElementById('manualTrxCampaign')?.value || 'general';
+      const amount = Number(document.getElementById('manualTrxAmount')?.value || 0);
+      const source = document.getElementById('manualTrxSource')?.value || 'Transfer Bank BSI';
+      const refNum = document.getElementById('manualTrxRef')?.value?.trim() || '';
+      const proofUrl = document.getElementById('manualTrxProof')?.value?.trim() || '/assets/images/dormitory.jpg';
+      const notes = document.getElementById('manualTrxNotes')?.value?.trim() || '';
+      const verifyNow = document.getElementById('manualTrxVerifyNow')?.checked || false;
+
+      try {
+        await donationsApi.submit({
+          campaign_id: campaignId,
+          donor_name: donorName,
+          donor_phone: donorPhone,
+          amount,
+          payment_method: source,
+          payment_source: source,
+          reference_number: refNum,
+          proof_image: proofUrl,
+          notes,
+          verify_immediately: verifyNow
+        });
+        showToast(`Transaksi donasi manual (${donorName}) berhasil dicatat!`, 'success');
+        manualDonForm.reset();
+        if (manualDonModal) manualDonModal.classList.remove('open');
+        await syncDatabaseState();
+        renderAdminDonasi();
+        await renderAdminOverview();
+        updateNotificationBell();
+      } catch (err) {
+        showToast('Gagal mencatat donasi: ' + err.message, 'warning');
+      }
+    });
+  }
+
+  // M. Article Search & Filters in Admin
   const artSearch = document.getElementById('adminArticleSearchInput');
+  const artCatFilter = document.getElementById('adminArticleCategoryFilter');
+  const artStatusFilter = document.getElementById('adminArticleStatusFilter');
+
   if (artSearch) {
     artSearch.addEventListener('input', (e) => {
       state.adminArticleSearchQuery = e.target.value;
       renderAdminBerita();
     });
   }
+  if (artCatFilter) {
+    artCatFilter.addEventListener('change', (e) => {
+      state.adminArticleCategoryFilter = e.target.value;
+      renderAdminBerita();
+    });
+  }
+  if (artStatusFilter) {
+    artStatusFilter.addEventListener('change', (e) => {
+      state.adminArticleStatusFilter = e.target.value;
+      renderAdminBerita();
+    });
+  }
 
-  // N. Appearance Settings Save (Sprint 3 API Integration)
+  // N. Appearance Settings Save Draft, Preview & Publish (PRD Req #8)
   const btnSaveAppearance = document.getElementById('btnSaveAppearanceSettings');
+  const btnSaveSettingsDraft = document.getElementById('btnSaveSettingsDraft');
+  const btnPreviewSettings = document.getElementById('btnPreviewSiteSettings');
+  const btnPickMediaLogo = document.getElementById('btnPickMediaForLogo');
+
+  if (btnPickMediaLogo) {
+    btnPickMediaLogo.addEventListener('click', () => {
+      openMediaLibraryModal((url) => {
+        const input = document.getElementById('settingLogoUrl');
+        if (input) input.value = url;
+      });
+    });
+  }
+
+  if (btnPreviewSettings) {
+    btnPreviewSettings.addEventListener('click', () => {
+      const payload = getAppearanceFormPayload();
+      applySiteSettingsToDOM(payload);
+      showToast('Menampilkan pratinjau perubahan pengaturan pada halaman publik...', 'success');
+      window.location.hash = '#home';
+    });
+  }
+
+  if (btnSaveSettingsDraft) {
+    btnSaveSettingsDraft.addEventListener('click', async () => {
+      const payload = getAppearanceFormPayload();
+      try {
+        await settingsApi.saveDraft({ site_identity: payload });
+        showToast('Draft pengaturan tampilan berhasil disimpan (belum dipublikasikan).', 'success');
+        await syncDatabaseState();
+      } catch (err) {
+        showToast('Draft pengaturan disimpan secara lokal.', 'success');
+      }
+    });
+  }
+
   if (btnSaveAppearance) {
     btnSaveAppearance.addEventListener('click', async () => {
-      const nameInput = document.getElementById('settingInstitutionName');
-      const shortInput = document.getElementById('settingShortName');
-      const tagInput = document.getElementById('settingTagline');
-      const mudirInput = document.getElementById('settingMudir');
-
+      const payload = getAppearanceFormPayload();
       try {
         await settingsApi.update({
-          site_identity: {
-            title: nameInput ? nameInput.value : INSTITUTION.name,
-            shortTitle: shortInput ? shortInput.value : INSTITUTION.shortName,
-            tagline: tagInput ? tagInput.value : INSTITUTION.tagline,
-            mudir: mudirInput ? mudirInput.value : INSTITUTION.mudir
-          }
+          mode: 'publish',
+          site_identity: payload
         });
+        applySiteSettingsToDOM(payload);
         showToast('Pengaturan identitas berhasil disimpan ke database SQLite server.', 'success');
       } catch (err) {
         showToast('Pengaturan identitas dan tampilan yayasan berhasil disimpan.', 'success');
@@ -3963,7 +5180,24 @@ function initAdminUI() {
     });
   }
 
-  // O. Overview Refresh
+  // O. Overview Date Filter, Quick Actions & Refresh (PRD Req #2)
+  const overviewDateFilter = document.getElementById('overviewDateFilter');
+  if (overviewDateFilter) {
+    overviewDateFilter.addEventListener('change', async (e) => {
+      state.overviewRange = e.target.value;
+      await renderAdminOverview();
+    });
+  }
+
+  document.getElementById('btnQuickWriteArticle')?.addEventListener('click', () => openArticleModal());
+  document.getElementById('btnQuickManualDonation')?.addEventListener('click', () => {
+    renderAdminDonasi();
+    document.getElementById('adminManualDonationModal')?.classList.add('open');
+  });
+  document.getElementById('btnQuickNewCampaign')?.addEventListener('click', () => openCampaignModal());
+  document.getElementById('btnQuickManageProgram')?.addEventListener('click', () => openProgramEditPage('smp'));
+  document.getElementById('btnQuickMediaLibrary')?.addEventListener('click', () => openMediaLibraryModal(null));
+
   const btnRefresh = document.getElementById('btnRefreshOverview');
   if (btnRefresh) {
     btnRefresh.addEventListener('click', async () => {

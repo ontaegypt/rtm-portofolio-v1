@@ -1110,16 +1110,20 @@
 
         <!-- Sidebar Navigation -->
         <aside class="admin-sidebar" id="adminSidebar">
+          <!-- Floating Collapse/Expand Button on Right Center of Menu -->
+          <button class="sidebar-collapse-toggle-btn" id="sidebarCollapseToggleBtn" aria-label="Collapse Menu" title="Collapse Menu">
+            <svg class="icon-collapse" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            <svg class="icon-expand" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+
           <div class="sidebar-header">
             <div class="sidebar-brand">
-              <img src="/assets/images/logo-footer-RTM.png" alt="Rumah Tahfidz Madani" class="dashboard-brand-logo" />
+              <img src="/assets/images/logo-footer-RTM.png" alt="Rumah Tahfidz Madani" class="dashboard-brand-logo" id="sidebarBrandLogo" />
             </div>
-            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Tutup Menu">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
           </div>
 
           <!-- User Profile Card in Sidebar -->
@@ -1153,7 +1157,7 @@
                       <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                     </svg>
                   </span>
-                  <span class="menu-label">Kelola Akademik</span>
+                  <span class="menu-label">Akademik</span>
                 </a>
               </li>
               <li class="sidebar-menu-item" data-module="donasi">
@@ -1165,7 +1169,7 @@
                       <path d="M6 12h.01M18 12h.01" />
                     </svg>
                   </span>
-                  <span class="menu-label">Modul Wakaf & Donasi</span>
+                  <span class="menu-label">Wakaf & Donasi</span>
                 </a>
               </li>
               <li class="sidebar-menu-item" data-module="galeri">
@@ -1176,7 +1180,7 @@
                       <rect width="14" height="12" x="1" y="6" rx="2" ry="2" />
                     </svg>
                   </span>
-                  <span class="menu-label">Kelola Galeri & Kunjungan</span>
+                  <span class="menu-label">Galeri & Kunjungan</span>
                 </a>
               </li>
               <li class="sidebar-menu-item" data-module="berita">
@@ -1187,7 +1191,7 @@
                       <polyline points="14 2 14 8 20 8" />
                     </svg>
                   </span>
-                  <span class="menu-label">Kelola Artikel / Berita</span>
+                  <span class="menu-label">Artikel / Berita</span>
                 </a>
               </li>
             </ul>
@@ -1203,7 +1207,7 @@
                       <line x1="12" y1="17" x2="12" y2="21" />
                     </svg>
                   </span>
-                  <span class="menu-label">Kelola Tampilan</span>
+                  <span class="menu-label">Tampilan</span>
                 </a>
               </li>
               <li class="sidebar-menu-item" data-module="users">
@@ -1216,7 +1220,7 @@
                       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                   </span>
-                  <span class="menu-label">Manajemen Pengguna</span>
+                  <span class="menu-label">Pengguna</span>
                 </a>
               </li>
             </ul>
@@ -1557,7 +1561,7 @@
             <div id="admin-panel-akademik" class="admin-panel">
               <div class="panel-header">
                 <div>
-                  <h2>Kelola Akademik, Program & Pendaftaran PPDB</h2>
+                  <h2>Akademik, Program & Pendaftaran PPDB</h2>
                   <p>Kelola informasi publik program pendidikan, skema formulir registrasi, silabus PDF, dan seleksi
                     calon santri.</p>
                 </div>
@@ -1685,18 +1689,18 @@
             <div id="admin-panel-donasi" class="admin-panel">
               <div class="panel-header">
                 <div>
-                  <h2>Modul Wakaf & Donasi (CMS Finansial)</h2>
+                  <h2>Wakaf & Donasi (CMS Finansial)</h2>
                   <p>Pengelolaan program campaign, pencatatan transaksi mandiri, verifikasi bukti transfer, dan jejak
                     audit keuangan.</p>
                 </div>
-                <div class="panel-header-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <div class="panel-header-actions donasi-header-actions">
                   <button class="btn btn-secondary btn-sm" id="btnExportDonationCSV">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                       <polyline points="7 10 12 15 17 10" />
                       <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
-                    <span>Ekspor CSV Laporan</span>
+                    <span>Ekspor CSV</span>
                   </button>
                   <button class="btn btn-secondary btn-sm" id="btnOpenManualTransaction">
                     <span>+ Catat Transaksi Manual</span>
@@ -1749,7 +1753,7 @@
                 </div>
 
                 <div class="admin-table-wrapper">
-                  <table class="admin-table">
+                  <table class="admin-table table-finance-nowrap">
                     <thead>
                       <tr>
                         <th class="col-desktop-only">No. Invoice</th>
@@ -1778,7 +1782,7 @@
                     nominal/status beserta alasan wajib</span>
                 </div>
                 <div class="admin-table-wrapper">
-                  <table class="admin-table">
+                  <table class="admin-table table-finance-nowrap">
                     <thead>
                       <tr>
                         <th class="col-desktop-only">Waktu</th>
@@ -1910,13 +1914,26 @@
             <div id="admin-panel-galeri" class="admin-panel">
               <div class="panel-header">
                 <div>
-                  <h2>Kelola Galeri Media, Pustaka Aset & Log Kunjungan</h2>
+                  <h2>Galeri Media, Pustaka Aset & Log Kunjungan</h2>
                   <p>Manajemen album dokumentasi, metadata alt-text, urutan tampil, pustaka media bersama, dan jadwal
                     kunjungan.</p>
                 </div>
-                <div class="panel-header-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                  <button class="btn btn-secondary btn-sm" id="btnOpenMediaLibrary">Pustaka Media Bersama</button>
-                  <button class="btn btn-primary btn-sm" id="btnAddGalleryMedia">+ Tambah Media Galeri</button>
+                <div class="panel-header-actions galeri-header-actions">
+                  <button class="btn btn-secondary btn-sm" id="btnOpenMediaLibrary">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span>Media Library</span>
+                  </button>
+                  <button class="btn btn-primary btn-sm" id="btnAddGalleryMedia">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19"/>
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Tambah Media</span>
+                  </button>
                 </div>
               </div>
 
@@ -1985,17 +2002,17 @@
             <div id="admin-panel-berita" class="admin-panel">
               <div class="panel-header">
                 <div>
-                  <h2>Kelola Artikel & Berita (CMS Blog)</h2>
+                  <h2>Artikel & Berita (CMS Blog)</h2>
                   <p>Tulis artikel baru, pratinjau konten, validasi slug unik, kelola publikasi/arsip, dan optimasi SEO
                     meta.</p>
                 </div>
-                <div class="panel-header-actions">
+                <div class="panel-header-actions artikel-header-actions">
                   <button class="btn btn-primary btn-sm" id="btnCreateArticle">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <line x1="12" y1="5" x2="12" y2="19" />
                       <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
-                    <span>+ Tulis Artikel Baru</span>
+                    <span>Artikel Baru</span>
                   </button>
                 </div>
               </div>
@@ -2053,23 +2070,53 @@
             <div id="admin-panel-tampilan" class="admin-panel">
               <div class="panel-header">
                 <div>
-                  <h2>Kelola Tampilan, Konten Beranda & Identitas Lembaga</h2>
-                  <p>Konfigurasi identitas lembaga, beranda, tentang kami, visi-misi, kontak, navigasi & footer dengan
-                    fitur Draft & Pratinjau.</p>
-                </div>
-                <div class="panel-header-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                  <button class="btn btn-secondary btn-sm" id="btnPreviewSiteSettings">Pratinjau Website</button>
-                  <button class="btn btn-secondary btn-sm" id="btnSaveSettingsDraft">Simpan sebagai Draft</button>
-                  <button class="btn btn-primary btn-sm" id="btnSaveAppearanceSettings">Simpan Perubahan
-                    Identitas</button>
+                  <h2>Tampilan, Konten Beranda & Identitas Lembaga</h2>
+                  <p>Konfigurasi identitas lembaga, beranda, tentang kami, visi-misi, kontak, navigasi & footer.</p>
                 </div>
               </div>
 
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 1.5rem;">
-                <!-- Identity Card -->
+              <!-- WordPress-style Pill Tabs Navigation (Identitas, Kontak, Beranda, Footer) -->
+              <div class="tampilan-tabs-wrapper">
+                <nav class="tampilan-tabs-nav" aria-label="Navigasi Menu Tampilan">
+                  <a href="#admin-tampilan/identitas" class="tampilan-tab-btn active" data-tab="identitas" title="Identitas & Logo Lembaga" aria-label="Identitas & Logo Lembaga">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span>Identitas & Logo</span>
+                  </a>
+                  <a href="#admin-tampilan/kontak" class="tampilan-tab-btn" data-tab="kontak" title="Kontak & Rekening Bank" aria-label="Kontak & Rekening Bank">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    <span>Kontak & Rekening</span>
+                  </a>
+                  <a href="#admin-tampilan/beranda" class="tampilan-tab-btn" data-tab="beranda" title="Konten Beranda & Visi Misi" aria-label="Konten Beranda & Visi Misi">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                      <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                    <span>Konten Beranda</span>
+                  </a>
+                  <a href="#admin-tampilan/footer" class="tampilan-tab-btn" data-tab="footer" title="Sosial Media & Footer" aria-label="Sosial Media & Footer">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                    </svg>
+                    <span>Sosial Media & Footer</span>
+                  </a>
+                </nav>
+              </div>
+
+              <!-- TAB 1: Identitas Yayasan & Logo Lembaga -->
+              <div id="tab-content-identitas" class="tampilan-tab-panel active" data-tab-panel="identitas">
                 <div class="admin-card">
                   <div class="admin-card-header">
-                    <span class="admin-card-title">Identitas Yayasan & Logo Lembaga</span>
+                    <div>
+                      <span class="admin-card-title">Identitas Yayasan & Logo Lembaga</span>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Atur identitas resmi lembaga, nama yayasan, tagline, pengasuh pesantren, dan logo header utama.</p>
+                    </div>
                   </div>
                   <form id="formAppearanceIdentity" style="display: flex; flex-direction: column; gap: 1rem;">
                     <div class="form-group">
@@ -2100,13 +2147,28 @@
                           Media</button>
                       </div>
                     </div>
+                    <div class="tampilan-tab-footer">
+                      <button type="button" class="btn btn-primary btn-sm btn-tampilan-save" id="btnSaveTampilanIdentitas">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                          <polyline points="17 21 17 13 7 13 7 21" />
+                          <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        <span>Simpan</span>
+                      </button>
+                    </div>
                   </form>
                 </div>
+              </div>
 
-                <!-- Contact & Bank Card -->
+              <!-- TAB 2: Kontak Resmi & Rekening Bank -->
+              <div id="tab-content-kontak" class="tampilan-tab-panel" data-tab-panel="kontak">
                 <div class="admin-card">
                   <div class="admin-card-header">
-                    <span class="admin-card-title">Kontak Resmi & Rekening Bank</span>
+                    <div>
+                      <span class="admin-card-title">Kontak Resmi & Rekening Bank</span>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Kelola nomor WhatsApp layanan PPDB, konfirmasi donasi, email, alamat fisik, dan nomor rekening bank yayasan.</p>
+                    </div>
                   </div>
                   <form id="formAppearanceContact" style="display: flex; flex-direction: column; gap: 1rem;">
                     <div class="form-group">
@@ -2131,15 +2193,30 @@
                       <input type="text" id="settingBankAccountInfo" class="form-input"
                         value="BSI 7123 4567 89 a.n. Yayasan Cahaya Hati Bening" />
                     </div>
+                    <div class="tampilan-tab-footer">
+                      <button type="button" class="btn btn-primary btn-sm btn-tampilan-save" id="btnSaveTampilanKontak">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                          <polyline points="17 21 17 13 7 13 7 21" />
+                          <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        <span>Simpan</span>
+                      </button>
+                    </div>
                   </form>
                 </div>
+              </div>
 
-                <!-- Homepage Hero & About / Vision-Mission Card (PRD Req #8) -->
+              <!-- TAB 3: Konten Beranda (Hero), Tentang Kami & Visi Misi -->
+              <div id="tab-content-beranda" class="tampilan-tab-panel" data-tab-panel="beranda">
                 <div class="admin-card">
                   <div class="admin-card-header">
-                    <span class="admin-card-title">Konten Beranda (Hero), Tentang Kami & Visi Misi</span>
+                    <div>
+                      <span class="admin-card-title">Konten Beranda (Hero), Tentang Kami & Visi Misi</span>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Konfigurasi judul utama banner hero beranda, rangkuman profil singkat tentang kami, visi lembaga, dan butir-butir misi.</p>
+                    </div>
                   </div>
-                  <div style="display: flex; flex-direction: column; gap: 1rem;">
+                  <form id="formAppearanceHeroAbout" style="display: flex; flex-direction: column; gap: 1rem;">
                     <div class="form-group">
                       <label class="form-label">Judul Utama Hero Beranda</label>
                       <input type="text" id="settingHeroTitle" class="form-input"
@@ -2148,28 +2225,43 @@
                     <div class="form-group">
                       <label class="form-label">Ringkasan Sejarah / Tentang Kami</label>
                       <textarea id="settingAboutSummary" class="form-input"
-                        rows="2">Didirikan pada tahun 2012 oleh KH. Dr. Muhammad Zaki Al-Hafizh, Rumah Tahfidz berkembang menjadi kawasan pendidikan pesantren modern terakreditasi A Unggul.</textarea>
+                        rows="3">Didirikan pada tahun 2012 oleh KH. Dr. Muhammad Zaki Al-Hafizh, Rumah Tahfidz berkembang menjadi kawasan pendidikan pesantren modern terakreditasi A Unggul.</textarea>
                     </div>
                     <div class="form-group">
                       <label class="form-label">Visi Lembaga</label>
                       <textarea id="settingVision" class="form-input"
-                        rows="2">Menjadi pusat peradaban Al-Qur'an terkemuka di Asia Tenggara yang melahirkan generasi penghafal Al-Qur'an mutqin, berakhlak mulia, berwawasan ilmiah, dan mandiri.</textarea>
+                        rows="3">Menjadi pusat peradaban Al-Qur'an terkemuka di Asia Tenggara yang melahirkan generasi penghafal Al-Qur'an mutqin, berakhlak mulia, berwawasan ilmiah, dan mandiri.</textarea>
                     </div>
                     <div class="form-group">
                       <label class="form-label">Misi Utama (Pisahkan dengan baris baru)</label>
-                      <textarea id="settingMission" class="form-input" rows="3">Menyelenggarakan pembelajaran Al-Qur'an bersanad muttashil.
+                      <textarea id="settingMission" class="form-input" rows="4">Menyelenggarakan pembelajaran Al-Qur'an bersanad muttashil.
 Mengintegrasikan kurikulum agama dan kurikulum sains nasional.
 Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                     </div>
-                  </div>
+                    <div class="tampilan-tab-footer">
+                      <button type="button" class="btn btn-primary btn-sm btn-tampilan-save" id="btnSaveTampilanBeranda">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                          <polyline points="17 21 17 13 7 13 7 21" />
+                          <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        <span>Simpan</span>
+                      </button>
+                    </div>
+                  </form>
                 </div>
+              </div>
 
-                <!-- Social Links, Navigation & Footer Card (PRD Req #8) -->
+              <!-- TAB 4: Tautan Sosial Media, Navigasi CTA & Footer -->
+              <div id="tab-content-footer" class="tampilan-tab-panel" data-tab-panel="footer">
                 <div class="admin-card">
                   <div class="admin-card-header">
-                    <span class="admin-card-title">Tautan Sosial Media, Navigasi CTA & Footer</span>
+                    <div>
+                      <span class="admin-card-title">Tautan Sosial Media, Navigasi CTA & Footer</span>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Pengaturan tautan sosial media resmi Instagram & YouTube, teks tombol Call to Action navigasi, dan hak cipta/legalitas footer.</p>
+                    </div>
                   </div>
-                  <div style="display: flex; flex-direction: column; gap: 1rem;">
+                  <form id="formAppearanceFooterSocial" style="display: flex; flex-direction: column; gap: 1rem;">
                     <div class="form-group">
                       <label class="form-label">Tautan Instagram Resmi</label>
                       <input type="url" id="settingSocialInstagram" class="form-input"
@@ -2187,9 +2279,19 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                     <div class="form-group">
                       <label class="form-label">Deskripsi Singkat Footer & Legalitas</label>
                       <textarea id="settingFooterCopyright" class="form-input"
-                        rows="2">© 2026 Rumah Tahfidz Al-Qur'an. Izin Kemenag RI No. Kd.10.04/PP.00.7/3492/2018 • NPSN: 69982341 (Akreditasi A)</textarea>
+                        rows="3">© 2026 Rumah Tahfidz Al-Qur'an. Izin Kemenag RI No. Kd.10.04/PP.00.7/3492/2018 • NPSN: 69982341 (Akreditasi A)</textarea>
                     </div>
-                  </div>
+                    <div class="tampilan-tab-footer">
+                      <button type="button" class="btn btn-primary btn-sm btn-tampilan-save" id="btnSaveTampilanFooter">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                          <polyline points="17 21 17 13 7 13 7 21" />
+                          <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        <span>Simpan</span>
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -2200,12 +2302,18 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
             <div id="admin-panel-users" class="admin-panel">
               <div class="panel-header">
                 <div>
-                  <h2>Manajemen Pengguna & Hak Akses (RBAC)</h2>
+                  <h2>Pengguna & Hak Akses (RBAC)</h2>
                   <p>Daftar akun staf yayasan dengan pembuatan, pengeditan, aktivasi/deaktivasi akun, dan pembagian
                     wewenang peran.</p>
                 </div>
-                <div class="panel-header-actions">
-                  <button class="btn btn-primary btn-sm" id="btnCreateUser">+ Tambah Pengguna Baru</button>
+                <div class="panel-header-actions users-header-actions">
+                  <button class="btn btn-primary btn-sm" id="btnCreateUser">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19"/>
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Tambah Pengguna Baru</span>
+                  </button>
                 </div>
               </div>
 
@@ -2470,7 +2578,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
                     </svg>
-                    <span>Kembali ke Kelola Pengguna</span>
+                    <span>Kembali ke Pengguna</span>
                   </a>
                   <div>
                     <h2 id="userModalTitle" style="font-size: 1.45rem; font-weight: 700; color: #111827; margin: 0;">
@@ -2550,7 +2658,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
                     </svg>
-                    <span>Kembali ke Kelola Pengguna</span>
+                    <span>Kembali ke Pengguna</span>
                   </a>
                   <div>
                     <h2 style="font-size: 1.45rem; font-weight: 700; color: #111827; margin: 0;">
@@ -2853,19 +2961,31 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label" style="font-weight: 600; color: #374151;">File Dokumen PDF Kurikulum
-                      *</label>
-                    <div
-                      style="border: 2px dashed rgba(129, 28, 229, 0.25); border-radius: var(--radius-lg); padding: 2rem; text-align: center; background: #faf8fe;">
+                    <label class="form-label" style="font-weight: 600; color: #374151;">File Dokumen PDF Kurikulum *</label>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.65rem;">
+                      <input type="text" id="syllabusPdfUrlInput" class="form-input"
+                        value="/assets/docs/silabus-smp-tahfidz-2026.pdf" placeholder="/assets/docs/... atau https://..."
+                        style="padding: 0.7rem 1rem; flex: 1;" required />
+                      <button type="button" class="btn btn-secondary btn-sm" id="btnPickMediaForSyllabus"
+                        style="display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span>Pilih dari Media Library</span>
+                      </button>
+                    </div>
+                    <div id="syllabusFileCardPreview"
+                      style="border: 2px dashed rgba(129, 28, 229, 0.25); border-radius: var(--radius-lg); padding: 1.5rem; text-align: center; background: #faf8fe;">
                       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="margin: 0 auto 0.5rem; color: #4338ca; display: block;">
+                        style="margin: 0 auto 0.5rem; color: #e11d48; display: block;">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                         <polyline points="14 2 14 8 20 8" />
                       </svg>
-                      <p style="font-size: 0.92rem; color: var(--text-dark); font-weight: 600; margin-bottom: 0.25rem;">
-                        Silabus-Kurikulum-Tahfidz-2026.pdf
+                      <p id="syllabusPreviewTitle" style="font-size: 0.92rem; color: var(--text-dark); font-weight: 600; margin-bottom: 0.25rem;">
+                        silabus-smp-tahfidz-2026.pdf
                       </p>
-                      <span style="font-size: 0.78rem; color: var(--text-muted);">Format PDF resmi maksimal 10MB</span>
+                      <span id="syllabusPreviewSub" style="font-size: 0.78rem; color: var(--text-muted);">Dokumen PDF resmi kurikulum akademik santri (dapat dipilih dari Media Library)</span>
                     </div>
                   </div>
 
@@ -3135,14 +3255,14 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               </svg>
               <span class="mob-nav-dot"></span>
             </a>
-            <a href="#admin-akademik" class="mob-nav-item" data-admin-nav="akademik" aria-label="Akademik & PPDB">
+            <a href="#admin-akademik" class="mob-nav-item" data-admin-nav="akademik" aria-label="Akademik">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
               </svg>
               <span class="mob-nav-dot"></span>
             </a>
-            <a href="#admin-donasi" class="mob-nav-item" data-admin-nav="donasi" aria-label="Donasi & Wakaf">
+            <a href="#admin-donasi" class="mob-nav-item" data-admin-nav="donasi" aria-label="Wakaf & Donasi">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect width="20" height="12" x="2" y="6" rx="2" />
                 <circle cx="12" cy="12" r="2.5"/>
@@ -3150,7 +3270,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               </svg>
               <span class="mob-nav-dot"></span>
             </a>
-            <a href="#admin-users" class="mob-nav-item" data-admin-nav="users" aria-label="Manajemen Pengguna">
+            <a href="#admin-users" class="mob-nav-item" data-admin-nav="users" aria-label="Pengguna">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
@@ -3456,39 +3576,47 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
       </div>
 
       <div class="receipt-modal-grid">
-        <!-- Receipt Image Preview -->
+        <!-- Receipt Image Preview (Only Bukti Transfer, No Campaign Featured Images) -->
         <div>
           <div class="receipt-image-frame">
-            <img id="adminReceiptImg" src="/assets/images/dormitory.jpg" alt="Bukti Transfer Donasi" />
+            <img id="adminReceiptImg" src="/assets/images/bukti-transfer-sample.svg" alt="Bukti Transfer Donasi" />
           </div>
           <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 0.5rem;">
-            Struk / bukti pembayaran transaksi donatur.
+            Struk / bukti pembayaran transfer bank donatur.
           </div>
         </div>
 
         <!-- Receipt Metadata & Approval Controls -->
         <div>
           <div class="receipt-details-list">
-            <div class="receipt-detail-item">
-              <span class="label">Nomor Invoice</span>
-              <strong id="receiptModalInvoice">INV-202610-003</strong>
+            <!-- Row 1: Nomor Invoice & Nama Donatur dalam 1 baris -->
+            <div class="receipt-meta-row-2col">
+              <div class="receipt-detail-item">
+                <span class="label">Nomor Invoice</span>
+                <strong id="receiptModalInvoice">INV-202610-003</strong>
+              </div>
+              <div class="receipt-detail-item">
+                <span class="label">Nama Donatur</span>
+                <strong id="receiptModalDonor">Dra. Hj. Siti Aminah</strong>
+              </div>
             </div>
-            <div class="receipt-detail-item">
-              <span class="label">Nama Donatur</span>
-              <strong id="receiptModalDonor">Dra. Hj. Siti Aminah</strong>
+
+            <!-- Row 2: Nominal & Metode Bayar dalam 1 baris -->
+            <div class="receipt-meta-row-2col">
+              <div class="receipt-detail-item">
+                <span class="label">Nominal Transfer</span>
+                <strong id="receiptModalAmount" style="font-size: 1.15rem; color: #059669;">Rp 10.000.000</strong>
+              </div>
+              <div class="receipt-detail-item">
+                <span class="label">Sumber & Metode Bayar</span>
+                <span id="receiptModalMethod">Transfer Manual (BSI - 7123 4567 89)</span>
+              </div>
             </div>
+
             <div class="receipt-detail-item">
               <span class="label">Program Wakaf</span>
               <span id="receiptModalCampaign" style="font-weight: 600; color: var(--primary-800);">Wakaf Pembebasan
                 Lahan & Perluasan Asrama</span>
-            </div>
-            <div class="receipt-detail-item">
-              <span class="label">Nominal Transfer</span>
-              <strong id="receiptModalAmount" style="font-size: 1.25rem; color: #059669;">Rp 10.000.000</strong>
-            </div>
-            <div class="receipt-detail-item">
-              <span class="label">Sumber & Metode Bayar</span>
-              <span id="receiptModalMethod">Transfer Manual (BSI - 7123 4567 89)</span>
             </div>
             <div class="receipt-detail-item">
               <span class="label">Nomor Referensi Bank</span>
@@ -3507,19 +3635,27 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               style="font-size: 0.85rem; padding: 0.5rem 0.75rem;" />
           </div>
 
-          <!-- Action Buttons -->
-          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
-            <button class="btn btn-primary" id="btnApproveReceiptAction"
-              style="background: #10b981; border-color: #10b981;">
-              Setujui & Verifikasi Dana Masuk
+          <!-- Action Buttons: 3 Tombol dalam 1 Baris (Setujui, Tolak, Kirim Kwitansi) -->
+          <div class="receipt-modal-actions">
+            <button class="btn btn-primary btn-receipt-approve" id="btnApproveReceiptAction">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>Setujui</span>
             </button>
-            <button class="btn btn-secondary" id="btnRejectReceiptAction"
-              style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
-              Tolak Transaksi (Tidak Valid)
+            <button class="btn btn-secondary btn-receipt-reject" id="btnRejectReceiptAction">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+              <span>Tolak</span>
             </button>
-            <a id="btnSendWAReceipt" href="#" target="_blank" class="btn btn-secondary"
-              style="font-size: 0.84rem; text-align: center;">
-              Kirim Kwitansi via WhatsApp
+            <a id="btnSendWAReceipt" href="#" target="_blank" class="btn btn-secondary btn-receipt-share">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+              <span>Kirim Kwitansi</span>
             </a>
           </div>
         </div>
@@ -4123,49 +4259,270 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
   </div>
 
   <!-- ==========================================================================
-       ADMIN MODAL 8: PUSTAKA MEDIA BERSAMA / REUSABLE MEDIA LIBRARY (PRD Req #4 & #9)
+       ADMIN MODAL 8: PUSTAKA MEDIA BERSAMA / WORDPRESS-STYLE MEDIA LIBRARY (PRD Req #4 & #9)
        ========================================================================== -->
-  <div class="modal-backdrop" id="mediaLibraryPickerModal" role="dialog" aria-modal="true">
-    <div class="modal-card" style="max-width: 820px;">
-      <button class="modal-close-btn" id="btnCloseMediaLibraryModal" aria-label="Tutup Pustaka Media">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-      <div style="margin-bottom: 1rem;">
-        <h3 style="font-size: 1.35rem; color: var(--midnight-blue); margin: 0;">Pustaka Media Bersama (Reusable Media
-          Library)</h3>
-        <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0.2rem 0 0;">Unggah gambar baru (JPG/PNG/WebP
-          maks. 5MB) atau pilih aset gambar yang sudah ada untuk artikel, galeri, dan program.</p>
+  <div class="modal-backdrop wp-media-backdrop" id="mediaLibraryPickerModal" role="dialog" aria-modal="true">
+    <div class="modal-card wp-media-frame" style="max-width: 980px; width: 95vw; height: 86vh; max-height: 740px; padding: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 12px; background: #f8fafc;">
+      
+      <!-- WP Modal Header -->
+      <div class="wp-media-header" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem; background: #ffffff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #4338ca, #811ce5); display: flex; align-items: center; justify-content: center; color: #ffffff;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.2;">Media Library</h3>
+              <p style="font-size: 0.74rem; color: #64748b; margin: 0;">Pustaka Aset Terpadu RTM (Foto, Video, PDF)</p>
+            </div>
+          </div>
+
+          <!-- WordPress Router Tabs -->
+          <div class="wp-media-router" style="display: flex; gap: 0.25rem; background: #f1f5f9; padding: 0.25rem; border-radius: 8px;">
+            <button type="button" class="wp-media-nav-tab active" id="wpTabBrowse" data-tab="browse"
+              style="padding: 0.4rem 0.95rem; font-size: 0.82rem; font-weight: 600; border-radius: 6px; border: none; background: #ffffff; color: #4338ca; box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>Pustaka Media</span>
+            </button>
+            <button type="button" class="wp-media-nav-tab" id="wpTabUpload" data-tab="upload"
+              style="padding: 0.4rem 0.95rem; font-size: 0.82rem; font-weight: 600; border-radius: 6px; border: none; background: transparent; color: #64748b; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Unggah Berkas Baru</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="modal-close-btn" id="btnCloseMediaLibraryModal" aria-label="Tutup Media Library" style="position: static; margin: 0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
 
-      <!-- Secure Upload Form -->
-      <form id="mediaLibraryUploadForm"
-        style="background: #faf8fe; padding: 0.95rem 1.15rem; border-radius: var(--radius-md); border: 1px dashed rgba(129, 28, 229, 0.25); margin-bottom: 1rem; display: grid; grid-template-columns: 1.3fr 1fr 1fr auto; gap: 0.65rem; align-items: end;">
-        <div>
-          <label class="form-label" style="font-size: 0.78rem;">Pilih File Gambar (JPG/PNG/WebP)</label>
-          <input type="file" id="mediaUploadFileInput" accept="image/jpeg,image/png,image/webp,image/gif"
-            class="form-input" style="font-size: 0.8rem; padding: 0.4rem;" required />
-        </div>
-        <div>
-          <label class="form-label" style="font-size: 0.78rem;">Alt Text Aksesibilitas *</label>
-          <input type="text" id="mediaUploadAltText" class="form-input" placeholder="Deskripsi gambar..."
-            style="font-size: 0.82rem; padding: 0.48rem 0.65rem;" required />
-        </div>
-        <div>
-          <label class="form-label" style="font-size: 0.78rem;">Keterangan / Caption</label>
-          <input type="text" id="mediaUploadCaption" class="form-input" placeholder="Caption opsional..."
-            style="font-size: 0.82rem; padding: 0.48rem 0.65rem;" />
-        </div>
-        <button type="submit" class="btn btn-primary btn-sm" id="btnUploadMediaAsset"
-          style="padding: 0.55rem 0.95rem; white-space: nowrap;">+ Unggah Aset</button>
-      </form>
+      <!-- VIEW 1: BROWSE MEDIA -->
+      <div class="wp-media-view" id="wpViewBrowse" style="display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;">
+        
+        <!-- Filter Toolbar -->
+        <div class="wp-media-toolbar" style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1.25rem; background: #ffffff; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap;">
+          <!-- Filter Tabs / Pills -->
+          <div class="wp-media-filters" style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+            <button type="button" class="wp-filter-pill active" data-type="all">
+              Semua Media
+            </button>
+            <button type="button" class="wp-filter-pill" data-type="image">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Foto / Gambar</span>
+            </button>
+            <button type="button" class="wp-filter-pill" data-type="video">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              <span>Video</span>
+            </button>
+            <button type="button" class="wp-filter-pill" data-type="pdf">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span>Dokumen (PDF)</span>
+            </button>
+          </div>
 
-      <div id="mediaLibraryGridContainer"
-        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 0.75rem; max-height: 340px; overflow-y: auto; padding: 0.25rem;">
-        <!-- Populated by JS -->
+          <!-- Search & Counter -->
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-left: auto;">
+            <div style="position: relative; width: 220px;">
+              <input type="text" id="wpMediaSearchInput" class="form-input" placeholder="Cari media..."
+                style="padding: 0.4rem 0.65rem 0.4rem 2rem; font-size: 0.8rem; height: 34px; border-radius: 6px;" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"
+                style="position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+            <span id="wpMediaCountBadge" style="font-size: 0.74rem; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 0.35rem 0.65rem; border-radius: 6px; white-space: nowrap;">
+              0 Berkas
+            </span>
+          </div>
+        </div>
+
+        <!-- Media Main Body (Grid + Details Sidebar) -->
+        <div class="wp-media-body" style="display: flex; flex: 1; min-height: 0; overflow: hidden; background: #f8fafc;">
+          
+          <!-- Media Grid Container -->
+          <div id="mediaLibraryGridContainer" class="wp-media-grid-container" style="flex: 1; overflow-y: auto; padding: 1rem; min-height: 0;">
+            <div id="mediaLibraryGrid" class="wp-media-grid">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Attachment Details Sidebar (WordPress Classic) -->
+          <div class="wp-media-details-sidebar" id="wpMediaSidebar" style="width: 290px; background: #ffffff; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; padding: 1rem;">
+            
+            <div id="wpSidebarEmpty" style="margin: auto; text-align: center; color: #94a3b8; padding: 1.5rem 0.5rem;">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.5rem; opacity: 0.6;">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <p style="font-size: 0.8rem; margin: 0;">Pilih salah satu media untuk melihat rincian & menggunakannya.</p>
+            </div>
+
+            <div id="wpSidebarContent" style="display: none; flex-direction: column; gap: 0.85rem;">
+              <div style="font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
+                Rincian Berkas
+              </div>
+
+              <!-- Media Preview Box -->
+              <div id="wpSidebarPreviewBox" style="width: 100%; height: 160px; border-radius: 8px; overflow: hidden; background: #0f172a; display: flex; align-items: center; justify-content: center; position: relative;">
+                <!-- Preview injected via JS -->
+              </div>
+
+              <!-- Media Meta Info -->
+              <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 0.65rem;">
+                <div id="wpSidebarFileName" style="font-weight: 700; font-size: 0.84rem; color: #1e293b; word-break: break-all; margin-bottom: 0.2rem;">
+                  filename.jpg
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                  <span id="wpSidebarBadge" class="wp-type-badge wp-type-image">Foto</span>
+                  <span id="wpSidebarFileSize" style="font-size: 0.72rem; color: #64748b;">240 KB</span>
+                  <span style="font-size: 0.72rem; color: #cbd5e1;">•</span>
+                  <span id="wpSidebarDate" style="font-size: 0.72rem; color: #64748b;">19 Okt 2026</span>
+                </div>
+              </div>
+
+              <!-- Form Inputs -->
+              <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div>
+                  <label class="form-label" style="font-size: 0.72rem; margin-bottom: 0.2rem;">URL Berkas</label>
+                  <div style="display: flex; gap: 0.35rem;">
+                    <input type="text" id="wpSidebarUrlInput" class="form-input" readonly
+                      style="font-size: 0.75rem; padding: 0.35rem 0.5rem; background: #f8fafc; height: 32px;" />
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnWpCopyUrl" style="padding: 0 0.5rem; height: 32px;" title="Salin URL">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="form-label" style="font-size: 0.72rem; margin-bottom: 0.2rem;">Alt Text Aksesibilitas / Judul</label>
+                  <input type="text" id="wpSidebarAltInput" class="form-input" readonly
+                    style="font-size: 0.75rem; padding: 0.35rem 0.5rem; background: #f8fafc; height: 32px;" />
+                </div>
+              </div>
+
+              <!-- Danger Action -->
+              <div style="margin-top: auto; padding-top: 0.5rem; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+                <button type="button" id="btnWpDeleteAsset" class="btn btn-secondary btn-sm"
+                  style="color: #dc2626; font-size: 0.74rem; padding: 0.35rem 0.65rem; border-color: #fecaca;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  Hapus Permanen
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- WordPress Selection Footer -->
+        <div class="wp-media-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; background: #ffffff; border-top: 1px solid #e2e8f0; flex-shrink: 0;">
+          <div id="wpFooterSelectionStatus" style="font-size: 0.8rem; color: #64748b;">
+            <span id="wpFooterSelectionText">Belum ada berkas dipilih</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnCancelMediaPicker" style="font-size: 0.8rem; height: 36px; padding: 0.4rem 0.85rem;">
+              Batal
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnApplyMediaSelection" disabled
+              style="font-size: 0.82rem; height: 36px; padding: 0.4rem 1.25rem; font-weight: 600;">
+              Gunakan Media Ini
+            </button>
+          </div>
+        </div>
+
       </div>
+
+      <!-- VIEW 2: UNGGAH BERKAS (UPLOAD DROPZONE) -->
+      <div class="wp-media-view" id="wpViewUpload" style="display: none; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; padding: 1.5rem; background: #ffffff;">
+        <form id="mediaLibraryUploadForm" style="max-width: 680px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 1.25rem;">
+          
+          <div id="wpDropzoneBox" class="wp-dropzone"
+            style="border: 2px dashed rgba(67, 56, 202, 0.35); border-radius: 12px; padding: 3rem 1.5rem; text-align: center; background: #faf8fe; transition: all 0.2s;">
+            <div style="width: 54px; height: 54px; margin: 0 auto 1rem; border-radius: 50%; background: #e0e7ff; display: flex; align-items: center; justify-content: center; color: #4338ca;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <h4 style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin: 0 0 0.4rem;">
+              Tarik berkas media ke sini untuk mengunggah
+            </h4>
+            <p style="font-size: 0.84rem; color: #64748b; margin: 0 0 1.25rem;">
+              Mendukung berkas Foto/Gambar, Video dokumentasi, dan Dokumen Silabus (PDF).
+            </p>
+            
+            <label class="btn btn-primary" style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.5rem; font-weight: 600;">
+              <input type="file" id="mediaUploadFileInput" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,video/mp4,video/webm,application/pdf" style="display: none;" />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Pilih Berkas dari Komputer</span>
+            </label>
+
+            <!-- File Selected Preview Container -->
+            <div id="wpUploadSelectedFileInfo" style="display: none; margin-top: 1.25rem; padding: 0.75rem 1rem; background: #ffffff; border: 1px solid #c7d2fe; border-radius: 8px; text-align: left;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                  <span id="wpSelectedFileIcon" style="font-size: 1.25rem;">📄</span>
+                  <div>
+                    <div id="wpSelectedFileName" style="font-weight: 600; font-size: 0.85rem; color: #1e293b;">file.pdf</div>
+                    <div id="wpSelectedFileSize" style="font-size: 0.74rem; color: #64748b;">1.2 MB</div>
+                  </div>
+                </div>
+                <button type="button" id="btnWpClearUploadFile" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 0.2rem 0.5rem;">Ganti</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Metadata Fields -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.9rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div>
+                <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #334155;">Tipe Media</label>
+                <select id="mediaUploadTypeSelect" class="form-input" style="font-size: 0.85rem; padding: 0.55rem 0.75rem;">
+                  <option value="auto">Otomatis Deteksi dari Berkas</option>
+                  <option value="image">Foto / Gambar (JPG, PNG, WebP)</option>
+                  <option value="video">Video (MP4, WebM)</option>
+                  <option value="pdf">Dokumen (PDF Silabus, Formulir)</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #334155;">Alt Text / Judul Aksesibilitas *</label>
+                <input type="text" id="mediaUploadAltText" class="form-input" placeholder="Contoh: Silabus SMP Tahfidz 2026 atau Kampus RTM"
+                  style="font-size: 0.85rem; padding: 0.55rem 0.75rem;" required />
+              </div>
+            </div>
+
+            <div>
+              <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #334155;">Keterangan / Caption Dokumen</label>
+              <input type="text" id="mediaUploadCaption" class="form-input" placeholder="Keterangan opsional untuk arsip..."
+                style="font-size: 0.85rem; padding: 0.55rem 0.75rem;" />
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.25rem;">
+              <span style="font-size: 0.75rem; color: #64748b;">
+                Batas ukuran file maksimal: <strong>25 MB</strong>.
+              </span>
+              <button type="submit" class="btn btn-primary" id="btnUploadMediaAsset"
+                style="padding: 0.6rem 1.5rem; font-weight: 600; font-size: 0.85rem;">
+                + Unggah Berkas ke Library
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
     </div>
   </div>
 

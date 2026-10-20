@@ -129,6 +129,69 @@ test('Mobile drawer has higher z-index (10010) than sticky bottom nav (9999) and
   assert(css.includes('padding: 1rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;'), 'Sidebar footer must have safe-area padding for logout button');
 });
 
+// Test 13: Simplified sidebar menu labels without 'Kelola', 'Modul', and 'Manajemen'
+test("Menu labels omit 'Kelola', 'Modul', and use 'Akademik' & 'Pengguna'", () => {
+  const startIdx = html.indexOf('<nav class="sidebar-nav">');
+  const endIdx = html.indexOf('</nav>', startIdx);
+  const sidebarNavSnippet = html.substring(startIdx, endIdx);
+  assert(!sidebarNavSnippet.includes('>Kelola Akademik<'), "Sidebar menu should not contain 'Kelola Akademik'");
+  assert(!sidebarNavSnippet.includes('>Modul Wakaf & Donasi<'), "Sidebar menu should not contain 'Modul Wakaf & Donasi'");
+  assert(!sidebarNavSnippet.includes('>Kelola Galeri'), "Sidebar menu should not contain 'Kelola Galeri'");
+  assert(!sidebarNavSnippet.includes('>Kelola Artikel'), "Sidebar menu should not contain 'Kelola Artikel'");
+  assert(!sidebarNavSnippet.includes('>Kelola Tampilan<'), "Sidebar menu should not contain 'Kelola Tampilan'");
+  assert(!sidebarNavSnippet.includes('>Manajemen Pengguna<'), "Sidebar menu should not contain 'Manajemen Pengguna'");
+
+  assert(sidebarNavSnippet.includes('>Akademik<'), "Sidebar menu must contain 'Akademik'");
+  assert(sidebarNavSnippet.includes('>Wakaf & Donasi<'), "Sidebar menu must contain 'Wakaf & Donasi'");
+  assert(sidebarNavSnippet.includes('>Galeri & Kunjungan<'), "Sidebar menu must contain 'Galeri & Kunjungan'");
+  assert(sidebarNavSnippet.includes('>Artikel / Berita<'), "Sidebar menu must contain 'Artikel / Berita'");
+  assert(sidebarNavSnippet.includes('>Tampilan<'), "Sidebar menu must contain 'Tampilan'");
+  assert(sidebarNavSnippet.includes('>Pengguna<'), "Sidebar menu must contain 'Pengguna'");
+});
+
+// Test 14: Artikel / Berita Header Action Button Sizing & Label
+test("Tombol 'Artikel Baru' tidak memiliki duplicate + dan ukurannya sama dengan menu akademik di desktop, ipad, dan mobile", () => {
+  assert(html.includes('class="panel-header-actions artikel-header-actions"'), 'Missing .artikel-header-actions in index.html');
+  assert(html.includes('id="btnCreateArticle"'), 'btnCreateArticle missing in index.html');
+  assert(html.includes('<span>Artikel Baru</span>'), 'Button text must be "Artikel Baru" without duplicate +');
+  assert(!html.includes('+ Tulis Artikel Baru'), 'Old label "+ Tulis Artikel Baru" should be removed');
+
+  // Desktop
+  assert(css.includes('.artikel-header-actions .btn {') && css.includes('height: 38px !important;') && css.includes('font-size: 0.85rem !important;'), 'Desktop rules for .artikel-header-actions .btn must match akademik (font-size: 0.85rem, height: 38px)');
+
+  // iPad
+  const ipadSection = css.slice(css.indexOf('@media (max-width: 1024px)'));
+  assert(ipadSection.includes('.artikel-header-actions .btn {') && ipadSection.includes('font-size: 0.78rem !important;'), 'iPad rules for .artikel-header-actions .btn must match akademik (font-size: 0.78rem)');
+
+  // Mobile
+  const mobileSection = css.slice(css.indexOf('@media (max-width: 768px)'));
+});
+
+// Test 15: Galeri 'Tambah Media' & Pengguna 'Tambah Pengguna Baru' without duplicate + and matching Menu Akademik
+test("Tombol 'Tambah Media' dan 'Tambah Pengguna Baru' tidak memiliki duplicate + dan ukurannya sama dengan menu akademik", () => {
+  // Tambah Media
+  assert(html.includes('id="btnAddGalleryMedia"'), 'btnAddGalleryMedia missing in index.html');
+  assert(html.includes('<span>Tambah Media</span>'), 'Button text must be "Tambah Media" without duplicate +');
+  assert(!html.includes('<span>+ Tambah Media</span>'), 'Old label "<span>+ Tambah Media</span>" should be removed');
+
+  // Tambah Pengguna Baru
+  assert(html.includes('class="panel-header-actions users-header-actions"'), 'Missing .users-header-actions in index.html');
+  assert(html.includes('id="btnCreateUser"'), 'btnCreateUser missing in index.html');
+  assert(html.includes('<span>Tambah Pengguna Baru</span>'), 'Button text must be "Tambah Pengguna Baru" without duplicate +');
+  assert(!html.includes('>+ Tambah Pengguna Baru<'), 'Old label "+ Tambah Pengguna Baru" string + should be removed');
+
+  // Desktop
+  assert(css.includes('.users-header-actions .btn') && css.includes('height: 38px !important;') && css.includes('font-size: 0.85rem !important;'), 'Desktop rules for .users-header-actions .btn must match akademik');
+
+  // iPad
+  const ipadSection = css.slice(css.indexOf('@media (max-width: 1024px)'));
+  assert(ipadSection.includes('.users-header-actions .btn') && ipadSection.includes('font-size: 0.78rem !important;'), 'iPad rules for .users-header-actions .btn must match akademik');
+
+  // Mobile
+  const mobileSection = css.slice(css.indexOf('@media (max-width: 768px)'));
+  assert(mobileSection.includes('.panel-header-actions.users-header-actions .btn') && mobileSection.includes('font-size: 0.76rem !important;'), 'Mobile rules for .users-header-actions .btn must match akademik');
+});
+
 console.log(`\n========================================`);
 console.log(`Test Results: ${passed}/${total} Passed (${Math.round(passed / total * 100)}%)`);
 console.log(`========================================\n`);

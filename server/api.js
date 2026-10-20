@@ -1444,22 +1444,33 @@ api.post('/media', verifyRoleIfAuthenticated('superadmin', 'editor', 'finance'),
   try {
     const { file_name, file_url, data_url, mime_type = 'image/jpeg', file_size = 150000, alt_text = '', caption = '', album_name = 'Pustaka Media' } = req.body;
 
-    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf'];
+    const allowedMimes = [
+      'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'image/gif',
+      'application/pdf',
+      'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/ogg'
+    ];
     if (mime_type && !allowedMimes.includes(mime_type)) {
-      return res.status(400).json({ success: false, message: `Tipe file ${mime_type} tidak diizinkan. Gunakan JPG, PNG, WEBP, atau PDF.` });
+      return res.status(400).json({ success: false, message: `Tipe file ${mime_type} tidak diizinkan. Gunakan JPG, PNG, WEBP, PDF, atau Video MP4/WebM.` });
     }
 
-    if (Number(file_size) > 5 * 1024 * 1024) {
-      return res.status(400).json({ success: false, message: 'Ukuran file melebihi batas maksimum 5MB.' });
+    if (Number(file_size) > 25 * 1024 * 1024) {
+      return res.status(400).json({ success: false, message: 'Ukuran file melebihi batas maksimum 25MB.' });
     }
 
     let finalUrl = file_url;
-    if (data_url && data_url.startsWith('data:image/')) {
+    if (data_url && (data_url.startsWith('data:image/') || data_url.startsWith('data:application/pdf') || data_url.startsWith('data:video/'))) {
       const uploadsDir = path.resolve(__dirname, '../public/assets/uploads');
       if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
       }
-      const ext = mime_type.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg';
+      let ext = 'bin';
+      if (mime_type.includes('pdf')) ext = 'pdf';
+      else if (mime_type.includes('mp4')) ext = 'mp4';
+      else if (mime_type.includes('webm')) ext = 'webm';
+      else if (mime_type.includes('png')) ext = 'png';
+      else if (mime_type.includes('webp')) ext = 'webp';
+      else if (mime_type.includes('svg')) ext = 'svg';
+      else ext = mime_type.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg';
       const safeName = (file_name || `upload-${Date.now()}`).replace(/[^a-zA-Z0-9._-]/g, '_').replace(/\.[^.]+$/, '') + '-' + Date.now() + '.' + ext;
       const base64Data = data_url.split(',')[1];
       fs.writeFileSync(path.join(uploadsDir, safeName), Buffer.from(base64Data, 'base64'));

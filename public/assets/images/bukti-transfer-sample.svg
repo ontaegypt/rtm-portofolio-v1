@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 620" width="100%" height="100%">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.1"/>
+    </filter>
+    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ticket Card Background -->
+  <rect x="15" y="15" width="420" height="590" rx="16" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5" filter="url(#shadow)"/>
+
+  <!-- Top Brand Banner -->
+  <rect x="15" y="15" width="420" height="85" rx="16" fill="url(#headerGrad)"/>
+  <rect x="15" y="75" width="420" height="25" fill="url(#headerGrad)"/>
+
+  <!-- Bank Logo & Name -->
+  <text x="40" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" fill="#ffffff" letter-spacing="1">BSI</text>
+  <text x="82" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#a7f3d0">BANK SYARIAH INDONESIA</text>
+  <text x="40" y="72" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#ecfdf5">M-Banking &amp; Digital Receipt</text>
+
+  <!-- Status Success Badge -->
+  <g transform="translate(195, 80)">
+    <circle cx="30" cy="30" r="28" fill="#ffffff" stroke="#10b981" stroke-width="4"/>
+    <circle cx="30" cy="30" r="22" fill="#10b981"/>
+    <path d="M21 30 L27 36 L39 23" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text x="225" y="160" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="800" fill="#065f46">TRANSFER BERHASIL</text>
+  <text x="225" y="180" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#6b7280">14 Oktober 2026, 14:10:25 WIB</text>
+
+  <!-- Amount Box -->
+  <rect x="35" y="198" width="380" height="64" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="225" y="222" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#166534">JUMLAH TRANSFER</text>
+  <text x="225" y="247" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="800" fill="#047857">Rp 10.000.000</text>
+
+  <!-- Dashed Divider -->
+  <line x1="35" y1="278" x2="415" y2="278" stroke="#d1d5db" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- Transaction Details List -->
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11.5">
+    <!-- Row 1 -->
+    <text x="40" y="306" fill="#6b7280">No. Referensi</text>
+    <text x="410" y="306" text-anchor="end" font-weight="700" fill="#111827">BSI-TRX-20261014-9981</text>
+
+    <!-- Row 2 -->
+    <text x="40" y="336" fill="#6b7280">Rekening Sumber</text>
+    <text x="410" y="336" text-anchor="end" font-weight="600" fill="#111827">Dra. Hj. Siti Aminah</text>
+
+    <!-- Row 3 -->
+    <text x="40" y="366" fill="#6b7280">Rekening Tujuan</text>
+    <text x="410" y="366" text-anchor="end" font-weight="700" fill="#059669">7123 4567 89</text>
+
+    <!-- Row 4 -->
+    <text x="40" y="396" fill="#6b7280">Nama Penerima</text>
+    <text x="410" y="396" text-anchor="end" font-weight="700" fill="#111827">RUMAH TAHFIDZ MADANI</text>
+
+    <!-- Row 5 -->
+    <text x="40" y="426" fill="#6b7280">Bank Tujuan</text>
+    <text x="410" y="426" text-anchor="end" font-weight="600" fill="#111827">Bank Syariah Indonesia (BSI)</text>
+
+    <!-- Row 6 -->
+    <text x="40" y="456" fill="#6b7280">Biaya Administrasi</text>
+    <text x="410" y="456" text-anchor="end" font-weight="600" fill="#059669">Rp 0 (Gratis)</text>
+
+    <!-- Row 7 -->
+    <text x="40" y="486" fill="#6b7280">Keterangan / Berita</text>
+    <text x="410" y="486" text-anchor="end" font-weight="600" fill="#111827">Wakaf Asrama &amp; Sarana Santri</text>
+  </g>
+
+  <!-- Dashed Divider -->
+  <line x1="35" y1="510" x2="415" y2="510" stroke="#d1d5db" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- Footer Watermark -->
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">
+    <text x="225" y="540" font-size="10.5" font-weight="600" fill="#4b5563">STRUK BUKTI PEMBAYARAN RESMI</text>
+    <text x="225" y="558" font-size="9" fill="#9ca3af">Dokumen ini diterbitkan otomatis oleh sistem perbankan terhubung.</text>
+    <text x="225" y="572" font-size="9" fill="#9ca3af">Simpan resi ini sebagai bukti verifikasi pembukuan donasi.</text>
+  </g>
+</svg>

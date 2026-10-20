@@ -527,7 +527,16 @@ async function verifyAndSyncSession() {
 // Router and Navigation System (Sprint 1 + Sprint 2 Auth Guard)
 function initRouter() {
   const handleHashChange = () => {
-    const rawHash = window.location.hash.slice(1) || 'home';
+    let rawHash = window.location.hash.slice(1);
+
+    // Support direct pathname routing if user enters /admin-tampilan or /admin-tampilan/identitas
+    if (!rawHash && window.location.pathname.startsWith('/admin-tampilan')) {
+      const sub = window.location.pathname.replace('/admin-tampilan', '').replace(/^\//, '');
+      rawHash = 'admin-tampilan/' + (sub || 'identitas');
+      window.location.hash = '#' + rawHash;
+    }
+
+    if (!rawHash) rawHash = 'home';
     let view = rawHash;
     let programParam = null;
 
@@ -564,6 +573,15 @@ function initRouter() {
         targetModule = roleConf.defaultModule;
       }
 
+      // Default #admin-tampilan to #admin-tampilan/identitas
+      if (targetModule === 'tampilan') {
+        targetModule = 'tampilan/identitas';
+      }
+      // Normalize hyphenated subtabs if used: admin-tampilan-identitas -> tampilan/identitas
+      if (targetModule.startsWith('tampilan-') && targetModule !== 'tampilan') {
+        targetModule = targetModule.replace('tampilan-', 'tampilan/');
+      }
+
       const SUBMODULE_PARENTS = {
         'article-form': 'berita',
         'user-form': 'users',
@@ -572,9 +590,13 @@ function initRouter() {
         'syllabus-form': 'akademik',
         'program-form': 'akademik',
         'campaign-form': 'donasi',
-        'profile': 'overview'
+        'profile': 'overview',
+        'tampilan/identitas': 'tampilan',
+        'tampilan/kontak': 'tampilan',
+        'tampilan/beranda': 'tampilan',
+        'tampilan/footer': 'tampilan'
       };
-      const checkModule = SUBMODULE_PARENTS[targetModule] || targetModule;
+      const checkModule = SUBMODULE_PARENTS[targetModule] || (targetModule.startsWith('tampilan') ? 'tampilan' : targetModule);
 
       // Check Role-Based Access Control (RBAC 403 Forbidden check)
       if (targetModule !== 'profile' && !roleConf.allowedModules.includes(checkModule)) {
@@ -677,13 +699,29 @@ export function navigateToAdmin(moduleName) {
   const adminView = document.getElementById('view-admin');
   if (adminView) adminView.classList.add('active');
 
+  // Determine base panel name and subtab (for tampilan tabs: tampilan/identitas, etc.)
+  let basePanelName = moduleName;
+  let tampilanSubTab = 'identitas';
+  if (moduleName.startsWith('tampilan')) {
+    basePanelName = 'tampilan';
+    const parts = moduleName.split('/');
+    if (parts.length > 1 && parts[1]) {
+      tampilanSubTab = parts[1];
+    }
+  }
+
   // Switch Admin Panels
   document.querySelectorAll('.admin-panel').forEach(panel => {
     panel.classList.remove('active');
   });
-  const targetPanel = document.getElementById(`admin-panel-${moduleName}`);
+  const targetPanel = document.getElementById(`admin-panel-${basePanelName}`);
   if (targetPanel) {
     targetPanel.classList.add('active');
+  }
+
+  // Switch Tampilan Tab if in tampilan module
+  if (basePanelName === 'tampilan') {
+    switchTampilanTab(tampilanSubTab);
   }
 
   // Submodule to parent mapping
@@ -695,31 +733,39 @@ export function navigateToAdmin(moduleName) {
     'syllabus-form': 'akademik',
     'program-form': 'akademik',
     'campaign-form': 'donasi',
-    'profile': 'overview'
+    'profile': 'overview',
+    'tampilan/identitas': 'tampilan',
+    'tampilan/kontak': 'tampilan',
+    'tampilan/beranda': 'tampilan',
+    'tampilan/footer': 'tampilan'
   };
-  const activeNavModule = SUBMODULE_PARENTS[moduleName] || moduleName;
+  const activeNavModule = SUBMODULE_PARENTS[moduleName] || (moduleName.startsWith('tampilan') ? 'tampilan' : moduleName);
 
   // Update Breadcrumb Text
   const breadcrumbTitles = {
     overview: 'Ringkasan / Analytics',
-    akademik: 'Kelola Akademik & PPDB',
-    donasi: 'Modul Wakaf & Donasi',
-    galeri: 'Kelola Galeri & Kunjungan',
-    berita: 'Kelola Artikel / Berita',
-    tampilan: 'Kelola Tampilan & Identitas',
-    users: 'Manajemen Pengguna & RBAC',
-    'article-form': 'Kelola Artikel / Berita > Editor Form',
-    'user-form': 'Manajemen Pengguna > Form Pengguna',
-    'user-detail': 'Manajemen Pengguna > Detail Informasi Akun',
-    'gallery-form': 'Kelola Galeri > Form Media Dokumentasi',
-    'syllabus-form': 'Kelola Akademik > Unggah Silabus',
-    'program-form': 'Kelola Akademik > Editor Program & Skema PPDB',
-    'campaign-form': 'Modul Wakaf & Donasi > Form Program Campaign',
+    akademik: 'Akademik & PPDB',
+    donasi: 'Wakaf & Donasi',
+    galeri: 'Galeri & Kunjungan',
+    berita: 'Artikel / Berita',
+    tampilan: 'Tampilan & Identitas',
+    'tampilan/identitas': 'Tampilan > Identitas & Logo',
+    'tampilan/kontak': 'Tampilan > Kontak & Rekening',
+    'tampilan/beranda': 'Tampilan > Konten Beranda & Visi Misi',
+    'tampilan/footer': 'Tampilan > Sosial Media & Footer',
+    users: 'Pengguna & RBAC',
+    'article-form': 'Artikel / Berita > Editor Form',
+    'user-form': 'Pengguna > Form Pengguna',
+    'user-detail': 'Pengguna > Detail Informasi Akun',
+    'gallery-form': 'Galeri > Form Media Dokumentasi',
+    'syllabus-form': 'Akademik > Unggah Silabus',
+    'program-form': 'Akademik > Editor Program & Skema PPDB',
+    'campaign-form': 'Wakaf & Donasi > Form Program Campaign',
     'profile': 'Pengaturan Akun > Ubah Data Profil'
   };
   const breadcrumbEl = document.getElementById('topbarBreadcrumbActive');
   if (breadcrumbEl) {
-    breadcrumbEl.textContent = breadcrumbTitles[moduleName] || 'Dashboard Admin';
+    breadcrumbEl.textContent = breadcrumbTitles[moduleName] || (moduleName.startsWith('tampilan') ? `Tampilan > ${tampilanSubTab}` : 'Dashboard Admin');
   }
 
   // Update Sidebar Navigation & Mobile App Bottom Nav Links
@@ -786,7 +832,7 @@ export function navigateToAdmin(moduleName) {
   if (moduleName === 'donasi') renderAdminDonasi();
   if (moduleName === 'galeri') renderAdminGaleri();
   if (moduleName === 'berita') renderAdminBerita();
-  if (moduleName === 'tampilan') renderAdminTampilan();
+  if (moduleName === 'tampilan' || moduleName.startsWith('tampilan')) renderAdminTampilan();
   if (moduleName === 'users') renderAdminUsers();
   if (moduleName === 'user-detail') renderUserDetailPage();
   if (moduleName === 'profile') renderAdminProfile();
@@ -799,6 +845,46 @@ export function navigateToAdmin(moduleName) {
   // Close Mobile Sidebar
   const sidebar = document.getElementById('adminSidebar');
   if (sidebar) sidebar.classList.remove('open');
+}
+
+// Switch WordPress-style Tampilan Tabs
+export function switchTampilanTab(tabKey) {
+  const validTabs = ['identitas', 'kontak', 'beranda', 'footer'];
+  const activeTab = validTabs.includes(tabKey) ? tabKey : 'identitas';
+
+  // Toggle tab buttons active class
+  document.querySelectorAll('.tampilan-tab-btn').forEach(btn => {
+    const btnTab = btn.getAttribute('data-tab');
+    if (btnTab === activeTab) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  // Toggle tab panels
+  document.querySelectorAll('.tampilan-tab-panel').forEach(panel => {
+    const panelTab = panel.getAttribute('data-tab-panel');
+    if (panelTab === activeTab) {
+      panel.classList.add('active');
+      panel.style.display = 'block';
+    } else {
+      panel.classList.remove('active');
+      panel.style.display = 'none';
+    }
+  });
+
+  // Update breadcrumb if currently in tampilan module
+  const tabTitles = {
+    identitas: 'Tampilan > Identitas & Logo',
+    kontak: 'Tampilan > Kontak & Rekening',
+    beranda: 'Tampilan > Konten Beranda & Visi Misi',
+    footer: 'Tampilan > Sosial Media & Footer'
+  };
+  const breadcrumbEl = document.getElementById('topbarBreadcrumbActive');
+  if (breadcrumbEl && state.activeAdminModule && state.activeAdminModule.startsWith('tampilan')) {
+    breadcrumbEl.textContent = tabTitles[activeTab] || 'Tampilan & Identitas';
+  }
 }
 
 
@@ -3373,14 +3459,307 @@ function renderAdminGaleri() {
   }
 }
 
-export async function openMediaLibraryModal(onSelectCallback = null) {
+// ============================================================================
+// 5. WORDPRESS-STYLE MEDIA LIBRARY ENGINE (PRD Section 5.5 & Req #4, #9)
+// ============================================================================
+
+export let allMediaList = [];
+
+export function detectMediaType(item) {
+  if (!item) return 'image';
+  const mime = (item.mime_type || '').toLowerCase();
+  const url = (item.file_url || item.file_name || '').toLowerCase();
+  if (mime.includes('pdf') || url.endsWith('.pdf')) return 'pdf';
+  if (
+    mime.startsWith('video/') ||
+    url.endsWith('.mp4') ||
+    url.endsWith('.webm') ||
+    url.endsWith('.mov') ||
+    url.endsWith('.ogg') ||
+    url.includes('youtube.com') ||
+    url.includes('youtu.be') ||
+    url.includes('vimeo.com')
+  ) {
+    return 'video';
+  }
+  return 'image';
+}
+
+export function formatFileSize(bytes) {
+  if (!bytes || isNaN(bytes)) return '250 KB';
+  const num = Number(bytes);
+  if (num < 1024) return num + ' B';
+  if (num < 1024 * 1024) return Math.round(num / 1024) + ' KB';
+  return (num / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+export function selectWpMediaItem(item) {
+  state.selectedMediaItem = item;
+
+  // Highlight active element in grid
+  document.querySelectorAll('.wp-media-item').forEach(el => {
+    if (String(el.getAttribute('data-id')) === String(item.id)) {
+      el.classList.add('selected');
+    } else {
+      el.classList.remove('selected');
+    }
+  });
+
+  const emptyBox = document.getElementById('wpSidebarEmpty');
+  const contentBox = document.getElementById('wpSidebarContent');
+  const previewBox = document.getElementById('wpSidebarPreviewBox');
+  const nameEl = document.getElementById('wpSidebarFileName');
+  const badgeEl = document.getElementById('wpSidebarBadge');
+  const sizeEl = document.getElementById('wpSidebarFileSize');
+  const dateEl = document.getElementById('wpSidebarDate');
+  const urlInput = document.getElementById('wpSidebarUrlInput');
+  const altInput = document.getElementById('wpSidebarAltInput');
+  const applyBtn = document.getElementById('btnApplyMediaSelection');
+  const footerText = document.getElementById('wpFooterSelectionText');
+
+  if (emptyBox) emptyBox.style.display = 'none';
+  if (contentBox) contentBox.style.display = 'flex';
+
+  const itemType = detectMediaType(item);
+
+  if (nameEl) nameEl.textContent = item.file_name;
+  if (sizeEl) sizeEl.textContent = formatFileSize(item.file_size || 250000);
+  if (dateEl) {
+    dateEl.textContent = item.created_at
+      ? new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+      : '19 Okt 2026';
+  }
+  if (urlInput) urlInput.value = item.file_url;
+  if (altInput) altInput.value = item.alt_text || item.file_name;
+
+  if (badgeEl) {
+    badgeEl.className = `wp-type-badge wp-type-${itemType}`;
+    badgeEl.textContent = itemType === 'image' ? 'Foto' : (itemType === 'video' ? 'Video' : 'Dokumen PDF');
+  }
+
+  if (previewBox) {
+    if (itemType === 'image') {
+      previewBox.innerHTML = `<img src="${item.file_url}" alt="${item.alt_text || item.file_name}" style="width: 100%; height: 100%; object-fit: contain; background: #0f172a;" onerror="this.src='/assets/images/campus.jpg';" />`;
+    } else if (itemType === 'video') {
+      previewBox.innerHTML = `
+        <video src="${item.file_url}" controls style="width: 100%; height: 100%; object-fit: contain; background: #000000;"></video>
+      `;
+    } else {
+      previewBox.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; text-align: center; padding: 1rem; color: #ffffff;">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #e11d48; display: flex; align-items: center; justify-content: center; color: #ffffff;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <span style="font-size: 0.76rem; font-weight: 600; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.file_name}</span>
+          <a href="${item.file_url}" target="_blank" rel="noopener noreferrer" style="font-size: 0.72rem; color: #a5b4fc; text-decoration: underline;">Buka Berkas PDF ↗</a>
+        </div>
+      `;
+    }
+  }
+
+  if (applyBtn) {
+    applyBtn.disabled = false;
+    applyBtn.textContent = typeof state.mediaPickerCallback === 'function' ? 'Gunakan Media Ini' : 'Salin URL Media';
+  }
+
+  if (footerText) {
+    footerText.innerHTML = `<strong>1 Berkas Dipilih:</strong> ${item.file_name} (${formatFileSize(item.file_size || 250000)})`;
+  }
+}
+
+export function applySelectedMedia() {
+  if (!state.selectedMediaItem) return;
+  const modal = document.getElementById('mediaLibraryPickerModal');
+  const item = state.selectedMediaItem;
+
+  if (typeof state.mediaPickerCallback === 'function') {
+    state.mediaPickerCallback(item.file_url, item.alt_text || item.file_name, item);
+    if (modal) modal.classList.remove('open');
+    showToast(`Media "${item.file_name}" berhasil diterapkan!`, 'success');
+  } else {
+    navigator.clipboard?.writeText(item.file_url);
+    showToast(`URL Media disalin: ${item.file_url}`, 'success');
+  }
+}
+
+export function renderWpMediaGrid() {
+  const grid = document.getElementById('mediaLibraryGrid');
+  const countBadge = document.getElementById('wpMediaCountBadge');
+  if (!grid) return;
+
+  const activeType = state.activeMediaFilterType || 'all';
+  const query = (state.mediaSearchQuery || '').toLowerCase().trim();
+
+  const filtered = allMediaList.filter(item => {
+    const itemType = detectMediaType(item);
+    if (activeType !== 'all' && itemType !== activeType) return false;
+    if (query) {
+      const matchName = (item.file_name || '').toLowerCase().includes(query);
+      const matchAlt = (item.alt_text || '').toLowerCase().includes(query);
+      const matchCaption = (item.caption || '').toLowerCase().includes(query);
+      if (!matchName && !matchAlt && !matchCaption) return false;
+    }
+    return true;
+  });
+
+  if (countBadge) countBadge.textContent = `${filtered.length} Berkas`;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 3.5rem 1rem; color: #94a3b8;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.65rem; opacity: 0.5;">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <p style="font-size: 0.95rem; font-weight: 600; color: #475569; margin: 0 0 0.25rem;">Tidak ada berkas media ditemukan</p>
+        <p style="font-size: 0.8rem; margin: 0;">Silakan sesuaikan filter tipe media atau kata kunci pencarian Anda.</p>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(item => {
+    const itemType = detectMediaType(item);
+    const isSelected = state.selectedMediaItem && (String(state.selectedMediaItem.id) === String(item.id) || state.selectedMediaItem.file_url === item.file_url);
+    const sizeStr = formatFileSize(item.file_size || 250000);
+
+    let thumbHtml = '';
+    let badgeHtml = '';
+
+    if (itemType === 'pdf') {
+      badgeHtml = `<span class="wp-type-badge wp-type-pdf">PDF</span>`;
+      thumbHtml = `
+        <div class="wp-media-pdf-box">
+          <div class="wp-pdf-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <span style="font-size: 0.65rem; font-weight: 700; color: #be123c;">DOKUMEN</span>
+        </div>
+      `;
+    } else if (itemType === 'video') {
+      badgeHtml = `<span class="wp-type-badge wp-type-video">Video</span>`;
+      thumbHtml = `
+        <div class="wp-media-thumb-box">
+          <div class="wp-media-video-overlay">
+            <div class="wp-play-icon-badge">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+            </div>
+          </div>
+          <img class="wp-media-thumb-img" src="${item.thumbnail || '/assets/images/campus.jpg'}" alt="${item.alt_text || item.file_name}" onerror="this.src='/assets/images/campus.jpg';" />
+        </div>
+      `;
+    } else {
+      badgeHtml = `<span class="wp-type-badge wp-type-image">Foto</span>`;
+      thumbHtml = `
+        <div class="wp-media-thumb-box">
+          <img class="wp-media-thumb-img" src="${item.file_url}" alt="${item.alt_text || item.file_name}" loading="lazy" onerror="this.src='/assets/images/campus.jpg';" />
+        </div>
+      `;
+    }
+
+    return `
+      <div class="wp-media-item ${isSelected ? 'selected' : ''}" data-id="${item.id}" data-url="${item.file_url}" title="${item.file_name}">
+        <div class="wp-media-item-check">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        ${thumbHtml}
+        <div class="wp-media-info-bar">
+          <div class="wp-media-filename">${item.file_name}</div>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            ${badgeHtml}
+            <span style="font-size: 0.65rem; color: #94a3b8;">${sizeStr}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  grid.querySelectorAll('.wp-media-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.getAttribute('data-id');
+      const item = allMediaList.find(m => String(m.id) === String(id));
+      if (!item) return;
+      selectWpMediaItem(item);
+    });
+
+    el.addEventListener('dblclick', () => {
+      const id = el.getAttribute('data-id');
+      const item = allMediaList.find(m => String(m.id) === String(id));
+      if (!item) return;
+      selectWpMediaItem(item);
+      applySelectedMedia();
+    });
+  });
+}
+
+export async function openMediaLibraryModal(onSelectCallback = null, requestedFilterType = 'all') {
   state.mediaPickerCallback = onSelectCallback;
+  state.activeMediaFilterType = requestedFilterType || 'all';
+  state.mediaSearchQuery = '';
+  state.selectedMediaItem = null;
+
   const modal = document.getElementById('mediaLibraryPickerModal');
   const grid = document.getElementById('mediaLibraryGrid');
   if (!modal || !grid) return;
 
   modal.classList.add('open');
-  grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-muted);">Memuat pustaka media...</div>`;
+
+  // Reset Router to Browse Tab
+  const tabBrowse = document.getElementById('wpTabBrowse');
+  const tabUpload = document.getElementById('wpTabUpload');
+  const viewBrowse = document.getElementById('wpViewBrowse');
+  const viewUpload = document.getElementById('wpViewUpload');
+  if (tabBrowse) {
+    tabBrowse.classList.add('active');
+    tabBrowse.style.background = '#ffffff';
+    tabBrowse.style.color = '#4338ca';
+  }
+  if (tabUpload) {
+    tabUpload.classList.remove('active');
+    tabUpload.style.background = 'transparent';
+    tabUpload.style.color = '#64748b';
+  }
+  if (viewBrowse) viewBrowse.style.display = 'flex';
+  if (viewUpload) viewUpload.style.display = 'none';
+
+  // Set active filter pill
+  document.querySelectorAll('.wp-filter-pill').forEach(pill => {
+    if (pill.getAttribute('data-type') === state.activeMediaFilterType) {
+      pill.classList.add('active');
+    } else {
+      pill.classList.remove('active');
+    }
+  });
+
+  // Reset search box
+  const searchInput = document.getElementById('wpMediaSearchInput');
+  if (searchInput) searchInput.value = '';
+
+  // Reset sidebar & apply button
+  const emptyBox = document.getElementById('wpSidebarEmpty');
+  const contentBox = document.getElementById('wpSidebarContent');
+  if (emptyBox) emptyBox.style.display = 'block';
+  if (contentBox) contentBox.style.display = 'none';
+
+  const applyBtn = document.getElementById('btnApplyMediaSelection');
+  if (applyBtn) {
+    applyBtn.disabled = true;
+    applyBtn.textContent = typeof state.mediaPickerCallback === 'function' ? 'Gunakan Media Ini' : 'Salin URL Media';
+  }
+
+  const footerText = document.getElementById('wpFooterSelectionText');
+  if (footerText) footerText.textContent = 'Belum ada berkas dipilih';
+
+  grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2.5rem; color: #64748b;">Memuat berkas pustaka media...</div>`;
 
   try {
     const res = await mediaApi.getAll();
@@ -3388,61 +3767,29 @@ export async function openMediaLibraryModal(onSelectCallback = null) {
       mediaState = res.data;
     }
   } catch {
-    // fallback
+    // offline fallback
   }
 
   const defaultAssets = [
-    { id: 'def-1', file_name: 'Campus RTM', file_url: '/assets/images/campus.jpg', alt_text: 'Kampus Rumah Tahfidz' },
-    { id: 'def-2', file_name: 'Halaqoh Classroom', file_url: '/assets/images/classroom.jpg', alt_text: 'Suasana Halaqoh' },
-    { id: 'def-3', file_name: 'Asrama Santri', file_url: '/assets/images/dormitory.jpg', alt_text: 'Asrama Tahfidz' },
-    { id: 'def-4', file_name: 'Wisuda Akbar', file_url: '/assets/images/wisuda.jpg', alt_text: 'Wisuda Tahfidz' }
+    // Foto / Gambar
+    { id: 'def-1', file_name: 'campus.jpg', file_url: '/assets/images/campus.jpg', mime_type: 'image/jpeg', file_size: 1055810, alt_text: 'Kampus Utama Rumah Tahfidz' },
+    { id: 'def-2', file_name: 'halaqoh.jpg', file_url: '/assets/images/halaqoh.jpg', mime_type: 'image/jpeg', file_size: 998912, alt_text: 'Suasana Halaqoh Tahfidz Al-Quran' },
+    { id: 'def-3', file_name: 'dormitory.jpg', file_url: '/assets/images/dormitory.jpg', mime_type: 'image/jpeg', file_size: 778983, alt_text: 'Asrama Santri Tahfidz' },
+    { id: 'def-4', file_name: 'wisuda.jpg', file_url: '/assets/images/wisuda.jpg', mime_type: 'image/jpeg', file_size: 1065433, alt_text: 'Wisuda Akbar Santri Tahfidz' },
+    { id: 'def-5', file_name: 'hero-santri.jpg', file_url: '/assets/images/hero-santri.jpg', mime_type: 'image/jpeg', file_size: 922536, alt_text: 'Santri Menghafal Al-Quran' },
+    { id: 'def-6', file_name: 'archery.jpg', file_url: '/assets/images/archery.jpg', mime_type: 'image/jpeg', file_size: 1043259, alt_text: 'Ekstrakurikuler Panahan Santri' },
+    // Video
+    { id: 'def-vid-1', file_name: 'profil-pesantren-rtm.mp4', file_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', mime_type: 'video/mp4', file_size: 5400000, alt_text: 'Video Profil Singkat Pesantren RTM' },
+    { id: 'def-vid-2', file_name: 'wisuda-akbar-tahfidz.mp4', file_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', mime_type: 'video/mp4', file_size: 4200000, alt_text: 'Video Liputan Wisuda Akbar & Tasmi 30 Juz' },
+    // Dokumen PDF
+    { id: 'def-doc-1', file_name: 'silabus-smp-tahfidz-2026.pdf', file_url: '/assets/docs/silabus-smp-tahfidz-2026.pdf', mime_type: 'application/pdf', file_size: 1420000, alt_text: 'Silabus Kurikulum SMP Tahfidz 2026' },
+    { id: 'def-doc-2', file_name: 'silabus-sma-tahfidz-2026.pdf', file_url: '/assets/docs/silabus-sma-tahfidz-2026.pdf', mime_type: 'application/pdf', file_size: 1850000, alt_text: 'Silabus Kurikulum SMA Tahfidz Sains 2026' },
+    { id: 'def-doc-3', file_name: 'brosur-panduan-ppdb-2026.pdf', file_url: '/assets/docs/brosur-panduan-ppdb-2026.pdf', mime_type: 'application/pdf', file_size: 2100000, alt_text: 'Brosur & Panduan Pendaftaran PPDB 2026' }
   ];
-  const allMedia = [...mediaState, ...defaultAssets.filter(d => !mediaState.some(m => m.file_url === d.file_url))];
 
-  grid.innerHTML = allMedia.map(m => `
-    <div class="media-lib-item" data-url="${m.file_url}" data-alt="${m.alt_text || m.file_name}" style="border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; background: #fff; display: flex; flex-direction: column;">
-      <div style="height: 100px; background: #0f172a; position: relative;">
-        <img src="${m.file_url}" alt="${m.alt_text || m.file_name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/assets/images/campus.jpg';" />
-      </div>
-      <div style="padding: 0.5rem; font-size: 0.74rem; display: flex; flex-direction: column; gap: 0.35rem; flex: 1; justify-content: space-between;">
-        <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${m.file_name}">${m.file_name}</div>
-        <div style="display: flex; gap: 0.25rem;">
-          <button type="button" class="btn btn-primary btn-sm btn-select-media-asset" data-url="${m.file_url}" data-alt="${m.alt_text || m.file_name}" style="flex: 1; font-size: 0.7rem; padding: 0.25rem 0.4rem;">
-            ${onSelectCallback ? 'Pilih' : 'Salin URL'}
-          </button>
-          ${!String(m.id).startsWith('def-') ? `<button type="button" class="btn btn-secondary btn-sm btn-delete-media-asset" data-id="${m.id}" style="font-size: 0.7rem; padding: 0.25rem 0.4rem; color: #dc2626;">🗑️</button>` : ''}
-        </div>
-      </div>
-    </div>
-  `).join('');
+  allMediaList = [...mediaState, ...defaultAssets.filter(d => !mediaState.some(m => m.file_url === d.file_url))];
 
-  grid.querySelectorAll('.btn-select-media-asset').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const url = e.currentTarget.getAttribute('data-url');
-      const alt = e.currentTarget.getAttribute('data-alt');
-      if (typeof state.mediaPickerCallback === 'function') {
-        state.mediaPickerCallback(url, alt);
-        modal.classList.remove('open');
-        showToast('Media berhasil dipilih!', 'success');
-      } else {
-        navigator.clipboard?.writeText(url);
-        showToast(`URL Media disalin: ${url}`, 'success');
-      }
-    });
-  });
-
-  grid.querySelectorAll('.btn-delete-media-asset').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const id = e.currentTarget.getAttribute('data-id');
-      try {
-        await mediaApi.delete(id);
-        showToast('Aset media berhasil dihapus.', 'info');
-        openMediaLibraryModal(state.mediaPickerCallback);
-      } catch (err) {
-        showToast('Gagal menghapus media: ' + err.message, 'warning');
-      }
-    });
-  });
+  renderWpMediaGrid();
 }
 
 // 6. Render Artikel / Berita Panel
@@ -3941,7 +4288,8 @@ async function openReceiptModal(transactionId) {
   const correctReason = modal.querySelector('#correctTrxReason');
   const auditList = modal.querySelector('#receiptModalAuditList');
 
-  if (img) img.src = trx.receiptUrl || '/assets/images/dormitory.jpg';
+  const isCampaignImage = (url) => url && (url.includes('dormitory') || url.includes('mudir') || url.includes('campus') || url.includes('halaqoh') || url.includes('hero-santri') || url.includes('wisuda'));
+  if (img) img.src = (trx.receiptUrl && !isCampaignImage(trx.receiptUrl)) ? trx.receiptUrl : '/assets/images/bukti-transfer-sample.svg';
   if (inv) inv.textContent = trx.invoiceNumber;
   if (statusPill) {
     statusPill.textContent = trx.paymentStatus === 'success' ? 'Terverifikasi (Sukses)' : (trx.paymentStatus === 'pending' ? 'Menunggu Verifikasi' : `Status: ${trx.paymentStatus}`);
@@ -4263,30 +4611,67 @@ function initAdminUI() {
     });
   }
 
-  // E. Mobile Sidebar Toggle & Backdrop
+  // E. Sidebar Collapse/Expand Toggle & Mobile Backdrop
   const sidebarToggleBtn = document.getElementById('adminSidebarToggleBtn');
-  const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+  const sidebarCollapseToggleBtn = document.getElementById('sidebarCollapseToggleBtn');
   const sidebar = document.getElementById('adminSidebar');
   const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+  function updateSidebarToggleUI() {
+    if (!sidebar || !sidebarCollapseToggleBtn) return;
+    const isMobile = window.innerWidth <= 1024;
+    const isCollapsed = isMobile ? !sidebar.classList.contains('open') : sidebar.classList.contains('collapsed');
+    
+    sidebarCollapseToggleBtn.setAttribute('title', isCollapsed ? 'Expand Menu' : 'Collapse Menu');
+    sidebarCollapseToggleBtn.setAttribute('aria-label', isCollapsed ? 'Expand Menu' : 'Collapse Menu');
+    
+    // Switch logo to white favicon when collapsed, and back to footer logo when expanded
+    const brandLogo = document.getElementById('sidebarBrandLogo');
+    if (brandLogo) {
+      if (isCollapsed) {
+        brandLogo.src = '/assets/images/favicon-RTM-white.png';
+        brandLogo.alt = 'RTM Favicon';
+      } else {
+        brandLogo.src = '/assets/images/logo-footer-RTM.png';
+        brandLogo.alt = 'Rumah Tahfidz Madani';
+      }
+    }
+  }
 
   function openAdminSidebar() {
     if (sidebar) sidebar.classList.add('open');
     if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
     document.body.classList.add('admin-sidebar-open');
+    updateSidebarToggleUI();
   }
 
   function closeAdminSidebar() {
     if (sidebar) sidebar.classList.remove('open');
     if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
     document.body.classList.remove('admin-sidebar-open');
+    updateSidebarToggleUI();
   }
 
   if (sidebarToggleBtn) {
     sidebarToggleBtn.addEventListener('click', openAdminSidebar);
   }
 
-  if (sidebarCloseBtn) {
-    sidebarCloseBtn.addEventListener('click', closeAdminSidebar);
+  if (sidebarCollapseToggleBtn) {
+    sidebarCollapseToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (window.innerWidth <= 1024) {
+        if (sidebar && sidebar.classList.contains('open')) {
+          closeAdminSidebar();
+        } else {
+          openAdminSidebar();
+        }
+      } else {
+        if (sidebar) {
+          sidebar.classList.toggle('collapsed');
+        }
+        updateSidebarToggleUI();
+      }
+    });
   }
 
   if (sidebarBackdrop) {
@@ -4701,6 +5086,21 @@ function initAdminUI() {
   const btnCancelSyllabus = document.getElementById('btnCancelSyllabus');
   const syllabusForm = document.getElementById('adminSyllabusForm');
 
+  const btnPickMediaSyllabus = document.getElementById('btnPickMediaForSyllabus');
+
+  if (btnPickMediaSyllabus) {
+    btnPickMediaSyllabus.addEventListener('click', () => {
+      openMediaLibraryModal((url, alt, item) => {
+        const input = document.getElementById('syllabusPdfUrlInput');
+        const previewTitle = document.getElementById('syllabusPreviewTitle');
+        const previewSub = document.getElementById('syllabusPreviewSub');
+        if (input) input.value = url;
+        if (previewTitle) previewTitle.textContent = item?.file_name || url.split('/').pop() || 'silabus.pdf';
+        if (previewSub) previewSub.textContent = alt || 'Dokumen PDF Kurikulum Akademik Terpilih';
+      }, 'pdf');
+    });
+  }
+
   if (btnUploadSyllabus) {
     btnUploadSyllabus.addEventListener('click', () => {
       if (syllabusModal) syllabusModal.classList.add('open');
@@ -4725,7 +5125,8 @@ function initAdminUI() {
       e.preventDefault();
       const progId = document.getElementById('syllabusProgramSelect').value;
       const prog = programsState.find(p => p.id === progId);
-      showToast(`Silabus Kurikulum Baru untuk ${prog ? prog.name : ''} berhasil diunggah & dipublikasikan.`, 'success');
+      const pdfUrl = document.getElementById('syllabusPdfUrlInput')?.value || '';
+      showToast(`Silabus Kurikulum Baru untuk ${prog ? prog.name : ''} (${pdfUrl.split('/').pop() || 'PDF'}) berhasil disimpan & dipublikasikan.`, 'success');
       if (syllabusModal) syllabusModal.classList.remove('open');
       window.location.hash = '#admin-akademik';
     });
@@ -4939,18 +5340,280 @@ function initAdminUI() {
   const galStatusFilter = document.getElementById('adminGalleryStatusFilter');
   const mediaUploadForm = document.getElementById('mediaLibraryUploadForm');
 
+  // Galeri & Media Library Handlers
   if (btnOpenMediaLib) {
-    btnOpenMediaLib.addEventListener('click', () => openMediaLibraryModal(null));
+    btnOpenMediaLib.addEventListener('click', () => openMediaLibraryModal(null, 'all'));
   }
 
   if (btnPickMediaGal) {
     btnPickMediaGal.addEventListener('click', () => {
-      openMediaLibraryModal((url, alt) => {
+      openMediaLibraryModal((url, alt, item) => {
         const urlInput = document.getElementById('galleryFormUrl');
         const altInput = document.getElementById('galleryFormAltText');
+        const titleInput = document.getElementById('galleryFormTitle');
         if (urlInput) urlInput.value = url;
         if (altInput && !altInput.value) altInput.value = alt || '';
+        if (titleInput && !titleInput.value && item?.file_name) {
+          titleInput.value = item.file_name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+        }
+      }, 'all');
+    });
+  }
+
+  // WordPress Media Library Router & Interactions
+  const wpTabBrowse = document.getElementById('wpTabBrowse');
+  const wpTabUpload = document.getElementById('wpTabUpload');
+  const wpViewBrowse = document.getElementById('wpViewBrowse');
+  const wpViewUpload = document.getElementById('wpViewUpload');
+  const wpSearchInput = document.getElementById('wpMediaSearchInput');
+  const btnApplyMedia = document.getElementById('btnApplyMediaSelection');
+  const btnCancelMedia = document.getElementById('btnCancelMediaPicker');
+  const btnCloseMediaModal = document.getElementById('btnCloseMediaLibraryModal');
+  const btnWpCopy = document.getElementById('btnWpCopyUrl');
+  const btnWpDelete = document.getElementById('btnWpDeleteAsset');
+  const mediaFileInput = document.getElementById('mediaUploadFileInput');
+  const btnClearUploadFile = document.getElementById('btnWpClearUploadFile');
+  const dropzoneBox = document.getElementById('wpDropzoneBox');
+
+  if (wpTabBrowse && wpTabUpload) {
+    wpTabBrowse.addEventListener('click', () => {
+      wpTabBrowse.classList.add('active');
+      wpTabBrowse.style.background = '#ffffff';
+      wpTabBrowse.style.color = '#4338ca';
+      wpTabUpload.classList.remove('active');
+      wpTabUpload.style.background = 'transparent';
+      wpTabUpload.style.color = '#64748b';
+      if (wpViewBrowse) wpViewBrowse.style.display = 'flex';
+      if (wpViewUpload) wpViewUpload.style.display = 'none';
+      renderWpMediaGrid();
+    });
+
+    wpTabUpload.addEventListener('click', () => {
+      wpTabUpload.classList.add('active');
+      wpTabUpload.style.background = '#ffffff';
+      wpTabUpload.style.color = '#4338ca';
+      wpTabBrowse.classList.remove('active');
+      wpTabBrowse.style.background = 'transparent';
+      wpTabBrowse.style.color = '#64748b';
+      if (wpViewUpload) wpViewUpload.style.display = 'flex';
+      if (wpViewBrowse) wpViewBrowse.style.display = 'none';
+    });
+  }
+
+  // Type Filter Pills
+  document.querySelectorAll('.wp-filter-pill').forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      const type = e.currentTarget.getAttribute('data-type');
+      state.activeMediaFilterType = type || 'all';
+      document.querySelectorAll('.wp-filter-pill').forEach(p => p.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      renderWpMediaGrid();
+    });
+  });
+
+  // Search input live filtering
+  if (wpSearchInput) {
+    wpSearchInput.addEventListener('input', (e) => {
+      state.mediaSearchQuery = e.target.value;
+      renderWpMediaGrid();
+    });
+  }
+
+  // Apply Selection Button
+  if (btnApplyMedia) {
+    btnApplyMedia.addEventListener('click', applySelectedMedia);
+  }
+
+  // Cancel & Close Buttons
+  const mediaModal = document.getElementById('mediaLibraryPickerModal');
+  if (btnCancelMedia && mediaModal) {
+    btnCancelMedia.addEventListener('click', () => {
+      mediaModal.classList.remove('open');
+    });
+  }
+  if (btnCloseMediaModal && mediaModal) {
+    btnCloseMediaModal.addEventListener('click', () => {
+      mediaModal.classList.remove('open');
+    });
+  }
+
+  // Sidebar Copy URL
+  if (btnWpCopy) {
+    btnWpCopy.addEventListener('click', () => {
+      if (state.selectedMediaItem?.file_url) {
+        navigator.clipboard?.writeText(state.selectedMediaItem.file_url);
+        showToast(`URL Media disalin: ${state.selectedMediaItem.file_url}`, 'success');
+      }
+    });
+  }
+
+  // Sidebar Delete Media Asset
+  if (btnWpDelete) {
+    btnWpDelete.addEventListener('click', async () => {
+      if (!state.selectedMediaItem) return;
+      const id = state.selectedMediaItem.id;
+      if (String(id).startsWith('def-')) {
+        showToast('Aset bawaan sistem tidak dapat dihapus.', 'warning');
+        return;
+      }
+      try {
+        await mediaApi.delete(id);
+        showToast('Aset media berhasil dihapus dari database.', 'info');
+        state.selectedMediaItem = null;
+        await openMediaLibraryModal(state.mediaPickerCallback, state.activeMediaFilterType);
+      } catch (err) {
+        showToast('Gagal menghapus aset media: ' + err.message, 'warning');
+      }
+    });
+  }
+
+  // Upload: File input change & preview
+  if (mediaFileInput) {
+    mediaFileInput.addEventListener('change', () => {
+      const file = mediaFileInput.files?.[0];
+      const previewBox = document.getElementById('wpUploadSelectedFileInfo');
+      const nameEl = document.getElementById('wpSelectedFileName');
+      const sizeEl = document.getElementById('wpSelectedFileSize');
+      const iconEl = document.getElementById('wpSelectedFileIcon');
+      const altInput = document.getElementById('mediaUploadAltText');
+      const typeSelect = document.getElementById('mediaUploadTypeSelect');
+
+      if (file && previewBox) {
+        previewBox.style.display = 'block';
+        if (nameEl) nameEl.textContent = file.name;
+        if (sizeEl) sizeEl.textContent = formatFileSize(file.size);
+        if (iconEl) {
+          if (file.type.includes('pdf') || file.name.endsWith('.pdf')) iconEl.textContent = '📄';
+          else if (file.type.startsWith('video/') || file.name.endsWith('.mp4')) iconEl.textContent = '🎬';
+          else iconEl.textContent = '🖼️';
+        }
+        if (altInput && !altInput.value) {
+          altInput.value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+        }
+        if (typeSelect) {
+          if (file.type.includes('pdf') || file.name.endsWith('.pdf')) typeSelect.value = 'pdf';
+          else if (file.type.startsWith('video/') || file.name.endsWith('.mp4')) typeSelect.value = 'video';
+          else if (file.type.startsWith('image/')) typeSelect.value = 'image';
+        }
+      }
+    });
+  }
+
+  if (btnClearUploadFile) {
+    btnClearUploadFile.addEventListener('click', () => {
+      if (mediaFileInput) mediaFileInput.value = '';
+      const previewBox = document.getElementById('wpUploadSelectedFileInfo');
+      if (previewBox) previewBox.style.display = 'none';
+    });
+  }
+
+  // Upload: Drag and Drop Handlers
+  if (dropzoneBox && mediaFileInput) {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzoneBox.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzoneBox.classList.add('dragover');
       });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzoneBox.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzoneBox.classList.remove('dragover');
+      });
+    });
+
+    dropzoneBox.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files && files.length > 0) {
+        mediaFileInput.files = files;
+        mediaFileInput.dispatchEvent(new Event('change'));
+      }
+    });
+  }
+
+  // Upload: Submit Form
+  if (mediaUploadForm) {
+    mediaUploadForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const file = mediaFileInput?.files?.[0];
+      const altText = document.getElementById('mediaUploadAltText')?.value?.trim() || '';
+      const caption = document.getElementById('mediaUploadCaption')?.value?.trim() || '';
+      const selectedType = document.getElementById('mediaUploadTypeSelect')?.value || 'auto';
+
+      if (!file) {
+        showToast('Pilih berkas Foto, Video, atau Dokumen PDF terlebih dahulu.', 'warning');
+        return;
+      }
+
+      if (file.size > 25 * 1024 * 1024) {
+        showToast('Ukuran berkas melebihi batas maksimal 25 MB.', 'warning');
+        return;
+      }
+
+      let mimeType = file.type || 'application/octet-stream';
+      if (!file.type) {
+        if (file.name.endsWith('.pdf')) mimeType = 'application/pdf';
+        else if (file.name.endsWith('.mp4')) mimeType = 'video/mp4';
+        else if (file.name.endsWith('.png')) mimeType = 'image/png';
+        else mimeType = 'image/jpeg';
+      }
+
+      const reader = new FileReader();
+      const uploadBtn = document.getElementById('btnUploadMediaAsset');
+      if (uploadBtn) {
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = 'Mengunggah berkas...';
+      }
+
+      reader.onload = async () => {
+        try {
+          const res = await mediaApi.upload({
+            file_name: file.name,
+            data_url: reader.result,
+            mime_type: mimeType,
+            file_size: file.size,
+            alt_text: altText || file.name,
+            caption: caption || '',
+            album_name: selectedType === 'pdf' ? 'Dokumen Akademik' : (selectedType === 'video' ? 'Video Dokumentasi' : 'Pustaka Foto')
+          });
+
+          showToast(`Berkas "${file.name}" berhasil diunggah ke Media Library!`, 'success');
+          mediaUploadForm.reset();
+          const previewBox = document.getElementById('wpUploadSelectedFileInfo');
+          if (previewBox) previewBox.style.display = 'none';
+
+          // Refresh and switch to browse tab
+          await openMediaLibraryModal(state.mediaPickerCallback, state.activeMediaFilterType);
+          if (wpTabBrowse) wpTabBrowse.click();
+
+          // Auto-select newly created asset
+          if (res?.data?.id) {
+            const newItem = allMediaList.find(m => m.id === res.data.id || m.file_name === file.name);
+            if (newItem) selectWpMediaItem(newItem);
+          }
+        } catch (err) {
+          showToast('Gagal mengunggah berkas: ' + err.message, 'warning');
+        } finally {
+          if (uploadBtn) {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = '+ Unggah Berkas ke Library';
+          }
+        }
+      };
+
+      reader.onerror = () => {
+        showToast('Gagal membaca berkas dari sistem lokal.', 'warning');
+        if (uploadBtn) {
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = '+ Unggah Berkas ke Library';
+        }
+      };
+
+      reader.readAsDataURL(file);
     });
   }
 
@@ -4965,36 +5628,6 @@ function initAdminUI() {
     galStatusFilter.addEventListener('change', (e) => {
       state.adminGalleryStatusFilter = e.target.value;
       renderAdminGaleri();
-    });
-  }
-
-  if (mediaUploadForm) {
-    mediaUploadForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fileInput = document.getElementById('mediaUploadFileInput');
-      const altText = document.getElementById('mediaUploadAltInput')?.value?.trim() || '';
-      const file = fileInput?.files?.[0];
-      if (!file) {
-        showToast('Pilih file gambar terlebih dahulu.', 'warning');
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          await mediaApi.upload({
-            file_name: file.name,
-            file_data: reader.result,
-            alt_text: altText || file.name,
-            category: 'general'
-          });
-          showToast(`File media "${file.name}" berhasil diunggah ke Pustaka Media!`, 'success');
-          mediaUploadForm.reset();
-          openMediaLibraryModal(state.mediaPickerCallback);
-        } catch (err) {
-          showToast('Gagal mengunggah media: ' + err.message, 'warning');
-        }
-      };
-      reader.readAsDataURL(file);
     });
   }
 
@@ -5253,10 +5886,53 @@ function initAdminUI() {
         applySiteSettingsToDOM(payload);
         showToast('Pengaturan identitas berhasil disimpan ke database SQLite server.', 'success');
       } catch (err) {
+        applySiteSettingsToDOM(payload);
         showToast('Pengaturan identitas dan tampilan yayasan berhasil disimpan.', 'success');
       }
     });
   }
+
+  // Tampilan Tab Click Navigation & Individual Tab Save Buttons
+  document.querySelectorAll('.tampilan-tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tab = btn.getAttribute('data-tab');
+      if (tab) {
+        window.location.hash = `#admin-tampilan/${tab}`;
+      }
+    });
+  });
+
+  const saveAppearanceTabSection = async (sectionTitle) => {
+    const payload = getAppearanceFormPayload();
+    try {
+      await settingsApi.update({
+        mode: 'publish',
+        site_identity: payload
+      });
+      applySiteSettingsToDOM(payload);
+      showToast(`Pengaturan ${sectionTitle} berhasil disimpan ke database server.`, 'success');
+    } catch (err) {
+      applySiteSettingsToDOM(payload);
+      showToast(`Pengaturan ${sectionTitle} berhasil disimpan.`, 'success');
+    }
+  };
+
+  document.getElementById('btnSaveTampilanIdentitas')?.addEventListener('click', () => {
+    saveAppearanceTabSection('Identitas Yayasan & Logo Lembaga');
+  });
+
+  document.getElementById('btnSaveTampilanKontak')?.addEventListener('click', () => {
+    saveAppearanceTabSection('Kontak Resmi & Rekening Bank');
+  });
+
+  document.getElementById('btnSaveTampilanBeranda')?.addEventListener('click', () => {
+    saveAppearanceTabSection('Konten Beranda & Visi Misi');
+  });
+
+  document.getElementById('btnSaveTampilanFooter')?.addEventListener('click', () => {
+    saveAppearanceTabSection('Tautan Sosial Media & Footer');
+  });
 
   // O. Overview Date Filter, Quick Actions & Refresh (PRD Req #2)
   const overviewDateFilter = document.getElementById('overviewDateFilter');

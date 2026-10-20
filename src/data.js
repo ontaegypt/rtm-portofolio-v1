@@ -1235,7 +1235,7 @@ export const DONATION_TRANSACTIONS = [
     paymentMethod: "Transfer Manual (BSI)",
     paymentStatus: "success",
     paidAt: "13 Okt 2026, 09:20 WIB",
-    receiptUrl: "/assets/images/dormitory.jpg"
+    receiptUrl: "/assets/images/bukti-transfer-sample.svg"
   },
   {
     id: "trx-002",
@@ -1265,7 +1265,7 @@ export const DONATION_TRANSACTIONS = [
     paymentMethod: "Transfer Manual (BSI)",
     paymentStatus: "pending",
     paidAt: "14 Okt 2026, 14:10 WIB",
-    receiptUrl: "/assets/images/mudir.jpg"
+    receiptUrl: "/assets/images/bukti-transfer-sample.svg"
   },
   {
     id: "trx-004",
@@ -1295,7 +1295,7 @@ export const DONATION_TRANSACTIONS = [
     paymentMethod: "Transfer Manual (BSI)",
     paymentStatus: "pending",
     paidAt: "15 Okt 2026, 08:30 WIB",
-    receiptUrl: "/assets/images/halaqoh.jpg"
+    receiptUrl: "/assets/images/bukti-transfer-sample.svg"
   }
 ];
 

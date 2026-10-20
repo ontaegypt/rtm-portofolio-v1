@@ -85,8 +85,7 @@ const requiredPrdDomIds = [
     'receiptCorrectionSection',
     'btnSubmitTrxCorrection',
     'adminFinancialAuditTableBody',
-    'btnSaveSettingsDraft',
-    'btnPreviewSiteSettings',
+    'btnSaveTampilanIdentitas',
     'btnDetailToggleUserActive'
 ];
 

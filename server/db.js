@@ -394,6 +394,64 @@ function ensureSchemaUpgrades() {
     });
   }
 
+  // Seed initial PDF documents if empty
+  const docCount = db.prepare("SELECT count(*) as c FROM media_assets WHERE mime_type = 'application/pdf'").get().c;
+  if (docCount === 0) {
+    const insertDoc = db.prepare(`
+      INSERT INTO media_assets (id, file_name, file_url, mime_type, file_size, alt_text, caption, album_name, uploaded_by, created_at)
+      VALUES (?, ?, ?, 'application/pdf', ?, ?, ?, 'Dokumen Akademik', 'usr-1', datetime('now'))
+    `);
+    insertDoc.run(
+      'med-doc-1',
+      'silabus-smp-tahfidz-2026.pdf',
+      '/assets/docs/silabus-smp-tahfidz-2026.pdf',
+      1420000,
+      'Silabus Kurikulum SMP Tahfidz 2026',
+      'Dokumen silabus akademik resmi program SMP Tahfidz Al-Quran'
+    );
+    insertDoc.run(
+      'med-doc-2',
+      'silabus-sma-tahfidz-2026.pdf',
+      '/assets/docs/silabus-sma-tahfidz-2026.pdf',
+      1850000,
+      'Silabus Kurikulum SMA Tahfidz Sains 2026',
+      'Dokumen kurikulum terpadu sains dan tahfidz bersanad 30 juz'
+    );
+    insertDoc.run(
+      'med-doc-3',
+      'brosur-panduan-ppdb-2026.pdf',
+      '/assets/docs/brosur-panduan-ppdb-2026.pdf',
+      2100000,
+      'Brosur & Panduan Pendaftaran PPDB 2026',
+      'Informasi lengkap syarat pendaftaran, rincian biaya, dan tahapan seleksi PPDB'
+    );
+  }
+
+  // Seed initial Video items if empty
+  const vidCount = db.prepare("SELECT count(*) as c FROM media_assets WHERE mime_type LIKE 'video/%'").get().c;
+  if (vidCount === 0) {
+    const insertVid = db.prepare(`
+      INSERT INTO media_assets (id, file_name, file_url, mime_type, file_size, alt_text, caption, album_name, uploaded_by, created_at)
+      VALUES (?, ?, ?, 'video/mp4', ?, ?, ?, 'Video Dokumentasi', 'usr-1', datetime('now'))
+    `);
+    insertVid.run(
+      'med-vid-1',
+      'profil-pesantren-rtm.mp4',
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      5400000,
+      'Video Profil Singkat Pesantren RTM',
+      'Video dokumenter lingkungan kampus, asrama, dan kegiatan harian santri'
+    );
+    insertVid.run(
+      'med-vid-2',
+      'wisuda-akbar-tahfidz.mp4',
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+      4200000,
+      'Video Liputan Wisuda Akbar & Tasmi 30 Juz',
+      'Dokumentasi prosesi wisuda tahfidz santri angkatan 2025/2026'
+    );
+  }
+
   // Seed initial registration status logs if empty
   const regLogCount = db.prepare('SELECT count(*) as c FROM registration_status_logs').get().c;
   if (regLogCount === 0) {

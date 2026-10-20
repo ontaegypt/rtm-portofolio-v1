@@ -1260,14 +1260,6 @@
                 </svg>
               </button>
 
-              <a href="#admin-profile" class="topbar-profile-pill" id="topbarProfileBtn" title="Ubah Profil Akun">
-                <div class="topbar-avatar" id="topbarAvatar">MZ</div>
-                <div class="topbar-user-meta">
-                  <span class="topbar-name" id="topbarUserName">Dr. Muhammad Zaki</span>
-                  <span id="topbarUserRoleBadge" class="user-role-badge superadmin">Admin</span>
-                </div>
-              </a>
-
               <div class="topbar-breadcrumb">
                 <span class="crumb-root">Portal Admin</span>
                 <span class="crumb-separator">/</span>
@@ -1276,7 +1268,17 @@
             </div>
 
             <div class="topbar-right">
-              <!-- Notification Bell with Dropdown -->
+              <!-- 1. Fitur 'Lihat Web' -->
+              <a href="#home" class="btn btn-secondary btn-sm topbar-web-btn" target="_blank">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+                <span>Lihat Web</span>
+              </a>
+
+              <!-- 2. Fitur Notifikasi -->
               <div class="topbar-notif-box">
                 <button class="topbar-icon-btn" id="notifBellBtn" aria-label="Notifikasi">
                   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1296,14 +1298,95 @@
                 </div>
               </div>
 
-              <a href="#home" class="btn btn-secondary btn-sm topbar-web-btn" target="_blank">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
-                <span>Lihat Web</span>
-              </a>
+              <!-- 3. Fitur Account Dropdown (Sebelah Kanan Atas) -->
+              <div class="topbar-profile-pill" id="topbarAccountWrapper">
+                <button type="button" class="topbar-avatar-btn" id="topbarAvatarTrigger" aria-label="Menu Akun Pengguna" aria-haspopup="true" aria-expanded="false" title="Menu Akun & Profil">
+                  <div class="topbar-avatar" id="topbarAvatar">MZ</div>
+                </button>
+
+                <!-- Account Dropdown Card (Styled like reference image) -->
+                <div class="account-dropdown-card" id="accountDropdownCard" style="display: none;" role="menu" aria-label="Menu Akun Pengguna">
+                  <!-- Header Card: User Information & Rainbow Ring Avatar -->
+                  <div class="account-card-header">
+                    <div class="account-card-info">
+                      <div class="account-card-name" id="topbarUserName">Dr. Muhammad Zaki</div>
+                      <div class="account-card-email" id="accountDropdownEmail">zaki@rtm.sch.id</div>
+                      <div class="account-card-badge-row">
+                        <span id="topbarUserRoleBadge" class="user-role-badge superadmin">Admin</span>
+                      </div>
+                    </div>
+                    <div class="account-card-avatar-ring" id="accountDropdownAvatarRing" title="Foto Profil Pengguna">
+                      <div class="account-card-avatar-inner" id="accountDropdownAvatar">
+                        MZ
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Menu List -->
+                  <div class="account-card-menu">
+                    <!-- 1. Profil Saya -->
+                    <a href="#admin-profile" class="account-menu-item active-style" id="accountMenuProfile" role="menuitem">
+                      <span class="account-menu-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                          <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                      </span>
+                      <span class="account-menu-label">Profil Saya</span>
+                    </a>
+
+                    <!-- 2. Bahasa -->
+                    <button type="button" class="account-menu-item" id="accountMenuLanguage" role="menuitem">
+                      <span class="account-menu-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"/>
+                          <line x1="2" y1="12" x2="22" y2="12"/>
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                      </span>
+                      <span class="account-menu-label">Bahasa</span>
+                      <span class="account-menu-badge">ID</span>
+                    </button>
+
+                    <!-- 3. Bantuan -->
+                    <button type="button" class="account-menu-item" id="accountMenuHelp" role="menuitem">
+                      <span class="account-menu-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"/>
+                          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                          <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                      </span>
+                      <span class="account-menu-label">Bantuan</span>
+                    </button>
+
+                    <!-- 4. Kirim Masukan -->
+                    <button type="button" class="account-menu-item" id="accountMenuFeedback" role="menuitem">
+                      <span class="account-menu-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                      </span>
+                      <span class="account-menu-label">Kirim Masukan</span>
+                    </button>
+
+                    <!-- Divider -->
+                    <hr class="account-card-divider" />
+
+                    <!-- 5. Keluar -->
+                    <button type="button" class="account-menu-item account-menu-logout" id="accountMenuLogout" role="menuitem">
+                      <span class="account-menu-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                          <polyline points="16 17 21 12 16 7"/>
+                          <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                      </span>
+                      <span class="account-menu-label">Keluar</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </header>
 
@@ -1335,44 +1418,19 @@
                   </div>
                   <div class="cockpit-top-actions"
                     style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-                    <select id="overviewDateFilter" class="form-input"
-                      style="font-size: 0.8rem; padding: 0.38rem 0.75rem; width: auto; min-width: 150px;"
-                      aria-label="Filter Periode Waktu">
-                      <option value="all">Semua Waktu</option>
-                      <option value="today">Hari Ini</option>
-                      <option value="7d">7 Hari Terakhir</option>
-                      <option value="30d">30 Hari Terakhir</option>
-                      <option value="month">Bulan Ini</option>
-                    </select>
-                    <button class="btn btn-secondary btn-sm" id="btnRefreshOverview"
-                      style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">Muat Ulang Data</button>
-                    <button class="btn btn-primary btn-sm" id="btnQuickExportCSV"
-                      style="font-size: 0.8rem; padding: 0.4rem 0.85rem; background: #c39860; border: none; color: #fff;">Unduh
-                      Rekap</button>
+                    <button class="btn btn-primary btn-sm btn-rekap-purple" id="btnQuickExportCSV"
+                      style="font-size: 0.8rem; padding: 0.45rem 1rem; background: var(--primary-purple); border: none; color: #fff; display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 700;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                      <span>Unduh Rekap</span>
+                    </button>
                   </div>
                 </div>
 
-                <!-- Quick Actions Bar (PRD Req #2) -->
-                <div class="admin-card"
-                  style="padding: 0.85rem 1.15rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
-                  <span
-                    style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Aksi
-                    Cepat CMS:</span>
-                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickWriteArticle"
-                      style="font-size: 0.78rem;">+ Tulis Artikel</button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickManualDonation"
-                      style="font-size: 0.78rem;">+ Catat Donasi Manual</button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickNewCampaign"
-                      style="font-size: 0.78rem;">+ Campaign Baru</button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickManageProgram"
-                      style="font-size: 0.78rem;">Kelola Program</button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btnQuickMediaLibrary"
-                      style="font-size: 0.78rem;">Pustaka Media</button>
-                  </div>
-                </div>
-
-                <!-- 2. Warm Camel / Deep Teal Welcome Hero Banner (Reference Style) -->
+                <!-- 2. Warm Camel Welcome Hero Banner with Visitor Analytics -->
                 <div class="cockpit-welcome-banner">
                   <div class="cockpit-banner-text">
                     <h2 class="cockpit-banner-title">Welcome back, <span id="welcomeUserName">Dr. Muhammad Zaki</span>
@@ -1384,12 +1442,40 @@
                       <a href="#admin-akademik" class="cockpit-pill-btn cockpit-pill-secondary">Data PPDB</a>
                     </div>
                   </div>
-                  <div class="cockpit-banner-avatar-wrap">
-                    <div class="cockpit-avatar-ring">
-                      <div class="cockpit-ring-arc">
-                        <span class="cockpit-ring-percent" id="overviewRingPercent">100%</span>
+                  <!-- Rightmost Feature: Visitor Analytics (Google Analytics Ready) -->
+                  <div class="cockpit-visitor-analytics-card" id="cockpitVisitorAnalytics">
+                    <div class="visitor-analytics-header">
+                      <div class="visitor-analytics-title-wrap">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M18 20V10"/>
+                          <path d="M12 20V4"/>
+                          <path d="M6 20v-6"/>
+                        </svg>
+                        <span>Analytics Pengunjung</span>
                       </div>
-                      <img src="/assets/images/mudir.jpg" alt="Mudir RTM" class="cockpit-avatar-img" />
+                      <span class="analytics-ga-badge" title="Siap dihubungkan ke Google Analytics 4">
+                        <span class="ga-status-dot"></span> GA4 Standby
+                      </span>
+                    </div>
+
+                    <div class="visitor-stats-grid">
+                      <div class="visitor-stat-col">
+                        <div class="visitor-stat-val" id="gaVisitorsToday">184</div>
+                        <div class="visitor-stat-lbl">Pengunjung Hari Ini</div>
+                      </div>
+                      <div class="visitor-stat-col">
+                        <div class="visitor-stat-val" id="gaPageviewsToday">2.410</div>
+                        <div class="visitor-stat-lbl">Tayangan Halaman</div>
+                      </div>
+                    </div>
+
+                    <div class="visitor-analytics-notice">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                      </svg>
+                      <span>Siap disambungkan ke Google Analytics saat web siap diluncurkan.</span>
                     </div>
                   </div>
                 </div>
@@ -4523,6 +4609,144 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         </form>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ADMIN ACCOUNT MODALS: BAHASA, BANTUAN, KIRIM MASUKAN
+       ========================================================================== -->
+  <!-- Modal: Pengaturan Bahasa -->
+  <div class="modal-backdrop" id="adminLanguageModal" role="dialog" aria-modal="true" style="display: none;">
+    <div class="modal-card" style="max-width: 440px;">
+      <button class="modal-close-btn" id="btnCloseLanguageModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0 0 0.25rem;">Pilih Bahasa Sistem</h3>
+        <p style="font-size: 0.85rem; color: #64748b; margin: 0;">Pilih bahasa tampilan untuk dashboard administrasi</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem;">
+        <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border: 2px solid #10b981; border-radius: 12px; background: #f0fdf4; cursor: pointer;">
+          <span style="display: flex; align-items: center; gap: 0.75rem; font-weight: 600; font-size: 0.9rem; color: #0f172a;">
+            <span style="font-size: 1.25rem;">🇮🇩</span> Bahasa Indonesia
+          </span>
+          <span style="font-size: 0.75rem; font-weight: 700; color: #059669; background: #dcfce7; padding: 2px 8px; border-radius: 9999px;">Aktif</span>
+        </label>
+        <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; cursor: pointer; opacity: 0.85;">
+          <span style="display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.9rem; color: #334155;">
+            <span style="font-size: 1.25rem;">🇬🇧</span> English (US)
+          </span>
+          <span style="font-size: 0.75rem; color: #64748b;">Segera Hadir</span>
+        </label>
+        <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; cursor: pointer; opacity: 0.85;">
+          <span style="display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.9rem; color: #334155;">
+            <span style="font-size: 1.25rem;">🇸🇦</span> العربية (Arabic)
+          </span>
+          <span style="font-size: 0.75rem; color: #64748b;">Segera Hadir</span>
+        </label>
+      </div>
+      <button type="button" class="btn btn-primary" id="btnSaveLanguage" style="width: 100%; justify-content: center; padding: 0.75rem;">
+        Simpan Pengaturan Bahasa
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal: Pusat Bantuan -->
+  <div class="modal-backdrop" id="adminHelpModal" role="dialog" aria-modal="true" style="display: none;">
+    <div class="modal-card" style="max-width: 580px;">
+      <button class="modal-close-btn" id="btnCloseHelpModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.25rem;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0;">Pusat Bantuan & Panduan RTM CMS</h3>
+          <p style="font-size: 0.82rem; color: #64748b; margin: 2px 0 0;">Petunjuk singkat penggunaan dashboard dan bantuan teknis</p>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.5rem; font-size: 0.88rem; color: #334155;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.9rem;">
+          <strong style="color: #0f172a;">1. Navigasi Cepat & Modul CMS</strong>
+          <p style="margin: 0.35rem 0 0; font-size: 0.82rem; color: #64748b; line-height: 1.5;">
+            Gunakan sidebar di sebelah kiri untuk berpindah modul: Ringkasan, Akademik & PPDB, Wakaf & Donasi, Galeri, Berita, Tampilan, dan Pengguna.
+          </p>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.9rem;">
+          <strong style="color: #0f172a;">2. Media Library Terpadu</strong>
+          <p style="margin: 0.35rem 0 0; font-size: 0.82rem; color: #64748b; line-height: 1.5;">
+            Kelola foto kegiatan, video streaming, dan PDF silabus di menu Galeri melalui tombol Media Library.
+          </p>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.9rem;">
+          <strong style="color: #0f172a;">3. Butuh Bantuan Lanjutan?</strong>
+          <p style="margin: 0.35rem 0 0; font-size: 0.82rem; color: #64748b; line-height: 1.5;">
+            Tim IT Support Rumah Tahfidz Madani siap mendampingi melalui WhatsApp Resmi: +62 812-3456-7890.
+          </p>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button type="button" class="btn btn-secondary" id="btnCloseHelpModalBtn" style="padding: 0.65rem 1.25rem;">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Kirim Masukan -->
+  <div class="modal-backdrop" id="adminFeedbackModal" role="dialog" aria-modal="true" style="display: none;">
+    <div class="modal-card" style="max-width: 520px;">
+      <button class="modal-close-btn" id="btnCloseFeedbackModal" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div style="margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0 0 0.25rem;">Kirim Masukan & Saran</h3>
+        <p style="font-size: 0.82rem; color: #64748b; margin: 0;">Bantu kami menyempurnakan Portal CMS Rumah Tahfidz Madani</p>
+      </div>
+      <form id="adminFeedbackForm" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label class="form-label" style="font-weight: 600; font-size: 0.82rem; color: #334155;">Kategori Masukan</label>
+          <select id="feedbackCategory" class="form-input" style="font-size: 0.85rem;" required>
+            <option value="feature">Saran Fitur Baru</option>
+            <option value="bug">Laporan Kendala / Bug</option>
+            <option value="ui">Desain & Tampilan (UI/UX)</option>
+            <option value="other">Pertanyaan atau Masukan Lainnya</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" style="font-weight: 600; font-size: 0.82rem; color: #334155;">Subjek Masukan</label>
+          <input type="text" id="feedbackSubject" class="form-input" placeholder="Ringkasan singkat masukan Anda..." style="font-size: 0.85rem;" required />
+        </div>
+        <div>
+          <label class="form-label" style="font-weight: 600; font-size: 0.82rem; color: #334155;">Detail Masukan</label>
+          <textarea id="feedbackMessage" class="form-textarea" rows="4" placeholder="Tuliskan pengalaman atau saran perbaikan Anda secara rinci..." style="font-size: 0.85rem;" required></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+          <button type="button" class="btn btn-secondary" id="btnCloseFeedbackModalBtn" style="padding: 0.65rem 1.25rem;">Batal</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitFeedback" style="padding: 0.65rem 1.5rem; font-weight: 600;">
+            Kirim Masukan
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

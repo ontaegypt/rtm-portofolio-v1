@@ -3318,35 +3318,71 @@ body.auth-mode {
   padding: 0.4rem 0.85rem;
 }
 
+.topbar-account-wrapper,
+.topbar-profile-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.topbar-avatar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  padding: 2px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.topbar-avatar-btn:hover {
+  border-color: #d4a373;
+  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.25);
+  transform: scale(1.05);
+}
+
+.topbar-avatar-btn:focus-visible {
+  border-color: #d4a373;
+  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.35);
+}
+
 .topbar-profile-pill {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.3rem 0.65rem;
-  background: #f7f3ec;
-  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  padding: 0;
   text-decoration: none;
   cursor: pointer;
   transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
 
-.topbar-profile-pill:hover {
-  background: #ede6dc;
-  transform: translateY(-1px);
-}
-
 .topbar-avatar {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #d4a373;
   color: #16191c;
   font-weight: 800;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
+  user-select: none;
+}
+
+.topbar-avatar img,
+.topbar-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .topbar-user-meta {
@@ -3365,6 +3401,232 @@ body.auth-mode {
   font-size: 0.68rem;
   color: #8c889a;
   font-weight: 600;
+}
+
+/* ==========================================================================
+   ACCOUNT DROPDOWN CARD (SOPHIE BENNETT STYLE INSPIRATION)
+   ========================================================================== */
+.account-dropdown-card {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  left: auto;
+  z-index: 1050;
+  width: 270px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 18px 40px -10px rgba(15, 23, 42, 0.16), 0 0 1px 1px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  padding: 14px 10px;
+  box-sizing: border-box;
+  animation: accountDropdownPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top right;
+}
+
+@keyframes accountDropdownPop {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header Card Area: User Info & Rainbow Ring Avatar */
+.account-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px 12px 8px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 6px;
+  gap: 12px;
+}
+
+.account-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.account-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.account-card-email {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-card-badge-row {
+  margin-top: 4px;
+}
+
+.account-card-badge-row .user-role-badge {
+  font-size: 0.65rem;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  text-transform: capitalize;
+  font-weight: 700;
+}
+
+/* Rainbow Gradient Avatar Ring (Instagram / Sophie Bennett Style) */
+.account-card-avatar-ring {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(from 180deg at 50% 50%, #f43f5e 0deg, #fbbf24 85deg, #10b981 165deg, #3b82f6 245deg, #8b5cf6 305deg, #ec4899 360deg);
+  padding: 2.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.18);
+}
+
+.account-card-avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.account-card-avatar-inner {
+  background: linear-gradient(135deg, #0f766e, #047857);
+}
+
+.account-card-avatar-inner img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Menu Items List */
+.account-card-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.account-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  box-sizing: border-box;
+  text-align: left;
+  outline: none;
+}
+
+.account-menu-item:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.account-menu-item:focus-visible {
+  background: #f1f5f9;
+  outline: 2px solid #3b82f6;
+}
+
+.account-menu-item.active-style {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.account-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  transition: color 0.15s ease;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.account-menu-item:hover .account-menu-icon {
+  color: #0f172a;
+}
+
+.account-menu-label {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.account-menu-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #e2e8f0;
+  color: #475569;
+  margin-left: auto;
+}
+
+.account-card-divider {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 6px 4px;
+}
+
+.account-menu-logout {
+  color: #ef4444;
+}
+
+.account-menu-logout .account-menu-icon {
+  color: #ef4444;
+}
+
+.account-menu-logout:hover {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+
+.account-menu-logout:hover .account-menu-icon {
+  color: #dc2626 !important;
+}
+
+@media (max-width: 640px) {
+  .account-dropdown-card {
+    right: 0;
+    left: auto;
+    width: 260px;
+    max-width: calc(100vw - 32px);
+  }
 }
 
 .admin-content-area {
@@ -3523,50 +3785,146 @@ body.auth-mode {
   background: rgba(255, 255, 255, 0.24);
 }
 
-.cockpit-banner-avatar-wrap {
+/* Purple Unduh Rekap Button matching Academic primary button style */
+.btn-rekap-purple {
+  background: var(--primary-purple) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 12px rgba(129, 28, 229, 0.25);
+  transition: background-color var(--t-hover) ease, transform var(--t-press) var(--ease-out), box-shadow var(--t-hover) ease;
+}
+
+.btn-rekap-purple:hover {
+  background: var(--purple-hover) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(129, 28, 229, 0.35);
+}
+
+/* Visitor Analytics Card in Cockpit Welcome Banner (PRD / GA4 Standby) */
+.cockpit-visitor-analytics-card {
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+  padding: 1.1rem 1.25rem;
+  min-width: 280px;
+  max-width: 320px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  transition: transform var(--t-hover) ease, box-shadow var(--t-hover) ease;
+}
+
+.cockpit-visitor-analytics-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.visitor-analytics-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.visitor-analytics-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.visitor-analytics-title-wrap svg {
+  color: #ffffff;
   flex-shrink: 0;
 }
 
-.cockpit-avatar-ring {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  padding: 4px;
-  border: 3px solid rgba(255, 255, 255, 0.85); /* taste-skill-ignore */
-  background: rgba(255, 255, 255, 0.2);
-  display: flex;
+.analytics-ga-badge {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.22);
+  color: #c4f3d1;
+  padding: 0.22rem 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
-.cockpit-ring-arc {
-  position: absolute;
-  inset: 0;
+.ga-status-dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  border: 4px solid #f5a623; /* taste-skill-ignore */
-  border-top-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+  display: inline-block;
+  animation: pulseGaDot 2s infinite ease-in-out;
 }
 
-.cockpit-ring-percent {
-  font-size: 0.95rem;
+@keyframes pulseGaDot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
+.visitor-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 0.75rem;
+}
+
+.visitor-stat-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.visitor-stat-val {
+  font-size: 1.35rem;
   font-weight: 800;
-  color: #f5a623;
-  display: none;
+  color: #ffffff;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
-.cockpit-avatar-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
+.visitor-stat-lbl {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  margin-top: 0.25rem;
+  line-height: 1.25;
+}
+
+.visitor-analytics-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.35;
+}
+
+.visitor-analytics-notice svg {
+  color: #ffffff;
+  opacity: 0.85;
 }
 
 /* Cockpit Section Headers (Bento & Activity) */
@@ -3850,9 +4208,8 @@ body.auth-mode {
 .topbar-profile-pill {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding-left: 0.5rem;
-  border-left: 1px solid rgba(129, 28, 229, 0.15); /* taste-skill-ignore */
+  border: none;
+  padding: 0;
 }
 .topbar-avatar {
   width: 36px;
@@ -5281,10 +5638,10 @@ input:checked + .switch-slider:before {
   }
 
   .cockpit-top-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
   .cockpit-page-title {
@@ -5296,115 +5653,93 @@ input:checked + .switch-slider:before {
   }
 
   .cockpit-accent-word {
-    color: #f5a623;
+    color: #e08b16;
     font-weight: 800;
   }
 
   .cockpit-page-sub {
-    display: none;
+    display: block !important;
+    font-size: 0.82rem;
+    color: #8c889a;
+    line-height: 1.4;
+    margin-top: 0.25rem;
   }
 
   .cockpit-top-actions {
-    display: none;
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+    align-items: center;
   }
 
   .cockpit-welcome-banner {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    background: #14383b;
-    padding: 1.25rem 1.15rem;
-    border-radius: 22px;
-    gap: 0.85rem;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    background: #c39860 !important;
+    padding: 1.35rem 1.25rem;
+    border-radius: 20px;
+    gap: 1.25rem;
     position: relative;
-    box-shadow: 0 8px 24px rgba(20, 56, 59, 0.16); /* taste-skill-ignore */
+    box-shadow: 0 8px 24px rgba(195, 152, 96, 0.22);
   }
 
   .cockpit-banner-text {
-    flex: 1;
-    min-width: 0;
+    width: 100%;
   }
 
   .cockpit-banner-title {
-    font-size: 1.05rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: #ffffff;
     line-height: 1.25;
-    margin-bottom: 0.65rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 0.45rem;
+    display: block;
   }
 
   .cockpit-banner-subtitle {
-    display: none;
+    display: block !important;
+    font-size: 0.84rem;
+    color: rgba(255, 255, 255, 0.92);
+    line-height: 1.45;
+    margin-bottom: 1rem;
   }
 
   .cockpit-banner-actions {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.5rem;
-    width: auto;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    width: 100%;
   }
 
   .cockpit-pill-btn {
     width: auto;
-    background: #f5a623;
-    color: #14383b;
-    font-weight: 800;
-    font-size: 0.76rem;
-    padding: 0.45rem 0.95rem;
+    background: #ffffff !important;
+    color: #16191c !important;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 0.5rem 1.15rem;
     border-radius: 9999px;
     white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
   }
 
   .cockpit-pill-btn.cockpit-pill-secondary {
-    display: none;
+    display: inline-flex !important;
+    background: rgba(255, 255, 255, 0.16) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
   }
 
-  .cockpit-banner-avatar-wrap {
-    align-self: center;
-    flex-shrink: 0;
-  }
-
-  .cockpit-avatar-ring {
-    width: 62px;
-    height: 62px;
-    border: none;
-    background: transparent;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    flex-shrink: 0;
-  }
-
-  .cockpit-ring-arc {
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    border: 4px solid #f5a623; /* taste-skill-ignore */
-    border-top-color: rgba(255, 255, 255, 0.18);
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .cockpit-ring-percent {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: #f5a623;
-    display: block;
-  }
-
-  .cockpit-avatar-img {
-    display: none;
+  .cockpit-visitor-analytics-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
   }
 
   /* Bento 2x2 Grid Matching User Screenshot */

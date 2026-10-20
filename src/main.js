@@ -788,16 +788,30 @@ export function navigateToAdmin(moduleName) {
     }
   });
 
+  // Helper to render user avatar photo or initials
+  function renderUserAvatar(el, user) {
+    if (!el) return;
+    const photo = user?.photo || user?.avatarUrl || user?.image;
+    if (photo && typeof photo === 'string' && (photo.startsWith('http') || photo.startsWith('/') || photo.startsWith('data:') || /\.(png|jpe?g|webp|svg|gif)$/i.test(photo))) {
+      el.innerHTML = `<img src="${photo}" alt="${user.name || 'User'}" class="topbar-avatar-img" />`;
+    } else {
+      const initials = (user?.avatar && user.avatar.length <= 4) ? user.avatar : (user?.name ? user.name.slice(0, 2).toUpperCase() : 'MZ');
+      el.textContent = initials;
+    }
+  }
+
   // Update Sidebar & Topbar User Display
   const sidebarAvatar = document.getElementById('sidebarUserAvatar');
   const sidebarName = document.getElementById('sidebarUserName');
   const sidebarRole = document.getElementById('sidebarUserRole');
   const topbarAvatar = document.getElementById('topbarAvatar');
+  const accountDropdownAvatar = document.getElementById('accountDropdownAvatar');
   const topbarName = document.getElementById('topbarUserName');
+  const accountDropdownEmail = document.getElementById('accountDropdownEmail');
   const topbarRole = document.getElementById('topbarUserRole');
   const topbarRoleBadge = document.getElementById('topbarUserRoleBadge');
 
-  if (sidebarAvatar) sidebarAvatar.textContent = currentUser.avatar || 'AD';
+  if (sidebarAvatar) renderUserAvatar(sidebarAvatar, currentUser);
   if (sidebarName) sidebarName.textContent = currentUser.name;
   if (sidebarRole) {
     sidebarRole.textContent = roleConf.name;
@@ -809,8 +823,10 @@ export function navigateToAdmin(moduleName) {
     welcomeUserName.textContent = currentUser.name;
   }
 
-  if (topbarAvatar) topbarAvatar.textContent = currentUser.avatar || 'AD';
+  if (topbarAvatar) renderUserAvatar(topbarAvatar, currentUser);
+  if (accountDropdownAvatar) renderUserAvatar(accountDropdownAvatar, currentUser);
   if (topbarName) topbarName.textContent = currentUser.name;
+  if (accountDropdownEmail) accountDropdownEmail.textContent = currentUser.email || 'zaki@rtm.sch.id';
   if (topbarRole) topbarRole.textContent = roleConf.name;
   if (topbarRoleBadge) {
     topbarRoleBadge.textContent = roleConf.name;
@@ -2552,8 +2568,7 @@ export function getShortJenjang(programName, programId) {
 
 // 2. Render Overview Panel (Sprint 3 Live SQLite DB Stats - Zero Fabricated Metrics)
 async function renderAdminOverview() {
-  const rangeSelect = document.getElementById('overviewDateFilter');
-  const rangeVal = rangeSelect ? rangeSelect.value : (state.overviewRange || 'all');
+  const rangeVal = state.overviewRange || 'all';
 
   try {
     const statsRes = await statsApi.getOverview({ range: rangeVal });
@@ -4611,6 +4626,136 @@ function initAdminUI() {
     });
   }
 
+  // D2. Account Dropdown Card Toggle & Actions (Sophie Bennett Style)
+  const topbarAvatarTrigger = document.getElementById('topbarAvatarTrigger');
+  const accountDropdownCard = document.getElementById('accountDropdownCard');
+  const topbarAccountWrapper = document.getElementById('topbarAccountWrapper');
+
+  if (topbarAvatarTrigger && accountDropdownCard) {
+    topbarAvatarTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = accountDropdownCard.style.display === 'none' || !accountDropdownCard.style.display;
+      accountDropdownCard.style.display = isHidden ? 'block' : 'none';
+      topbarAvatarTrigger.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (topbarAccountWrapper && !topbarAccountWrapper.contains(e.target)) {
+        accountDropdownCard.style.display = 'none';
+        topbarAvatarTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Menu Item 1: Profil Saya
+    const accountMenuProfile = document.getElementById('accountMenuProfile');
+    if (accountMenuProfile) {
+      accountMenuProfile.addEventListener('click', () => {
+        accountDropdownCard.style.display = 'none';
+        topbarAvatarTrigger.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    // Menu Item 2: Bahasa
+    const accountMenuLanguage = document.getElementById('accountMenuLanguage');
+    const adminLanguageModal = document.getElementById('adminLanguageModal');
+    if (accountMenuLanguage && adminLanguageModal) {
+      accountMenuLanguage.addEventListener('click', () => {
+        accountDropdownCard.style.display = 'none';
+        topbarAvatarTrigger.setAttribute('aria-expanded', 'false');
+        adminLanguageModal.classList.add('open');
+        adminLanguageModal.style.display = 'flex';
+      });
+    }
+
+    // Menu Item 3: Bantuan
+    const accountMenuHelp = document.getElementById('accountMenuHelp');
+    const adminHelpModal = document.getElementById('adminHelpModal');
+    if (accountMenuHelp && adminHelpModal) {
+      accountMenuHelp.addEventListener('click', () => {
+        accountDropdownCard.style.display = 'none';
+        topbarAvatarTrigger.setAttribute('aria-expanded', 'false');
+        adminHelpModal.classList.add('open');
+        adminHelpModal.style.display = 'flex';
+      });
+    }
+
+    // Menu Item 4: Kirim Masukan
+    const accountMenuFeedback = document.getElementById('accountMenuFeedback');
+    const adminFeedbackModal = document.getElementById('adminFeedbackModal');
+    if (accountMenuFeedback && adminFeedbackModal) {
+      accountMenuFeedback.addEventListener('click', () => {
+        accountDropdownCard.style.display = 'none';
+        topbarAvatarTrigger.setAttribute('aria-expanded', 'false');
+        adminFeedbackModal.classList.add('open');
+        adminFeedbackModal.style.display = 'flex';
+      });
+    }
+
+    // Menu Item 5: Keluar
+    const accountMenuLogout = document.getElementById('accountMenuLogout');
+    if (accountMenuLogout) {
+      accountMenuLogout.addEventListener('click', () => {
+        accountDropdownCard.style.display = 'none';
+        topbarAvatarTrigger.setAttribute('aria-expanded', 'false');
+        auth.clearUser();
+        client.clearToken();
+        showToast('Sesi administrasi ditutup. Anda telah berhasil keluar.', 'success');
+        window.location.hash = '#admin-login';
+      });
+    }
+  }
+
+  // Modals: Bahasa, Bantuan, Kirim Masukan event bindings
+  const btnCloseLanguageModal = document.getElementById('btnCloseLanguageModal');
+  const btnSaveLanguage = document.getElementById('btnSaveLanguage');
+  const adminLanguageModal = document.getElementById('adminLanguageModal');
+  const closeLang = () => {
+    if (adminLanguageModal) {
+      adminLanguageModal.classList.remove('open');
+      adminLanguageModal.style.display = 'none';
+    }
+  };
+  if (btnCloseLanguageModal) btnCloseLanguageModal.addEventListener('click', closeLang);
+  if (btnSaveLanguage) {
+    btnSaveLanguage.addEventListener('click', () => {
+      closeLang();
+      showToast('Bahasa sistem berhasil diatur ke Bahasa Indonesia (ID).', 'success');
+    });
+  }
+
+  const btnCloseHelpModal = document.getElementById('btnCloseHelpModal');
+  const btnCloseHelpModalBtn = document.getElementById('btnCloseHelpModalBtn');
+  const adminHelpModal = document.getElementById('adminHelpModal');
+  const closeHelp = () => {
+    if (adminHelpModal) {
+      adminHelpModal.classList.remove('open');
+      adminHelpModal.style.display = 'none';
+    }
+  };
+  if (btnCloseHelpModal) btnCloseHelpModal.addEventListener('click', closeHelp);
+  if (btnCloseHelpModalBtn) btnCloseHelpModalBtn.addEventListener('click', closeHelp);
+
+  const btnCloseFeedbackModal = document.getElementById('btnCloseFeedbackModal');
+  const btnCloseFeedbackModalBtn = document.getElementById('btnCloseFeedbackModalBtn');
+  const adminFeedbackForm = document.getElementById('adminFeedbackForm');
+  const adminFeedbackModal = document.getElementById('adminFeedbackModal');
+  const closeFeedback = () => {
+    if (adminFeedbackModal) {
+      adminFeedbackModal.classList.remove('open');
+      adminFeedbackModal.style.display = 'none';
+    }
+  };
+  if (btnCloseFeedbackModal) btnCloseFeedbackModal.addEventListener('click', closeFeedback);
+  if (btnCloseFeedbackModalBtn) btnCloseFeedbackModalBtn.addEventListener('click', closeFeedback);
+  if (adminFeedbackForm) {
+    adminFeedbackForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      closeFeedback();
+      adminFeedbackForm.reset();
+      showToast('Jazakallah khair! Masukan Anda telah berhasil dikirim ke tim pengembang RTM.', 'success');
+    });
+  }
+
   // E. Sidebar Collapse/Expand Toggle & Mobile Backdrop
   const sidebarToggleBtn = document.getElementById('adminSidebarToggleBtn');
   const sidebarCollapseToggleBtn = document.getElementById('sidebarCollapseToggleBtn');
@@ -5934,30 +6079,10 @@ function initAdminUI() {
     saveAppearanceTabSection('Tautan Sosial Media & Footer');
   });
 
-  // O. Overview Date Filter, Quick Actions & Refresh (PRD Req #2)
-  const overviewDateFilter = document.getElementById('overviewDateFilter');
-  if (overviewDateFilter) {
-    overviewDateFilter.addEventListener('change', async (e) => {
-      state.overviewRange = e.target.value;
-      await renderAdminOverview();
-    });
-  }
-
-  document.getElementById('btnQuickWriteArticle')?.addEventListener('click', () => openArticleModal());
-  document.getElementById('btnQuickManualDonation')?.addEventListener('click', () => {
-    renderAdminDonasi();
-    document.getElementById('adminManualDonationModal')?.classList.add('open');
-  });
-  document.getElementById('btnQuickNewCampaign')?.addEventListener('click', () => openCampaignModal());
-  document.getElementById('btnQuickManageProgram')?.addEventListener('click', () => openProgramEditPage('smp'));
-  document.getElementById('btnQuickMediaLibrary')?.addEventListener('click', () => openMediaLibraryModal(null));
-
-  const btnRefresh = document.getElementById('btnRefreshOverview');
-  if (btnRefresh) {
-    btnRefresh.addEventListener('click', async () => {
-      await syncDatabaseState();
-      await renderAdminOverview();
-      showToast('Data ringkasan eksekutif telah disinkronkan dengan database.', 'success');
+  const visitorAnalyticsCard = document.getElementById('cockpitVisitorAnalytics');
+  if (visitorAnalyticsCard) {
+    visitorAnalyticsCard.addEventListener('click', () => {
+      showToast('Google Analytics 4: Siap dihubungkan dengan Measurement ID saat website resmi dipublikasikan.', 'info');
     });
   }
 
@@ -6035,13 +6160,17 @@ function initAdminUI() {
 
         // Update topbar and cockpit UI
         const topbarAvatar = document.getElementById('topbarAvatar');
+        const accountAvatar = document.getElementById('accountDropdownAvatar');
         const topbarName = document.getElementById('topbarUserName');
+        const accountEmail = document.getElementById('accountDropdownEmail');
         const sidebarAvatar = document.getElementById('sidebarUserAvatar');
         const sidebarName = document.getElementById('sidebarUserName');
         const welcomeUserName = document.getElementById('welcomeUserName');
 
         if (topbarAvatar) topbarAvatar.textContent = initials;
+        if (accountAvatar) accountAvatar.textContent = initials;
         if (topbarName) topbarName.textContent = newName;
+        if (accountEmail) accountEmail.textContent = newEmail;
         if (sidebarAvatar) sidebarAvatar.textContent = initials;
         if (sidebarName) sidebarName.textContent = newName;
         if (welcomeUserName) welcomeUserName.textContent = newName;

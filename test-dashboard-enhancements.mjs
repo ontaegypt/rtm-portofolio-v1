@@ -51,13 +51,12 @@ test('All form panels (campaign, article, user, gallery, syllabus, profile) exis
   }
 });
 
-// Test 3: Topbar Profile Pill in topbar-left with Link to #admin-profile
-test('Topbar profile pill is placed in topbar-left with href="#admin-profile"', () => {
-  const topbarLeftStart = html.indexOf('class="topbar-left"');
+// Test 3: Topbar Profile Pill in topbar-right with Link to #admin-profile
+test('Topbar profile pill is placed in topbar-right with href="#admin-profile"', () => {
   const topbarRightStart = html.indexOf('class="topbar-right"');
   const profilePillStart = html.indexOf('class="topbar-profile-pill"');
 
-  assert(profilePillStart > topbarLeftStart && profilePillStart < topbarRightStart, 'Profile pill must be in topbar-left');
+  assert(profilePillStart > topbarRightStart, 'Profile pill must be in topbar-right');
   assert(html.includes('href="#admin-profile"'), 'Profile pill must link to #admin-profile');
   assert(html.includes('id="topbarAvatar"'), '#topbarAvatar missing');
   assert(html.includes('id="topbarUserName"'), '#topbarUserName missing');
@@ -190,6 +189,106 @@ test("Tombol 'Tambah Media' dan 'Tambah Pengguna Baru' tidak memiliki duplicate 
   // Mobile
   const mobileSection = css.slice(css.indexOf('@media (max-width: 768px)'));
   assert(mobileSection.includes('.panel-header-actions.users-header-actions .btn') && mobileSection.includes('font-size: 0.76rem !important;'), 'Mobile rules for .users-header-actions .btn must match akademik');
+});
+
+// Test 16: Topbar Right Order: [Lihat Web] [Notifikasi] [Account Dropdown] & Sophie Bennett Style Card
+test("Topbar right has [Lihat Web] [Notifikasi] [Account Dropdown] in order with 5 menus", () => {
+  // 1. Right side ordering: Lihat Web < Notifikasi < Account Dropdown
+  const topbarRightStart = html.indexOf('class="topbar-right"');
+  const webBtnStart = html.indexOf('class="btn btn-secondary btn-sm topbar-web-btn"');
+  const notifBoxStart = html.indexOf('class="topbar-notif-box"');
+  const avatarWrapperStart = html.indexOf('id="topbarAccountWrapper"');
+
+  assert(webBtnStart > topbarRightStart, 'topbar-web-btn must be inside topbar-right');
+  assert(webBtnStart < notifBoxStart, 'topbar-web-btn must be before topbar-notif-box');
+  assert(notifBoxStart < avatarWrapperStart, 'topbar-notif-box must be before topbarAccountWrapper');
+
+  // 2. Avatar button contains only the avatar circle (no username text on the topbar bar)
+  assert(html.includes('id="topbarAvatarTrigger"'), 'topbarAvatarTrigger button missing');
+  assert(html.includes('id="topbarAvatar"'), 'topbarAvatar circle missing');
+
+  // 3. Account dropdown card exists with header and 5 menus
+  assert(html.includes('id="accountDropdownCard"'), 'accountDropdownCard missing');
+  assert(html.includes('class="account-card-header"'), 'account-card-header missing');
+  assert(html.includes('id="accountDropdownEmail"'), 'accountDropdownEmail missing');
+  assert(html.includes('id="accountDropdownAvatarRing"'), 'accountDropdownAvatarRing missing');
+  assert(html.includes('id="accountDropdownAvatar"'), 'accountDropdownAvatar missing');
+
+  // 4. Five menu items: Profil Saya, Bahasa, Bantuan, Kirim Masukan, | Keluar
+  assert(html.includes('id="accountMenuProfile"') && html.includes('Profil Saya'), 'Menu Profil Saya missing');
+  assert(html.includes('id="accountMenuLanguage"') && html.includes('Bahasa'), 'Menu Bahasa missing');
+  assert(html.includes('id="accountMenuHelp"') && html.includes('Bantuan'), 'Menu Bantuan missing');
+  assert(html.includes('id="accountMenuFeedback"') && html.includes('Kirim Masukan'), 'Menu Kirim Masukan missing');
+  assert(html.includes('class="account-card-divider"'), 'Divider line missing');
+  assert(html.includes('id="accountMenuLogout"') && html.includes('Keluar'), 'Menu Keluar missing');
+
+  // 5. CSS definitions for card, rainbow ring, and menu items
+  assert(css.includes('.account-dropdown-card'), '.account-dropdown-card styling missing');
+  assert(css.includes('.account-card-avatar-ring'), '.account-card-avatar-ring styling missing');
+  assert(css.includes('conic-gradient('), 'Conic gradient rainbow ring missing');
+  assert(css.includes('.account-menu-item'), '.account-menu-item styling missing');
+  assert(css.includes('.account-menu-logout'), '.account-menu-logout styling missing');
+
+  // 6. Main.js wiring for trigger toggle, click-outside, and menu actions
+  assert(mainJs.includes('topbarAvatarTrigger.addEventListener'), 'topbarAvatarTrigger click event missing');
+  assert(mainJs.includes('accountMenuLogout.addEventListener'), 'accountMenuLogout click event missing');
+  assert(mainJs.includes('adminLanguageModal'), 'adminLanguageModal handling missing');
+  assert(mainJs.includes('adminHelpModal'), 'adminHelpModal handling missing');
+  assert(mainJs.includes('adminFeedbackModal'), 'adminFeedbackModal handling missing');
+});
+
+// Test 17: Menu Ringkasan / Analytics: Tombol 'Muat Ulang Data' dihapus & Tombol 'Unduh Rekap' berwarna ungu
+test("Menu Ringkasan: Tombol 'Muat Ulang Data' dihapus & Tombol 'Unduh Rekap' berwarna ungu seperti menu akademik", () => {
+  // 1. Muat ulang data button removed
+  assert(!html.includes('id="btnRefreshOverview"'), 'btnRefreshOverview must be removed from index.html');
+  assert(!html.includes('>Muat Ulang Data<'), 'Muat Ulang Data string must be removed from index.html');
+  assert(!mainJs.includes("getElementById('btnRefreshOverview')"), 'btnRefreshOverview listener must be removed from main.js');
+
+  // 2. Unduh Rekap button uses purple primary styling
+  assert(html.includes('id="btnQuickExportCSV"'), 'btnQuickExportCSV must exist in index.html');
+  assert(html.includes('btn-rekap-purple'), 'btnQuickExportCSV must have btn-rekap-purple class in index.html');
+  assert(css.includes('.btn-rekap-purple {') && css.includes('background: var(--primary-purple) !important;'), '.btn-rekap-purple must use var(--primary-purple) in style.css');
+  assert(css.includes('.btn-rekap-purple:hover {') && css.includes('background: var(--purple-hover) !important;'), '.btn-rekap-purple:hover must use var(--purple-hover)');
+});
+
+// Test 18: Welcoming Banner: Analytics Pengunjung (Google Analytics Standby) & Konsistensi Warna/Fitur di Semua Media Query
+test("Welcoming Banner: Analytics Pengunjung (GA4 Standby) & Warna/Fitur seragam di Desktop, Tablet, dan Mobile", () => {
+  // 1. Rightmost feature is Visitor Analytics with Google Analytics readiness
+  assert(html.includes('id="cockpitVisitorAnalytics"'), 'cockpitVisitorAnalytics must exist in index.html');
+  assert(html.includes('class="cockpit-visitor-analytics-card"'), 'cockpit-visitor-analytics-card must exist in index.html');
+  assert(html.includes('class="analytics-ga-badge"'), 'analytics-ga-badge must exist in index.html');
+  assert(html.includes('class="ga-status-dot"'), 'ga-status-dot must exist in index.html');
+  assert(html.includes('id="gaVisitorsToday"'), 'gaVisitorsToday must exist in index.html');
+  assert(html.includes('id="gaPageviewsToday"'), 'gaPageviewsToday must exist in index.html');
+  assert(html.includes('Siap disambungkan ke Google Analytics'), 'Google Analytics readiness notice missing in index.html');
+
+  // 2. Desktop CSS styling
+  assert(css.includes('.cockpit-welcome-banner {') && css.includes('background: #c39860;'), 'Desktop welcome banner must use camel #c39860');
+  assert(css.includes('.cockpit-visitor-analytics-card {'), 'cockpit-visitor-analytics-card CSS missing');
+  assert(css.includes('.ga-status-dot {') && css.includes('#22c55e;'), 'ga-status-dot CSS missing or not green');
+
+  // 3. Mobile CSS styling uniformity (no dark teal divergence, all features retained)
+  const mobileCss = css.slice(css.indexOf('@media (max-width: 768px)'));
+  assert(mobileCss.includes('.cockpit-welcome-banner {') && mobileCss.includes('background: #c39860 !important;'), 'Mobile welcome banner must use unified #c39860 !important');
+  assert(!mobileCss.includes('.cockpit-top-actions {\n    display: none;'), 'Mobile cockpit top actions (date filter and rekap button) must not be hidden');
+  assert(mobileCss.includes('.cockpit-pill-btn {') && mobileCss.includes('background: #ffffff !important;'), 'Mobile pill button must match desktop white pill');
+  assert(mobileCss.includes('.cockpit-pill-btn.cockpit-pill-secondary {') && mobileCss.includes('display: inline-flex !important;'), 'Mobile secondary action button must not be hidden');
+  assert(mobileCss.includes('.cockpit-visitor-analytics-card {') && mobileCss.includes('width: 100% !important;'), 'Mobile visitor analytics card must be full width');
+});
+
+// Test 19: Menu Ringkasan: Hapus Fitur Aksi Cepat CMS & Hapus Filter Periode
+test("Menu Ringkasan: Aksi Cepat CMS dan Filter Periode berhasil dihapus", () => {
+  // 1. Aksi Cepat CMS bar removed
+  assert(!html.includes('Aksi Cepat CMS:'), 'Aksi Cepat CMS label must be removed from index.html');
+  assert(!html.includes('id="btnQuickWriteArticle"'), 'btnQuickWriteArticle must be removed from index.html');
+  assert(!html.includes('id="btnQuickManualDonation"'), 'btnQuickManualDonation must be removed from index.html');
+  assert(!html.includes('id="btnQuickNewCampaign"'), 'btnQuickNewCampaign must be removed from index.html');
+  assert(!html.includes('id="btnQuickManageProgram"'), 'btnQuickManageProgram must be removed from index.html');
+  assert(!html.includes('id="btnQuickMediaLibrary"'), 'btnQuickMediaLibrary must be removed from index.html');
+
+  // 2. Filter periode next to Unduh Rekap removed
+  assert(!html.includes('id="overviewDateFilter"'), 'overviewDateFilter must be removed from index.html');
+  assert(!html.includes('aria-label="Filter Periode Waktu"'), 'Filter Periode Waktu select must be removed from index.html');
 });
 
 console.log(`\n========================================`);

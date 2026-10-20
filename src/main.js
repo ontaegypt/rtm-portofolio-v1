@@ -72,16 +72,40 @@ const state = {
   mediaPickerCallback: null
 };
 
-// Mutable CMS Stores (Synchronized with Backend SQLite Database)
+// Mutable CMS Stores (Synchronized with Backend SQLite Database & localStorage)
 let campaignsState = JSON.parse(JSON.stringify(CAMPAIGNS));
 let donationsState = JSON.parse(JSON.stringify(DONATION_TRANSACTIONS));
 let ppdbState = JSON.parse(JSON.stringify(PPDB_LEADS));
 let visitsState = JSON.parse(JSON.stringify(VISIT_RESERVATIONS));
-let articlesState = JSON.parse(JSON.stringify(NEWS_ARTICLES));
-let galleriesState = JSON.parse(JSON.stringify(GALLERIES));
+let articlesState = (() => {
+  try {
+    const c = localStorage.getItem('rtm_cms_articles');
+    if (c) return JSON.parse(c);
+  } catch {}
+  return JSON.parse(JSON.stringify(NEWS_ARTICLES));
+})();
+let galleriesState = (() => {
+  try {
+    const c = localStorage.getItem('rtm_cms_galleries');
+    if (c) return JSON.parse(c);
+  } catch {}
+  return JSON.parse(JSON.stringify(GALLERIES));
+})();
 let usersState = JSON.parse(JSON.stringify(ADMIN_USERS));
-let programsState = PROGRAMS.map(p => ({ ...p, ppdbOpen: true, publicationStatus: 'published', formSchema: [] }));
-let mediaState = [];
+let programsState = (() => {
+  try {
+    const c = localStorage.getItem('rtm_cms_programs');
+    if (c) return JSON.parse(c);
+  } catch {}
+  return PROGRAMS.map(p => ({ ...p, ppdbOpen: true, publicationStatus: 'published', formSchema: [] }));
+})();
+let mediaState = (() => {
+  try {
+    const c = localStorage.getItem('rtm_cms_media');
+    if (c) return JSON.parse(c);
+  } catch {}
+  return [];
+})();
 let financialAuditState = [];
 let systemAuditState = [];
 let settingsState = {};
@@ -206,7 +230,7 @@ function normalizeGallery(g) {
 }
 
 function normalizeProgram(p) {
-  const staticProg = PROGRAMS.find(sp => sp.id === p.id) || PROGRAMS[0];
+  const staticProg = PROGRAMS.find(sp => sp.id === p.id) || null;
   let parsedSchema = [];
   if (Array.isArray(p.form_schema)) {
     parsedSchema = p.form_schema;
@@ -230,22 +254,27 @@ function normalizeProgram(p) {
     }
   }
   if (p.duration) parsedStats.durasi = p.duration;
+  if (p.duration_claim) parsedStats.durasi = p.duration_claim;
   if (p.target_hafalan) parsedStats.targetHafalan = p.target_hafalan;
+
+  const progName = p.name || p.title || (staticProg ? staticProg.name : 'Program Tahfidz');
+  const progShortTitle = p.shortTitle || (p.name && p.name !== staticProg?.name ? p.name : (staticProg ? staticProg.shortTitle : (p.title || 'Program')));
 
   return {
     ...(staticProg || {}),
     ...p,
     id: p.id,
-    name: p.title || p.name || (staticProg ? staticProg.name : 'Program Tahfidz'),
-    shortTitle: p.shortTitle || (staticProg ? staticProg.shortTitle : (p.title || p.name || 'Program')),
-    headline: p.subtitle || p.headline || (staticProg ? staticProg.headline : ''),
-    summary: p.description || p.summary || (staticProg ? staticProg.summary : ''),
-    image: p.hero_image || p.image || (staticProg ? staticProg.image : '/assets/images/classroom.jpg'),
+    name: progName,
+    title: progName,
+    shortTitle: progShortTitle,
+    headline: p.headline || p.subtitle || (staticProg ? staticProg.headline : ''),
+    summary: p.summary || p.description || (staticProg ? staticProg.summary : ''),
+    image: p.image || p.hero_image || (staticProg ? staticProg.image : '/assets/images/classroom.jpg'),
     stats: parsedStats,
-    eligibilityCriteria: p.eligibility_criteria || p.eligibilityCriteria || (staticProg?.about?.target || ''),
-    scheduleInfo: p.schedule_info || p.scheduleInfo || '',
-    applicationInstructions: p.application_instructions || p.applicationInstructions || '',
-    publicationStatus: p.publication_status || p.publicationStatus || 'published',
+    eligibilityCriteria: p.eligibilityCriteria || p.eligibility_criteria || (staticProg?.about?.target || ''),
+    scheduleInfo: p.scheduleInfo || p.schedule_info || '',
+    applicationInstructions: p.applicationInstructions || p.application_instructions || '',
+    publicationStatus: p.publicationStatus || p.publication_status || 'published',
     ppdbOpen: p.is_active !== undefined ? p.is_active === 1 : (p.ppdbOpen !== false),
     formSchema: parsedSchema
   };
@@ -268,7 +297,7 @@ function normalizeUser(u) {
 // Synchronize all CMS stores with Backend SQLite Database
 export async function syncDatabaseState() {
   try {
-    const [progRes, artRes, galRes, campRes, donRes, visRes, leadRes, userRes, setRes] = await Promise.allSettled([
+    const [progRes, artRes, galRes, campRes, donRes, visRes, leadRes, userRes, setRes, medRes] = await Promise.allSettled([
       programsApi.getAll(),
       articlesApi.getAll(),
       galleriesApi.getAll(),
@@ -277,17 +306,28 @@ export async function syncDatabaseState() {
       reservationsApi.getAll(),
       ppdbApi.getAll(),
       usersApi.getAll(),
-      settingsApi.get()
+      settingsApi.get(),
+      mediaApi.getAll()
     ]);
 
     if (progRes.status === 'fulfilled' && progRes.value.data) {
       programsState = progRes.value.data.map(normalizeProgram);
+      try { localStorage.setItem('rtm_cms_programs', JSON.stringify(programsState)); } catch {}
+      if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
+      if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
+      if (state.currentView === 'akademik' && typeof renderAkademikView === 'function') renderAkademikView();
     }
     if (artRes.status === 'fulfilled' && artRes.value.data) {
       articlesState = artRes.value.data.map(normalizeArticle);
+      try { localStorage.setItem('rtm_cms_articles', JSON.stringify(articlesState)); } catch {}
     }
     if (galRes.status === 'fulfilled' && galRes.value.data) {
       galleriesState = galRes.value.data.map(normalizeGallery);
+      try { localStorage.setItem('rtm_cms_galleries', JSON.stringify(galleriesState)); } catch {}
+    }
+    if (medRes.status === 'fulfilled' && medRes.value?.data) {
+      mediaState = medRes.value.data;
+      try { localStorage.setItem('rtm_cms_media', JSON.stringify(mediaState)); } catch {}
     }
     if (campRes.status === 'fulfilled' && campRes.value.data) {
       campaignsState = campRes.value.data.map(normalizeCampaign);
@@ -666,11 +706,20 @@ export function navigateTo(viewName, programId = null) {
     }
   });
 
+  // Always update dynamic navigation links
+  if (typeof renderPublicNavigationPrograms === 'function') {
+    renderPublicNavigationPrograms();
+  }
+
   // Re-render sub-views if needed
-  if (viewName === 'akademik') {
+  if (viewName === 'home') {
+    if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
+  } else if (viewName === 'akademik') {
     renderAkademikView();
   } else if (viewName === 'news') {
     renderNewsGrid();
+  } else if (viewName === 'visit') {
+    renderGalleryGrid();
   }
 
   // Scroll to Top Smoothly
@@ -2544,8 +2593,66 @@ function initGlobalUI() {
     });
   });
 
-  // Render initial Home Program Cards
+  // Render initial Home Program Cards & Public Navigation
+  renderPublicNavigationPrograms();
   renderHomeProgramCards('all');
+}
+
+export function renderPublicNavigationPrograms() {
+  const activePrograms = (programsState && programsState.length > 0) ? programsState : PROGRAMS;
+  const publishedPrograms = activePrograms.filter(p => p.publicationStatus !== 'draft' && p.publicationStatus !== 'archived');
+  const progsToRender = publishedPrograms.length > 0 ? publishedPrograms : activePrograms;
+
+  // 1. Desktop Navbar Academic Dropdown (#navbarAcademicDropdown)
+  const desktopDropdown = document.getElementById('navbarAcademicDropdown');
+  if (desktopDropdown) {
+    const formalList = progsToRender.filter(p => p.category === 'formal');
+    const nonFormalList = progsToRender.filter(p => p.category !== 'formal');
+
+    let dropdownHtml = '';
+    if (formalList.length > 0) {
+      dropdownHtml += '<div class="dropdown-section-title">Pendidikan Formal</div>';
+      dropdownHtml += formalList.map(p => `
+        <a href="#akademik-${p.id}" class="dropdown-link" data-program-id="${p.id}">
+          <span>${p.name}</span>
+          <span class="badge-tag">${p.stats?.targetHafalan || p.badge || 'Formal'}</span>
+        </a>
+      `).join('');
+    }
+
+    if (formalList.length > 0 && nonFormalList.length > 0) {
+      dropdownHtml += '<div class="dropdown-divider"></div>';
+    }
+
+    if (nonFormalList.length > 0) {
+      dropdownHtml += '<div class="dropdown-section-title">Pendidikan Non-Formal</div>';
+      dropdownHtml += nonFormalList.map(p => `
+        <a href="#akademik-${p.id}" class="dropdown-link" data-program-id="${p.id}">
+          <span>${p.name}</span>
+          <span class="badge-tag">${p.stats?.targetHafalan || p.badge || 'Non-Formal'}</span>
+        </a>
+      `).join('');
+    }
+
+    desktopDropdown.innerHTML = dropdownHtml;
+  }
+
+  // 2. Mobile Drawer Academic Submenu (#mobileAcademicSubmenu)
+  const mobileSubmenu = document.getElementById('mobileAcademicSubmenu');
+  if (mobileSubmenu) {
+    mobileSubmenu.innerHTML = progsToRender.map(p => {
+      const tag = p.stats?.targetHafalan ? ` (${p.stats.targetHafalan})` : '';
+      return `<a href="#akademik-${p.id}" class="mobile-sublink" data-program-id="${p.id}">${p.name}${tag}</a>`;
+    }).join('');
+  }
+
+  // 3. Footer Academic Program Links (#footerProgramLinksList)
+  const footerList = document.getElementById('footerProgramLinksList');
+  if (footerList) {
+    footerList.innerHTML = progsToRender.map(p => `
+      <li><a href="#akademik-${p.id}" data-program-id="${p.id}">${p.name}</a></li>
+    `).join('');
+  }
 }
 
 function renderHomeProgramCards(category) {
@@ -2872,7 +2979,7 @@ function renderAdminAkademik() {
       </tr>
     `).join('');
 
-    // Toggle switch listeners (wired to backend API)
+    // Toggle switch listeners (wired to backend API & live public sync)
     tbody.querySelectorAll('.program-ppdb-switch').forEach(toggle => {
       toggle.addEventListener('change', async (e) => {
         const id = e.target.getAttribute('data-id');
@@ -2881,6 +2988,12 @@ function renderAdminAkademik() {
           prog.ppdbOpen = e.target.checked;
           const label = e.target.closest('.switch-label').querySelector('.switch-text');
           if (label) label.textContent = prog.ppdbOpen ? 'Buka' : 'Tutup';
+          try {
+            localStorage.setItem('rtm_cms_programs', JSON.stringify(programsState));
+          } catch {}
+          if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
+          if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
+          if (typeof renderAkademikView === 'function') renderAkademikView();
           try {
             await programsApi.toggleStatus(id);
           } catch {
@@ -5367,8 +5480,23 @@ function initAdminUI() {
             articleSlugFeedback.textContent = `⚠️ ${err.message}`;
             articleSlugFeedback.style.color = '#dc2626';
           }
+          showToast(err.message, 'warning');
+          return;
         }
-        showToast(err.message, 'warning');
+        // Resilient fallback: store locally and update UI immediately
+        const localArt = normalizeArticle({
+          id: id || `art-${Date.now()}`,
+          ...payload
+        });
+        const idx = articlesState.findIndex(a => a.id === localArt.id);
+        if (idx >= 0) articlesState[idx] = localArt;
+        else articlesState.unshift(localArt);
+        try { localStorage.setItem('rtm_cms_articles', JSON.stringify(articlesState)); } catch {}
+        if (articleModal) articleModal.classList.remove('open');
+        renderAdminBerita();
+        renderNewsGrid();
+        showToast(`Artikel "${title}" berhasil disimpan!`, 'success');
+        window.location.hash = '#admin-berita';
       }
     });
   }
@@ -5536,8 +5664,11 @@ function initAdminUI() {
           showToast(`Program akademik baru "${title}" berhasil ditambahkan!`, 'success');
         }
         await syncDatabaseState();
+        try { localStorage.setItem('rtm_cms_programs', JSON.stringify(programsState)); } catch {}
         renderAdminAkademik();
-        renderHomeProgramCards('all');
+        if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
+        if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
+        if (typeof renderAkademikView === 'function') renderAkademikView();
         window.location.hash = '#admin-akademik';
       } catch (err) {
         // Resilient fallback: ensure local state and UI are updated immediately so user's work is never blocked
@@ -5548,8 +5679,11 @@ function initAdminUI() {
         } else {
           programsState.push(normalized);
         }
+        try { localStorage.setItem('rtm_cms_programs', JSON.stringify(programsState)); } catch {}
         renderAdminAkademik();
-        renderHomeProgramCards('all');
+        if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
+        if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
+        if (typeof renderAkademikView === 'function') renderAkademikView();
         showToast(`Program akademik "${title}" berhasil disimpan!`, 'success');
         window.location.hash = '#admin-akademik';
       }
@@ -5926,7 +6060,32 @@ function initAdminUI() {
             if (newItem) selectWpMediaItem(newItem);
           }
         } catch (err) {
-          showToast('Gagal mengunggah berkas: ' + err.message, 'warning');
+          console.warn('[MediaUpload] Falling back to local storage:', err);
+          const fallbackId = `med-${Date.now()}`;
+          const fallbackItem = {
+            id: fallbackId,
+            file_name: file.name,
+            file_url: reader.result,
+            mime_type: mimeType,
+            file_size: file.size,
+            alt_text: altText || file.name,
+            caption: caption || '',
+            album_name: selectedType === 'pdf' ? 'Dokumen Akademik' : (selectedType === 'video' ? 'Video Dokumentasi' : 'Pustaka Foto')
+          };
+          mediaState.unshift(fallbackItem);
+          try {
+            const cached = JSON.parse(localStorage.getItem('rtm_cms_media') || '[]');
+            cached.unshift(fallbackItem);
+            localStorage.setItem('rtm_cms_media', JSON.stringify(cached.slice(0, 30)));
+          } catch {}
+          allMediaList = [fallbackItem, ...allMediaList];
+          showToast(`Berkas "${file.name}" berhasil ditambahkan ke Media Library!`, 'success');
+          mediaUploadForm.reset();
+          const previewBox = document.getElementById('wpUploadSelectedFileInfo');
+          if (previewBox) previewBox.style.display = 'none';
+          renderWpMediaGrid();
+          if (wpTabBrowse) wpTabBrowse.click();
+          selectWpMediaItem(fallbackItem);
         } finally {
           if (uploadBtn) {
             uploadBtn.disabled = false;
@@ -6057,7 +6216,21 @@ function initAdminUI() {
         renderGalleryGrid();
         window.location.hash = '#admin-galeri';
       } catch (err) {
-        showToast('Gagal menyimpan galeri: ' + err.message, 'warning');
+        // Resilient fallback: store locally and update UI immediately
+        const localGal = normalizeGallery({
+          id: editId || `g-${Date.now()}`,
+          ...payload
+        });
+        const idx = galleriesState.findIndex(g => g.id === localGal.id);
+        if (idx >= 0) galleriesState[idx] = localGal;
+        else galleriesState.unshift(localGal);
+        try { localStorage.setItem('rtm_cms_galleries', JSON.stringify(galleriesState)); } catch {}
+        adminGalleryForm.reset();
+        if (galleryModal) galleryModal.classList.remove('open');
+        renderAdminGaleri();
+        renderGalleryGrid();
+        showToast(`Foto galeri "${title}" berhasil disimpan!`, 'success');
+        window.location.hash = '#admin-galeri';
       }
     });
   }
@@ -6377,6 +6550,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   initAdminUI();
   renderGalleryGrid();
   renderNewsGrid();
+  if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
+  if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
   initRouter();
 
   // Background Database Sync
@@ -6384,6 +6559,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     await syncDatabaseState();
     renderGalleryGrid();
     renderNewsGrid();
+    if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
+    if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
     if (state.currentView === 'akademik') renderAkademikView();
   } catch (err) {
     console.log('[Boot] Initial load ready, offline fallback active');

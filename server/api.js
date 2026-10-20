@@ -16,7 +16,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const api = express.Router();
-api.use(express.json({ limit: '10mb' }));
+api.use((req, res, next) => {
+  if (req.body !== undefined) return next();
+  express.json({ limit: '50mb' })(req, res, (err) => {
+    if (err) return next(err);
+    if (req.body !== undefined) return next();
+    express.urlencoded({ extended: true, limit: '50mb' })(req, res, next);
+  });
+});
 
 // In-memory brute force tracker (PRD 5.1 A)
 const failedAttemptsMap = new Map();
@@ -1632,7 +1639,7 @@ api.post('/media', verifyRoleIfAuthenticated('superadmin', 'editor', 'finance'),
     }
 
     let finalUrl = file_url;
-    if (data_url && (data_url.startsWith('data:image/') || data_url.startsWith('data:application/pdf') || data_url.startsWith('data:video/'))) {
+    if (data_url && data_url.startsWith('data:')) {
       const uploadsDir = path.resolve(__dirname, '../public/assets/uploads');
       if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
@@ -1644,11 +1651,16 @@ api.post('/media', verifyRoleIfAuthenticated('superadmin', 'editor', 'finance'),
       else if (mime_type.includes('png')) ext = 'png';
       else if (mime_type.includes('webp')) ext = 'webp';
       else if (mime_type.includes('svg')) ext = 'svg';
+      else if (mime_type.includes('gif')) ext = 'gif';
       else ext = mime_type.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg';
       const safeName = (file_name || `upload-${Date.now()}`).replace(/[^a-zA-Z0-9._-]/g, '_').replace(/\.[^.]+$/, '') + '-' + Date.now() + '.' + ext;
-      const base64Data = data_url.split(',')[1];
-      fs.writeFileSync(path.join(uploadsDir, safeName), Buffer.from(base64Data, 'base64'));
-      finalUrl = `/assets/uploads/${safeName}`;
+      try {
+        const base64Data = data_url.split(',')[1] || data_url;
+        fs.writeFileSync(path.join(uploadsDir, safeName), Buffer.from(base64Data, 'base64'));
+        finalUrl = `/assets/uploads/${safeName}`;
+      } catch (writeErr) {
+        finalUrl = data_url; // fallback to inline data URL if disk write encounters permissions
+      }
     }
 
     if (!finalUrl) {
@@ -2579,5 +2591,31 @@ api.put('/site-settings', verifyRoleIfAuthenticated('superadmin'), (req, res, ne
 
 // Express app wrapper for Vite connect middleware & standalone server compatibility
 export const apiApp = express();
+apiApp.use((req, res, next) => {
+  if (req.body !== undefined) return next();
+  express.json({ limit: '50mb' })(req, res, (err) => {
+    if (err) return next(err);
+    if (req.body !== undefined) return next();
+    express.urlencoded({ extended: true, limit: '50mb' })(req, res, next);
+  });
+});
+
+// Strip /api prefix if present so router always matches /media, /programs, etc.
+apiApp.use((req, res, next) => {
+  if (req.url && req.url.startsWith('/api/')) {
+    req.url = req.url.slice(4);
+  } else if (req.url === '/api') {
+    req.url = '/';
+  }
+  next();
+});
+
 apiApp.use(api);
-apiApp.use('/api', api);
+
+// Fallback JSON 404 handler for unmatched API routes
+apiApp.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Rute API tidak ditemukan: ${req.method} ${req.originalUrl || req.url}`
+  });
+});

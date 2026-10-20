@@ -474,29 +474,91 @@ api.get('/programs/:id', (req, res) => {
 
 api.post('/programs', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
-    const {
-      name,
-      category = 'non_formal',
-      slug: rawSlug,
-      badge = 'Program RTM',
-      headline = '',
-      description = '',
-      eligibility_criteria = '',
-      duration_claim = '6 Bulan',
-      schedule_info = '',
-      target_participants = 'Muslimah / Umum',
-      application_instructions = '',
-      form_schema = [],
-      quota = 30,
-      investment_fee = 0,
-      syllabus_pdf_url = '',
-      is_active = 1,
-      publication_status = 'published',
-      image = '/assets/images/halaqoh.jpg'
-    } = req.body;
+    const rawId = req.body.id || req.body.rawId;
+    const name = req.body.name || req.body.title;
+    const category = req.body.category === 'formal' ? 'formal' : (req.body.category || 'non_formal');
+    const rawSlug = req.body.slug || rawId;
+    const badge = req.body.badge || (category === 'formal' ? 'Program Formal' : 'Program Unggulan');
+    const headline = req.body.headline || req.body.subtitle || req.body.description || name || '';
+    const description = req.body.description || req.body.subtitle || headline || '';
+    const eligibility_criteria = req.body.eligibility_criteria || '';
+    const duration_claim = req.body.duration_claim || req.body.duration || '3 Tahun';
+    const schedule_info = req.body.schedule_info || '';
+    const target_participants = req.body.target_participants || 'Muslimah / Umum';
+    const application_instructions = req.body.application_instructions || '';
+    const form_schema = req.body.form_schema || [];
+    const quota = req.body.quota || 30;
+    const investment_fee = req.body.investment_fee || 0;
+    const syllabus_pdf_url = req.body.syllabus_pdf_url || '';
+    const is_active = req.body.is_active !== undefined ? (req.body.is_active ? 1 : 0) : 1;
+    const publication_status = req.body.publication_status || 'published';
+    const image = req.body.image || req.body.hero_image || '/assets/images/classroom.jpg';
 
-    if (!name || !headline) {
-      return res.status(400).json({ success: false, message: 'Nama program dan headline wajib diisi.' });
+    if (!name) {
+      return res.status(400).json({ success: false, message: 'Nama program wajib diisi.' });
+    }
+
+    // If program with rawId or rawSlug already exists, update it cleanly
+    const existing = (rawId || rawSlug)
+      ? db.prepare('SELECT id FROM academic_programs WHERE id = ? OR slug = ?').get(rawId || rawSlug, rawId || rawSlug)
+      : null;
+
+    if (existing) {
+      const formSchemaStr = typeof form_schema === 'string' ? form_schema : JSON.stringify(form_schema || []);
+      db.prepare(`
+        UPDATE academic_programs SET
+          name = COALESCE(?, name),
+          category = COALESCE(?, category),
+          badge = COALESCE(?, badge),
+          headline = COALESCE(?, headline),
+          description = COALESCE(?, description),
+          eligibility_criteria = COALESCE(?, eligibility_criteria),
+          duration_claim = COALESCE(?, duration_claim),
+          schedule_info = COALESCE(?, schedule_info),
+          target_participants = COALESCE(?, target_participants),
+          application_instructions = COALESCE(?, application_instructions),
+          form_schema = COALESCE(?, form_schema),
+          quota = COALESCE(?, quota),
+          investment_fee = COALESCE(?, investment_fee),
+          syllabus_pdf_url = COALESCE(?, syllabus_pdf_url),
+          is_active = COALESCE(?, is_active),
+          publication_status = COALESCE(?, publication_status),
+          image = COALESCE(?, image),
+          updated_at = datetime('now')
+        WHERE id = ?
+      `).run(
+        name,
+        category,
+        badge,
+        headline,
+        description,
+        eligibility_criteria,
+        duration_claim,
+        schedule_info,
+        target_participants,
+        application_instructions,
+        formSchemaStr,
+        Number(quota || 30),
+        Number(investment_fee || 0),
+        syllabus_pdf_url || `/downloads/silabus-${existing.id}.pdf`,
+        is_active,
+        publication_status,
+        image,
+        existing.id
+      );
+
+      logSystemAudit({
+        actorId: req.user?.id,
+        actorName: req.user?.name || 'Admin',
+        actorRole: req.user?.role,
+        module: 'akademik',
+        action: 'UPDATE',
+        entityType: 'academic_program',
+        entityId: existing.id,
+        summary: `Memperbarui program akademik: ${name}`
+      });
+
+      return res.status(200).json({ success: true, id: existing.id, slug: existing.id, message: 'Program akademik berhasil diperbarui.' });
     }
 
     let baseSlug = (rawSlug || name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -506,7 +568,7 @@ api.post('/programs', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, r
       slug = `${baseSlug}-${counter++}`;
     }
 
-    const id = slug;
+    const id = rawId && !db.prepare('SELECT id FROM academic_programs WHERE id = ?').get(rawId) ? rawId : slug;
     db.prepare(`
       INSERT INTO academic_programs (
         id, name, category, slug, badge, headline, description,
@@ -517,7 +579,7 @@ api.post('/programs', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, r
     `).run(
       id,
       name,
-      category === 'formal' ? 'formal' : 'non_formal',
+      category,
       slug,
       badge,
       headline,
@@ -531,9 +593,9 @@ api.post('/programs', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, r
       Number(quota || 30),
       Number(investment_fee || 0),
       syllabus_pdf_url || `/downloads/silabus-${id}.pdf`,
-      is_active ? 1 : 0,
-      publication_status || 'published',
-      image || '/assets/images/halaqoh.jpg'
+      is_active,
+      publication_status,
+      image
     );
 
     logSystemAudit({
@@ -556,29 +618,59 @@ api.post('/programs', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, r
 api.put('/programs/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      name,
-      category,
-      badge,
-      headline,
-      description,
-      eligibility_criteria,
-      duration_claim,
-      schedule_info,
-      target_participants,
-      application_instructions,
-      form_schema,
-      quota,
-      investment_fee,
-      syllabus_pdf_url,
-      is_active,
-      publication_status,
-      image
-    } = req.body;
+    const name = req.body.name || req.body.title;
+    const category = req.body.category;
+    const badge = req.body.badge;
+    const headline = req.body.headline || req.body.subtitle;
+    const description = req.body.description || req.body.subtitle;
+    const eligibility_criteria = req.body.eligibility_criteria;
+    const duration_claim = req.body.duration_claim || req.body.duration;
+    const schedule_info = req.body.schedule_info;
+    const target_participants = req.body.target_participants;
+    const application_instructions = req.body.application_instructions;
+    const form_schema = req.body.form_schema;
+    const quota = req.body.quota;
+    const investment_fee = req.body.investment_fee;
+    const syllabus_pdf_url = req.body.syllabus_pdf_url;
+    const is_active = req.body.is_active;
+    const publication_status = req.body.publication_status;
+    const image = req.body.image || req.body.hero_image;
 
-    const existing = db.prepare('SELECT * FROM academic_programs WHERE id = ?').get(id);
+    let existing = db.prepare('SELECT * FROM academic_programs WHERE id = ? OR slug = ?').get(id, id);
     if (!existing) {
-      return res.status(404).json({ success: false, message: 'Program akademik tidak ditemukan.' });
+      // Auto-upsert into database so program edits or creates with an existing ID never return 404
+      const actualId = id;
+      const actualSlug = id;
+      db.prepare(`
+        INSERT INTO academic_programs (
+          id, name, category, slug, badge, headline, description,
+          eligibility_criteria, duration_claim, schedule_info, target_participants,
+          application_instructions, form_schema, quota, enrolled, investment_fee,
+          syllabus_pdf_url, is_active, publication_status, image, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+      `).run(
+        actualId,
+        name || 'Program Akademik',
+        category === 'formal' ? 'formal' : (category || 'non_formal'),
+        actualSlug,
+        badge || 'Program RTM',
+        headline || description || '',
+        description || headline || '',
+        eligibility_criteria || '',
+        duration_claim || '3 Tahun',
+        schedule_info || '',
+        target_participants || 'Muslimah / Umum',
+        application_instructions || '',
+        typeof form_schema === 'string' ? form_schema : JSON.stringify(form_schema || []),
+        Number(quota || 30),
+        Number(investment_fee || 0),
+        syllabus_pdf_url || `/downloads/silabus-${actualId}.pdf`,
+        is_active !== undefined ? (is_active ? 1 : 0) : 1,
+        publication_status || 'published',
+        image || '/assets/images/classroom.jpg'
+      );
+
+      existing = db.prepare('SELECT * FROM academic_programs WHERE id = ?').get(actualId);
     }
 
     const formSchemaStr = form_schema !== undefined
@@ -626,7 +718,7 @@ api.put('/programs/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req
       is_active !== undefined ? (is_active ? 1 : 0) : null,
       publication_status ?? null,
       image ?? null,
-      id
+      existing.id
     );
 
     logSystemAudit({
@@ -636,7 +728,7 @@ api.put('/programs/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req
       module: 'akademik',
       action: 'UPDATE',
       entityType: 'academic_program',
-      entityId: id,
+      entityId: existing.id,
       summary: `Memperbarui program akademik & skema pendaftaran: ${name || existing.name}`
     });
 
@@ -649,11 +741,18 @@ api.put('/programs/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req
 api.patch('/programs/:id/toggle', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const { id } = req.params;
-    const prog = db.prepare('SELECT name, is_active FROM academic_programs WHERE id = ?').get(id);
-    if (!prog) return res.status(404).json({ success: false, message: 'Program tidak ditemukan.' });
+    let prog = db.prepare('SELECT id, name, is_active FROM academic_programs WHERE id = ? OR slug = ?').get(id, id);
+    if (!prog) {
+      db.prepare(`
+        INSERT INTO academic_programs (
+          id, name, slug, badge, headline, description, is_active, publication_status, created_at, updated_at
+        ) VALUES (?, ?, ?, 'Program RTM', 'Program RTM', 'Program RTM', 1, 'published', datetime('now'), datetime('now'))
+      `).run(id, id, id);
+      prog = { id, name: id, is_active: 1 };
+    }
 
     const newStatus = prog.is_active === 1 ? 0 : 1;
-    db.prepare("UPDATE academic_programs SET is_active = ?, updated_at = datetime('now') WHERE id = ?").run(newStatus, id);
+    db.prepare("UPDATE academic_programs SET is_active = ?, updated_at = datetime('now') WHERE id = ?").run(newStatus, prog.id);
 
     logSystemAudit({
       actorId: req.user?.id,

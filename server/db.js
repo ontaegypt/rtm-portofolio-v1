@@ -347,6 +347,35 @@ function ensureSchemaUpgrades() {
   addColumnIfNotExists('site_settings', 'published_at', 'TEXT');
   addColumnIfNotExists('site_settings', 'updated_by', 'TEXT');
 
+  // Ensure all programs from data.js exist in academic_programs
+  for (const p of PROGRAMS) {
+    const exists = db.prepare('SELECT id FROM academic_programs WHERE id = ? OR slug = ?').get(String(p.id), String(p.id));
+    if (!exists) {
+      db.prepare(`
+        INSERT INTO academic_programs (
+          id, name, category, slug, badge, headline, description,
+          duration_claim, target_participants, quota, enrolled, investment_fee,
+          syllabus_pdf_url, is_active, publication_status, image, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'published', ?, datetime('now'), datetime('now'))
+      `).run(
+        String(p.id),
+        String(p.name || p.shortTitle || p.title || 'Program'),
+        String(p.category || 'formal'),
+        String(p.id),
+        String(p.badge || ''),
+        String(p.headline || ''),
+        String(p.summary || p.shortDescription || ''),
+        String(p.durationClaim || '1 Tahun'),
+        String(p.about?.target || 'Umum'),
+        Number(p.quota || 30),
+        Number(p.enrolled || 18),
+        Number(p.investmentFee || 0),
+        String(p.syllabusPdf || `/downloads/silabus-${p.id}.pdf`),
+        String(p.image || '')
+      );
+    }
+  }
+
   // Seed default dynamic form_schema on programs if empty
   const programs = db.prepare('SELECT id, name, category, form_schema, eligibility_criteria, schedule_info, application_instructions FROM academic_programs').all();
   for (const p of programs) {

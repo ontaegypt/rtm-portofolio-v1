@@ -376,6 +376,106 @@ function ensureSchemaUpgrades() {
     }
   }
 
+  // Ensure all news articles from data.js exist in articles table
+  for (const a of NEWS_ARTICLES) {
+    const exists = db.prepare('SELECT id FROM articles WHERE id = ? OR slug = ?').get(String(a.id), String(a.id));
+    if (!exists) {
+      db.prepare(`
+        INSERT INTO articles (id, author_id, author_name, title, slug, category, excerpt, content, thumbnail_url, tags, seo_title, seo_description, read_time, view_count, status, published_at, created_at, updated_at)
+        VALUES (?, 'usr-1', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, datetime('now'), datetime('now'))
+      `).run(
+        String(a.id),
+        String(a.author || 'Tim Media RTM'),
+        String(a.title),
+        String(a.id),
+        String(a.category || 'Berita'),
+        String(a.excerpt || ''),
+        String(a.content || a.excerpt || ''),
+        String(a.image || a.thumbnail || '/assets/images/campus.jpg'),
+        JSON.stringify(a.tags || ['Tahfidz', 'RTM']),
+        String(a.title),
+        String(a.excerpt || ''),
+        String(a.readTime || '4 min baca'),
+        Number(a.viewCount || 120),
+        String(a.date || '2026-10-10')
+      );
+    }
+  }
+
+  // Ensure all galleries from data.js exist in galleries table
+  for (let idx = 0; idx < GALLERIES.length; idx++) {
+    const g = GALLERIES[idx];
+    const exists = db.prepare('SELECT id FROM galleries WHERE id = ?').get(String(g.id));
+    if (!exists) {
+      db.prepare(`
+        INSERT INTO galleries (id, title, category, album_name, media_type, media_url, alt_text, caption, sort_order, status, date)
+        VALUES (?, ?, ?, ?, 'photo', ?, ?, ?, ?, 'published', ?)
+      `).run(
+        String(g.id),
+        String(g.title),
+        String(g.category || 'gedung'),
+        String(g.album || 'Dokumentasi Utama'),
+        String(g.image || ''),
+        String(g.title),
+        String(g.caption || g.title),
+        idx + 1,
+        '2026-03-15'
+      );
+    }
+  }
+
+  // Ensure all campaigns from data.js exist in campaigns table
+  for (const c of CAMPAIGNS) {
+    const exists = db.prepare('SELECT id FROM campaigns WHERE id = ? OR slug = ?').get(String(c.id), String(c.id));
+    if (!exists) {
+      db.prepare(`
+        INSERT INTO campaigns (id, title, slug, type, category_name, target_amount, collected_amount, donor_count, cover_image, description, status, is_urgent, end_date)
+        VALUES (?, ?, ?, ?, ?, ?, 0, 0, ?, ?, ?, ?, ?)
+      `).run(
+        String(c.id),
+        String(c.title),
+        String(c.id),
+        String(c.type || 'wakaf_pembangunan'),
+        String(c.categoryName || 'Infrastruktur'),
+        Number(c.targetAmount || 100000000),
+        String(c.image || '/assets/images/campus.jpg'),
+        String(c.description || ''),
+        String(c.status || 'active'),
+        c.isUrgent ? 1 : 0,
+        String(c.endDate || '2027-12-31')
+      );
+    }
+  }
+
+  // Ensure default site_settings exists
+  const siteIdentity = db.prepare("SELECT value FROM site_settings WHERE key = 'site_identity'").get();
+  if (!siteIdentity) {
+    const defaultSite = {
+      title: INSTITUTION.name,
+      shortTitle: INSTITUTION.shortName,
+      tagline: INSTITUTION.tagline,
+      mudir: INSTITUTION.mudir,
+      logoUrl: '/assets/images/logo-header-RTM.png',
+      whatsappPPDB: INSTITUTION.whatsappPPDB,
+      whatsappDonasi: INSTITUTION.whatsappDonasi,
+      email: INSTITUTION.email,
+      address: INSTITUTION.address,
+      bankAccountInfo: 'BSI 7199 8822 11 a.n. Yayasan Rumah Tahfidz Al-Hikmah',
+      heroTitle: 'Mencetak Generasi Qur\'ani yang Mutqin, Berkarakter, dan Berdaya Saing Global',
+      aboutSummary: 'Rumah Tahfidz Muslimah (RTM) adalah lembaga pendidikan tahfidz Al-Qur\'an terpadu dengan asrama berstandar tinggi.',
+      vision: 'Menjadi pusat unggulan tahfidz Al-Qur\'an dan kaderisasi muslimah berprestasi tingkat nasional.',
+      mission: '1. Menyelenggarakan talaqqi tahfidz bersanad muttashil.\n2. Mengintegrasikan kurikulum agama dan sains modern.\n3. Membina adab dan karakter kepemimpinan islami.',
+      socialInstagram: '@rumahtahfidz_rtm',
+      socialYoutube: 'Rumah Tahfidz Official',
+      navCtaLabel: 'Daftar PPDB Online',
+      footerCopyright: '© 2026 Yayasan Rumah Tahfidz Al-Hikmah. Hak Cipta Dilindungi.'
+    };
+    db.prepare(`
+      INSERT INTO site_settings (key, value, draft_value, published_at, updated_at)
+      VALUES ('site_identity', ?, ?, datetime('now'), datetime('now'))
+    `).run(JSON.stringify(defaultSite), JSON.stringify(defaultSite));
+  }
+
   // Seed default dynamic form_schema on programs if empty
   const programs = db.prepare('SELECT id, name, category, form_schema, eligibility_criteria, schedule_info, application_instructions FROM academic_programs').all();
   for (const p of programs) {

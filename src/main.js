@@ -909,16 +909,22 @@ function renderAkademikView() {
   const container = document.getElementById('akademikProgramContent');
   if (!container) return;
 
-  const program = PROGRAMS.find(p => p.id === state.activeProgramId) || PROGRAMS[0];
+  const activePrograms = (programsState && programsState.length) ? programsState : PROGRAMS;
+  const program = activePrograms.find(p => p.id === state.activeProgramId) || activePrograms[0];
+  const isProgramOpen = program.ppdbOpen !== false && program.is_active !== 0;
 
   // Render Top Selector Buttons
   const selectorContainer = document.getElementById('academicProgramSelector');
   if (selectorContainer) {
-    selectorContainer.innerHTML = PROGRAMS.map(p => `
-      <button class="program-tab-btn ${p.id === program.id ? 'active' : ''}" data-program-id="${p.id}">
-        ${p.category === 'formal' ? '🏛️' : '📖'} ${p.shortTitle}
-      </button>
-    `).join('');
+    selectorContainer.innerHTML = activePrograms.map(p => {
+      const open = p.ppdbOpen !== false && p.is_active !== 0;
+      return `
+        <button class="program-tab-btn ${p.id === program.id ? 'active' : ''}" data-program-id="${p.id}">
+          ${p.category === 'formal' ? '🏛️' : '📖'} ${p.shortTitle || p.name}
+          ${!open ? '<span style="font-size:0.68rem;background:#ef4444;color:#fff;padding:1px 6px;border-radius:999px;margin-left:6px;font-weight:700;">TUTUP</span>' : ''}
+        </button>
+      `;
+    }).join('');
 
     selectorContainer.querySelectorAll('.program-tab-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -941,35 +947,45 @@ function renderAkademikView() {
             <div class="prog-badge-tag">
               <span>${program.category === 'formal' ? 'Pendidikan Formal Terpadu' : 'Pendidikan Non-Formal'}</span>
               <span>•</span>
-              <span>${program.badge}</span>
+              <span>${program.badge || 'Program Unggulan'}</span>
+              ${!isProgramOpen ? '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:999px;font-weight:700;">• Pendaftaran Ditutup</span>' : ''}
             </div>
             <h2 class="prog-hero-title">${program.name}</h2>
-            <p class="prog-claim-text">${program.headline}</p>
-            <p class="prog-summary-text">${program.summary}</p>
+            <p class="prog-claim-text">${program.headline || ''}</p>
+            <p class="prog-summary-text">${program.summary || ''}</p>
             
             <div class="prog-stats-counter-bar">
               <div class="prog-counter-item">
                 <span class="prog-counter-label">Durasi Program</span>
-                <span class="prog-counter-val">${program.stats.durasi}</span>
+                <span class="prog-counter-val">${program.stats?.durasi || '3 Tahun'}</span>
               </div>
               <div class="prog-counter-item">
                 <span class="prog-counter-label">Target Hafalan</span>
-                <span class="prog-counter-val">${program.stats.targetHafalan}</span>
+                <span class="prog-counter-val">${program.stats?.targetHafalan || '30 Juz'}</span>
               </div>
               <div class="prog-counter-item">
                 <span class="prog-counter-label">Rasio Asatidz</span>
-                <span class="prog-counter-val">${program.stats.rasioUstadz}</span>
+                <span class="prog-counter-val">${program.stats?.rasioUstadz || '1:10'}</span>
               </div>
               <div class="prog-counter-item">
                 <span class="prog-counter-label">Kelulusan & Ijazah</span>
-                <span class="prog-counter-val">${program.stats.ijazah}</span>
+                <span class="prog-counter-val">${program.stats?.ijazah || 'Sanad & Formal'}</span>
               </div>
             </div>
 
             <div class="prog-hero-buttons">
-              <a href="#enrollmentFormSection" class="btn btn-primary" onclick="document.getElementById('enrollmentFormSection').scrollIntoView({behavior: 'smooth'})">
-                Daftar Program Ini Sekarang
-              </a>
+              ${isProgramOpen ? `
+                <a href="#enrollmentFormSection" class="btn btn-primary" onclick="document.getElementById('enrollmentFormSection')?.scrollIntoView({behavior: 'smooth'})">
+                  Daftar Program Ini Sekarang
+                </a>
+              ` : `
+                <button class="btn btn-secondary" style="opacity: 0.8; cursor: not-allowed; background: #fee2e2; color: #991b1b; border: 1px solid #f87171;" disabled title="Pendaftaran untuk program ini sedang ditutup">
+                  🔒 Pendaftaran Sedang Ditutup
+                </button>
+                <a href="https://wa.me/${(INSTITUTION.whatsappPPDB || '6281234567890').replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalamu\'alaikum Admin PPDB, saya ingin tanya info gelombang berikutnya untuk program ' + program.name)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="border: 1px solid var(--primary-purple); color: var(--primary-purple); font-weight: 600;">
+                  Hubungi Panitia PPDB
+                </a>
+              `}
               <button class="btn btn-secondary" id="btnDownloadSilabus">
                 <span class="btn-icon-leading">${getIconSvg('download', 18)}</span>
                 Download PDF Silabus
@@ -1223,10 +1239,27 @@ function renderAkademikView() {
       <div class="container">
         <div class="enrollment-form-container">
           <div class="section-header" style="margin-bottom: 2.5rem;">
-            <h3 class="section-title">Daftar Program: ${program.name}</h3>
-            <p class="section-description">Silakan isi formulir resmi di bawah ini. Tim panitia PPDB akan segera menghubungi Anda via WhatsApp.</p>
+            <h3 class="section-title">Pendaftaran Program: ${program.name}</h3>
+            <p class="section-description">${isProgramOpen ? 'Silakan isi formulir resmi di bawah ini. Tim panitia PPDB akan segera menghubungi Anda via WhatsApp.' : 'Status penerimaan dan pendaftaran untuk program ini.'}</p>
           </div>
 
+          ${!isProgramOpen ? `
+            <div class="enrollment-closed-banner" style="background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%); border: 2px dashed #f87171; border-radius: 1.25rem; padding: 3rem 2rem; text-align: center; max-width: 680px; margin: 0 auto; box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.1);">
+              <div style="font-size: 3.5rem; margin-bottom: 1rem; line-height: 1;">🔒</div>
+              <h4 style="font-size: 1.5rem; font-weight: 800; color: #991b1b; margin-bottom: 0.75rem;">Pendaftaran Program Ini Sedang Ditutup</h4>
+              <p style="color: #4b5563; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.75rem; max-width: 520px; margin-left: auto; margin-right: auto;">
+                Mohon maaf, penerimaan santri baru untuk program <strong>${program.name}</strong> saat ini sedang ditutup atau kuota telah terpenuhi. Silakan hubungi panitia PPDB kami untuk mendapatkan informasi pembukaan gelombang berikutnya atau berkonsultasi mengenai program pendidikan lainnya.
+              </p>
+              <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="https://wa.me/${(INSTITUTION.whatsappPPDB || '6281234567890').replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalamu\'alaikum Panitia PPDB Rumah Tahfidz, saya ingin bertanya tentang pembukaan gelombang selanjutnya untuk program ' + program.name)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #25D366; border-color: #25D366; color: #ffffff; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem;">
+                  <span>💬 Chat Admin PPDB WhatsApp</span>
+                </a>
+                <button type="button" class="btn btn-secondary" onclick="window.location.hash='#akademik'; window.scrollTo({top: 400, behavior: 'smooth'});" style="padding: 0.75rem 1.5rem; border-radius: 0.75rem;">
+                  Lihat Program Lainnya
+                </button>
+              </div>
+            </div>
+          ` : `
           <form id="directEnrollmentForm">
             <input type="hidden" name="programId" value="${program.id}" />
             <input type="hidden" name="programName" value="${program.name}" />
@@ -1318,6 +1351,7 @@ function renderAkademikView() {
               </p>
             </div>
           </form>
+          `}
         </div>
       </div>
     </section>
@@ -1430,6 +1464,10 @@ function initAkademikInteractions(program) {
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (program.ppdbOpen === false || program.is_active === 0) {
+        showToast(`Mohon maaf, pendaftaran untuk program "${program.name}" saat ini sedang ditutup.`, 'error');
+        return;
+      }
       const submitBtn = form.querySelector('button[type="submit"]');
       const originalText = submitBtn ? submitBtn.innerHTML : '';
       if (submitBtn) {
@@ -1638,9 +1676,17 @@ export function openPPDBModal(preselectedProgramId = null) {
 
   const progSelect = document.getElementById('modalProgramId');
   if (progSelect) {
-    if (preselectedProgramId) {
+    const list = (programsState && programsState.length) ? programsState : PROGRAMS;
+    progSelect.innerHTML = list.map(p => {
+      const isOpen = p.ppdbOpen !== false && p.is_active !== 0;
+      return `<option value="${p.id}" ${!isOpen ? 'data-closed="true"' : ''}>
+        ${p.name} ${isOpen ? '(Pendaftaran Buka)' : '🔒 (Pendaftaran Ditutup)'}
+      </option>`;
+    }).join('');
+
+    if (preselectedProgramId && list.some(p => p.id === preselectedProgramId)) {
       progSelect.value = preselectedProgramId;
-    } else if (state.activeProgramId) {
+    } else if (state.activeProgramId && list.some(p => p.id === state.activeProgramId)) {
       progSelect.value = state.activeProgramId;
     }
     updateProgramQuickPreview(progSelect.value);
@@ -1672,6 +1718,43 @@ function updateProgramQuickPreview(progId) {
 
   if (title) title.textContent = prog.name;
   if (desc) desc.textContent = prog.headline || prog.summary;
+
+  const isOpen = prog.ppdbOpen !== false && prog.is_active !== 0;
+  const btnNext2 = document.getElementById('btnNextToStep2');
+  let closedWarning = document.getElementById('modalProgramClosedNotice');
+  if (!closedWarning) {
+    closedWarning = document.createElement('div');
+    closedWarning.id = 'modalProgramClosedNotice';
+    const pqpCard = document.querySelector('.program-quick-preview-card');
+    if (pqpCard && pqpCard.parentNode) {
+      pqpCard.parentNode.insertBefore(closedWarning, pqpCard.nextSibling);
+    }
+  }
+
+  if (!isOpen) {
+    if (closedWarning) {
+      closedWarning.style.display = 'block';
+      closedWarning.innerHTML = `
+        <div style="background:#fef2f2;border:1px solid #f87171;color:#991b1b;border-radius:0.5rem;padding:0.75rem 1rem;font-size:0.85rem;margin-top:0.75rem;">
+          <strong>🔒 Pendaftaran Sedang Ditutup:</strong> Penerimaan untuk program <em>${prog.name}</em> saat ini belum dibuka atau kuota telah penuh. Anda tidak dapat melanjutkan pendaftaran untuk program ini.
+        </div>
+      `;
+    }
+    if (btnNext2) {
+      btnNext2.disabled = true;
+      btnNext2.style.opacity = '0.5';
+      btnNext2.style.cursor = 'not-allowed';
+      btnNext2.title = 'Program ini sedang ditutup';
+    }
+  } else {
+    if (closedWarning) closedWarning.style.display = 'none';
+    if (btnNext2) {
+      btnNext2.disabled = false;
+      btnNext2.style.opacity = '1';
+      btnNext2.style.cursor = 'pointer';
+      btnNext2.title = '';
+    }
+  }
 
   if (batchSelect && prog.batches) {
     batchSelect.innerHTML = prog.batches.map(b => `
@@ -1902,6 +1985,12 @@ export function initPPDBModalEvents() {
   const btnNext2 = document.getElementById('btnNextToStep2');
   if (btnNext2) {
     btnNext2.addEventListener('click', () => {
+      const progId = document.getElementById('modalProgramId')?.value;
+      const prog = programsState.find(p => p.id === progId) || PROGRAMS.find(p => p.id === progId);
+      if (prog && (prog.ppdbOpen === false || prog.is_active === 0)) {
+        showToast(`Mohon maaf, pendaftaran untuk program "${prog.name}" saat ini sedang ditutup.`, 'error');
+        return;
+      }
       ppdbActiveStep = 2;
       updatePPDBWizardSteps();
     });
@@ -1945,6 +2034,13 @@ export function initPPDBModalEvents() {
   if (modalForm) {
     modalForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const progId = document.getElementById('modalProgramId').value;
+      const targetProg = programsState.find(p => p.id === progId) || PROGRAMS.find(p => p.id === progId);
+      if (targetProg && (targetProg.ppdbOpen === false || targetProg.is_active === 0)) {
+        showToast(`Mohon maaf, pendaftaran untuk program "${targetProg.name}" sedang ditutup.`, 'error');
+        return;
+      }
+
       const submitBtn = document.getElementById('btnSubmitModalPPDB');
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -2462,29 +2558,35 @@ function renderHomeProgramCards(category) {
     list = list.filter(p => p.category === category);
   }
 
-  container.innerHTML = list.map(p => `
-    <div class="program-card">
-      <div class="program-card-thumb">
-        <img src="${p.image}" alt="${p.name}" loading="lazy" />
-        <span class="program-card-badge">${p.badge || 'Program Unggulan'}</span>
-      </div>
-      <div class="program-card-body">
-        <h4 class="program-card-title">${p.name}</h4>
-        <span class="program-card-claim">${p.headline || ''}</span>
-        <p class="program-card-summary">${p.summary || ''}</p>
-        
-        <div class="program-card-specs">
-          <span class="spec-item">⏱️ ${p.stats?.durasi || '3 Tahun'}</span>
-          <span class="spec-item">${p.stats?.targetHafalan || '30 Juz'}</span>
+  container.innerHTML = list.map(p => {
+    const isOpen = p.ppdbOpen !== false && p.is_active !== 0;
+    return `
+      <div class="program-card">
+        <div class="program-card-thumb" style="position: relative;">
+          <img src="${p.image}" alt="${p.name}" loading="lazy" />
+          <span class="program-card-badge">${p.badge || 'Program Unggulan'}</span>
+          <span class="program-ppdb-status-badge ${isOpen ? 'status-open' : 'status-closed'}" style="position: absolute; bottom: 8px; left: 8px; background: ${isOpen ? '#10b981' : '#ef4444'}; color: #ffffff; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; box-shadow: 0 2px 4px rgba(0,0,0,0.25);">
+            ${isOpen ? '● PPDB Buka' : '✕ Ditutup'}
+          </span>
         </div>
+        <div class="program-card-body">
+          <h4 class="program-card-title">${p.name}</h4>
+          <span class="program-card-claim">${p.headline || ''}</span>
+          <p class="program-card-summary">${p.summary || ''}</p>
+          
+          <div class="program-card-specs">
+            <span class="spec-item">⏱️ ${p.stats?.durasi || '3 Tahun'}</span>
+            <span class="spec-item">📖 ${p.stats?.targetHafalan || '30 Juz'}</span>
+          </div>
 
-        <a href="#akademik-${p.id}" class="btn-detail-link">
-          <span>Lihat Silabus & Detail</span>
-          <span>${getIconSvg('chevron-right', 16)}</span>
-        </a>
+          <a href="#akademik-${p.id}" class="btn-detail-link">
+            <span>Lihat Silabus & Detail</span>
+            <span>${getIconSvg('chevron-right', 16)}</span>
+          </a>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 // ============================================================================
@@ -3933,13 +4035,60 @@ function applySiteSettingsToDOM(siteConf = {}) {
   if (siteConf.email) INSTITUTION.email = siteConf.email;
   if (siteConf.address) INSTITUTION.address = siteConf.address;
 
+  // 1. Document Title
+  if (siteConf.title || siteConf.shortTitle) {
+    document.title = `${siteConf.title || INSTITUTION.name} | ${siteConf.tagline || INSTITUTION.tagline}`;
+  }
+
+  // 2. Logos (Header, Footer, Dashboard Sidebar)
+  if (siteConf.logoUrl) {
+    document.querySelectorAll('.header-logo, .footer-logo, #sidebarBrandLogo').forEach(img => {
+      img.src = siteConf.logoUrl;
+      img.alt = siteConf.title || INSTITUTION.name;
+    });
+  }
+
+  // 3. Hero Section Title & Lead Subtitle
   const heroTitleEl = document.querySelector('#view-home .hero-title');
   if (heroTitleEl && siteConf.heroTitle) {
     heroTitleEl.textContent = siteConf.heroTitle;
   }
+  const heroLeadEl = document.querySelector('#view-home .hero-description, #view-home .hero-lead');
+  if (heroLeadEl && siteConf.tagline) {
+    heroLeadEl.textContent = siteConf.tagline;
+  }
+
+  // 4. Footer Description & Copyright Legal Notice
+  const footerDescEl = document.querySelector('.site-footer .footer-desc');
+  if (footerDescEl && (siteConf.footerCopyright || siteConf.aboutSummary)) {
+    footerDescEl.textContent = siteConf.footerCopyright || siteConf.aboutSummary;
+  }
   const footerCopyEl = document.querySelector('.site-footer .footer-bottom p');
   if (footerCopyEl && siteConf.footerCopyright) {
     footerCopyEl.textContent = siteConf.footerCopyright;
+  }
+
+  // 5. Bank Account Information in Footer
+  if (siteConf.bankAccountInfo) {
+    const bankNum = document.querySelector('.footer-bank-num');
+    if (bankNum) bankNum.textContent = siteConf.bankAccountInfo;
+  }
+
+  // 6. Dynamic WhatsApp Links
+  if (siteConf.whatsappPPDB) {
+    const cleanWa = siteConf.whatsappPPDB.replace(/[^0-9]/g, '');
+    document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.includes('wa.me')) {
+        try {
+          const url = new URL(href);
+          url.pathname = '/' + cleanWa;
+          link.setAttribute('href', url.toString());
+        } catch {
+          // ignore malformed URLs
+        }
+      }
+    });
   }
 }
 

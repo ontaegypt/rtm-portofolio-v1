@@ -80,3 +80,7 @@ tmp/
 coverage/
 .eslintcache
 .stylelintcache
+
+# 9. Uploaded Media Assets (Aset dinamis yang diunggah pengguna)
+public/assets/uploads/*
+!public/assets/uploads/.gitkeep

@@ -73,8 +73,7 @@ const requiredIds = [
   'btnExportPPDB',
   'adminPPDBCountBadge',
   'adminPPDBTableBody',
-  'overviewPPDBTable',
-  'btnNavbarPPDB'
+  'overviewPPDBTable'
 ];
 
 console.log('🔍 Verifying DOM element integrity for Sprint 4...\n');

@@ -75,8 +75,20 @@ const state = {
 // Mutable CMS Stores (Synchronized with Backend SQLite Database & localStorage)
 let campaignsState = JSON.parse(JSON.stringify(CAMPAIGNS));
 let donationsState = JSON.parse(JSON.stringify(DONATION_TRANSACTIONS));
-let ppdbState = JSON.parse(JSON.stringify(PPDB_LEADS));
-let visitsState = JSON.parse(JSON.stringify(VISIT_RESERVATIONS));
+let ppdbState = (() => {
+  try {
+    const c = localStorage.getItem('rtm_cms_ppdb');
+    if (c) return JSON.parse(c);
+  } catch {}
+  return JSON.parse(JSON.stringify(PPDB_LEADS));
+})();
+let visitsState = (() => {
+  try {
+    const c = localStorage.getItem('rtm_cms_visits');
+    if (c) return JSON.parse(c);
+  } catch {}
+  return JSON.parse(JSON.stringify(VISIT_RESERVATIONS));
+})();
 let articlesState = (() => {
   try {
     const c = localStorage.getItem('rtm_cms_articles');
@@ -337,9 +349,16 @@ export async function syncDatabaseState() {
     }
     if (visRes.status === 'fulfilled' && visRes.value.data) {
       visitsState = visRes.value.data.map(normalizeVisit);
+      try { localStorage.setItem('rtm_cms_visits', JSON.stringify(visitsState)); } catch {}
+      if (typeof renderAdminGaleri === 'function') renderAdminGaleri();
+      if (typeof updateNotificationBell === 'function') updateNotificationBell();
     }
     if (leadRes.status === 'fulfilled' && leadRes.value.data) {
       ppdbState = leadRes.value.data.map(normalizeLead);
+      try { localStorage.setItem('rtm_cms_ppdb', JSON.stringify(ppdbState)); } catch {}
+      if (typeof renderAdminPPDBTable === 'function') renderAdminPPDBTable();
+      if (typeof renderAdminOverview === 'function') renderAdminOverview();
+      if (typeof updateNotificationBell === 'function') updateNotificationBell();
     }
     if (userRes.status === 'fulfilled' && userRes.value.data) {
       usersState = userRes.value.data.map(normalizeUser);
@@ -522,9 +541,10 @@ async function verifyAndSyncSession() {
       if (!stored || stored.role !== res.user.role || stored.id !== res.user.id || stored.name !== res.user.name) {
         auth.setStoredUser(res.user, true);
         const roleConf = ROLES_CONFIG[res.user.role] || ROLES_CONFIG.superadmin;
-        const currentHash = window.location.hash.slice(1);
-        if (currentHash.startsWith('admin-')) {
-          const mod = currentHash.replace('admin-', '');
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/admin') && currentPath !== '/admin/login') {
+          const parts = currentPath.replace('/admin', '').replace(/^\//, '').split('/');
+          const mod = parts[0] || 'overview';
           const SUBMODULE_PARENTS = {
             'article-form': 'berita',
             'user-form': 'users',
@@ -538,7 +558,7 @@ async function verifyAndSyncSession() {
           const checkMod = SUBMODULE_PARENTS[mod] || mod;
           if (mod !== 'profile' && !roleConf.allowedModules.includes(checkMod)) {
             showToast(`Akses Ditolak (403): Otorisasi akun Anda (${roleConf.name}) dipatenkan. Mengalihkan ke modul resmi.`, 'warning');
-            window.location.hash = `#admin-${roleConf.defaultModule}`;
+            navigate(`/admin/${roleConf.defaultModule}`);
             return;
           }
         }
@@ -554,7 +574,7 @@ async function verifyAndSyncSession() {
       auth.clearUser();
       client.clearToken();
       showToast('Sesi masuk Anda telah kedaluwarsa. Silakan masuk kembali.', 'warning');
-      window.location.hash = '#admin-login';
+      navigate('/admin/login');
     } else {
       // Network failure / server offline: keep the active local session intact!
       console.warn('[Auth] Server unreachable during verification, keeping active local session:', err.message);
@@ -564,113 +584,334 @@ async function verifyAndSyncSession() {
   }
 }
 
-// Router and Navigation System (Sprint 1 + Sprint 2 Auth Guard)
-function initRouter() {
-  const handleHashChange = () => {
-    let rawHash = window.location.hash.slice(1);
+// ============================================================================
+// CLEAN PERMALINK ROUTER SYSTEM (History API, Clean Paths, WordPress-style permalinks)
+// ============================================================================
 
-    // Support direct pathname routing if user enters /admin-tampilan or /admin-tampilan/identitas
-    if (!rawHash && window.location.pathname.startsWith('/admin-tampilan')) {
-      const sub = window.location.pathname.replace('/admin-tampilan', '').replace(/^\//, '');
-      rawHash = 'admin-tampilan/' + (sub || 'identitas');
-      window.location.hash = '#' + rawHash;
+// Map legacy hash formats to clean permalink paths for seamless backward-compatibility
+export function hashToPath(hash) {
+  if (!hash) return '/';
+  let clean = hash.replace(/^#\/?/, '').trim();
+  if (!clean || clean === 'home') return '/';
+
+  // Admin Login
+  if (clean === 'admin-login' || clean === 'login') return '/admin/login';
+
+  // Admin routes
+  if (clean === 'admin' || clean.startsWith('admin-') || clean.startsWith('admin/')) {
+    let sub = clean.replace(/^admin[-/]/, '');
+    if (!sub || sub === 'admin') return '/admin/overview';
+    // tampilan subtab
+    if (sub.startsWith('tampilan')) {
+      let tab = sub.replace(/^tampilan[-/]?/, '');
+      return `/admin/tampilan/${tab || 'identitas'}`;
+    }
+    return `/admin/${sub}`;
+  }
+
+  // Academic deep links: akademik-smp -> /akademik/smp
+  if (clean.startsWith('akademik-')) {
+    const progId = clean.replace('akademik-', '');
+    return `/akademik/${progId}`;
+  }
+  if (clean === 'akademik') return '/akademik';
+
+  // Public views
+  if (clean === 'visit' || clean === 'galeri' || clean === 'kunjungan') return '/visit';
+  if (clean === 'about' || clean === 'tentang') return '/about';
+  if (clean === 'news' || clean === 'berita' || clean === 'artikel') return '/news';
+
+  return `/${clean}`;
+}
+
+// Convert pathname to route descriptor
+export function pathToRoute(pathname) {
+  let clean = (pathname || '/').trim();
+  // Lowercase check while preserving potential slug casing
+  const cleanLower = clean.toLowerCase();
+
+  // Strip trailing slashes unless root
+  if (clean.length > 1 && clean.endsWith('/')) {
+    clean = clean.replace(/\/+$/, '');
+  }
+
+  // 1. Root / Home
+  if (clean === '' || clean === '/' || cleanLower === '/home') {
+    return {
+      type: 'public',
+      view: 'home',
+      path: '/',
+      title: "Rumah Tahfidz Al-Qur'an - Lembaga Pencetak Hafidz Mutqin Berakhlak Mulia"
+    };
+  }
+
+  // 2. Admin Login
+  if (cleanLower === '/admin/login' || cleanLower === '/login' || cleanLower === '/admin-login') {
+    return {
+      type: 'admin-login',
+      view: 'admin-login',
+      path: '/admin/login',
+      title: "Masuk Portal Admin Backoffice - Rumah Tahfidz"
+    };
+  }
+
+  // 3. Admin Backoffice Modules
+  if (cleanLower === '/admin' || cleanLower.startsWith('/admin/')) {
+    const parts = clean.split('/').filter(Boolean); // ['admin', module, sub]
+    let mod = (parts[1] || 'overview').toLowerCase();
+    let sub = (parts[2] || '').toLowerCase();
+
+    // Default /admin to /admin/overview
+    if (!mod || mod === 'admin') {
+      mod = 'overview';
     }
 
-    if (!rawHash) rawHash = 'home';
-    let view = rawHash;
-    let programParam = null;
-
-    // A. Route Guard for Admin Login (#admin-login)
-    if (rawHash === 'admin-login') {
-      const currentUser = auth.getStoredUser();
-      if (currentUser && client.token) {
-        const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
-        window.location.hash = `#admin-${roleConf.defaultModule}`;
-        return;
-      }
-      navigateTo('admin-login');
-      return;
-    }
-
-    // B. Route Guard for Backoffice Area (#admin, #admin-*) (PRD 5.1 A - Otorisasi Dipatenkan)
-    if (rawHash === 'admin' || rawHash.startsWith('admin-')) {
-      const currentUser = auth.getStoredUser();
-      if (!currentUser || !client.token) {
-        auth.setCallbackUrl(rawHash);
-        showToast('Sesi masuk diperlukan untuk mengakses modul administratif.', 'warning');
-        window.location.hash = '#admin-login';
-        return;
-      }
-
-      // Synchronize and verify authoritative role from database
-      verifyAndSyncSession();
-
-      // User authenticated: extract target module
-      let targetModule = rawHash === 'admin' ? null : rawHash.replace('admin-', '');
-      const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
-
-      if (!targetModule || targetModule === 'admin') {
-        targetModule = roleConf.defaultModule;
-      }
-
-      // Default #admin-tampilan to #admin-tampilan/identitas
-      if (targetModule === 'tampilan') {
-        targetModule = 'tampilan/identitas';
-      }
-      // Normalize hyphenated subtabs if used: admin-tampilan-identitas -> tampilan/identitas
-      if (targetModule.startsWith('tampilan-') && targetModule !== 'tampilan') {
-        targetModule = targetModule.replace('tampilan-', 'tampilan/');
-      }
-
-      const SUBMODULE_PARENTS = {
-        'article-form': 'berita',
-        'user-form': 'users',
-        'user-detail': 'users',
-        'gallery-form': 'galeri',
-        'syllabus-form': 'akademik',
-        'program-form': 'akademik',
-        'campaign-form': 'donasi',
-        'profile': 'overview',
-        'tampilan/identitas': 'tampilan',
-        'tampilan/kontak': 'tampilan',
-        'tampilan/beranda': 'tampilan',
-        'tampilan/footer': 'tampilan'
+    // If /admin/tampilan -> default to identitas
+    if (mod === 'tampilan') {
+      const tab = sub || 'identitas';
+      return {
+        type: 'admin',
+        module: `tampilan/${tab}`,
+        path: `/admin/tampilan/${tab}`,
+        title: "Tampilan & Identitas Lembaga - Admin Backoffice"
       };
-      const checkModule = SUBMODULE_PARENTS[targetModule] || (targetModule.startsWith('tampilan') ? 'tampilan' : targetModule);
+    }
 
-      // Check Role-Based Access Control (RBAC 403 Forbidden check)
-      if (targetModule !== 'profile' && !roleConf.allowedModules.includes(checkModule)) {
-        showToast(`Akses Ditolak (403): Role "${roleConf.name}" tidak berwenang mengelola modul ini. Hak akses dipatenkan.`, 'warning');
-        window.location.hash = `#admin-${roleConf.defaultModule}`;
-        return;
-      }
+    const ADMIN_TITLES = {
+      overview: 'Ringkasan / Analytics - Admin Backoffice',
+      akademik: 'Akademik & PPDB - Admin Backoffice',
+      donasi: 'Wakaf & Donasi - Admin Backoffice',
+      galeri: 'Galeri & Media - Admin Backoffice',
+      berita: 'Artikel & Berita - Admin Backoffice',
+      users: 'Pengguna & RBAC - Admin Backoffice',
+      profile: 'Profil Akun - Admin Backoffice',
+      'program-form': 'Editor Program Akademik - Admin Backoffice',
+      'campaign-form': 'Form Campaign Wakaf - Admin Backoffice',
+      'article-form': 'Editor Artikel Berita - Admin Backoffice',
+      'gallery-form': 'Upload Galeri Media - Admin Backoffice',
+      'user-form': 'Kelola Akun Pengguna - Admin Backoffice',
+      'user-detail': 'Detail Akun Pengguna - Admin Backoffice',
+      'syllabus-form': 'Upload Silabus Kurikulum - Admin Backoffice'
+    };
 
-      // Check Superadmin-only sub-pages
-      if ((targetModule === 'user-form' || targetModule === 'user-detail' || targetModule === 'gallery-form') && currentUser.role !== 'superadmin') {
-        showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
-        window.location.hash = `#admin-${roleConf.defaultModule}`;
-        return;
-      }
+    return {
+      type: 'admin',
+      module: mod,
+      path: `/admin/${mod}`,
+      title: ADMIN_TITLES[mod] || 'Dashboard Admin - Rumah Tahfidz'
+    };
+  }
 
-      // Render Admin Module
-      navigateToAdmin(targetModule);
+  // 4. Public Academic Programs (/akademik, /akademik/:id)
+  if (cleanLower === '/akademik' || cleanLower.startsWith('/akademik/')) {
+    const parts = clean.split('/').filter(Boolean);
+    const programId = parts[1] ? parts[1].toLowerCase() : null;
+    return {
+      type: 'public',
+      view: 'akademik',
+      programParam: programId,
+      path: programId ? `/akademik/${programId}` : '/akademik',
+      title: programId ? `Program ${programId.toUpperCase()} - Rumah Tahfidz` : "Program Akademik & PPDB - Rumah Tahfidz"
+    };
+  }
+
+  // 5. Public Visit & Galeri
+  if (cleanLower === '/visit' || cleanLower === '/galeri' || cleanLower === '/kunjungan') {
+    return {
+      type: 'public',
+      view: 'visit',
+      path: '/visit',
+      title: "Galeri Dokumentasi & Reservasi Kunjungan - Rumah Tahfidz"
+    };
+  }
+
+  // 6. Public About
+  if (cleanLower === '/about' || cleanLower === '/tentang') {
+    return {
+      type: 'public',
+      view: 'about',
+      path: '/about',
+      title: "Tentang Kami & Legalitas Resmi - Rumah Tahfidz"
+    };
+  }
+
+  // 7. Public News
+  if (cleanLower === '/news' || cleanLower === '/berita' || cleanLower === '/artikel') {
+    return {
+      type: 'public',
+      view: 'news',
+      path: '/news',
+      title: "Kabar Santri & Artikel Edukasi - Rumah Tahfidz"
+    };
+  }
+
+  // Default fallback to home
+  return {
+    type: 'public',
+    view: 'home',
+    path: '/',
+    title: "Rumah Tahfidz Al-Qur'an - Lembaga Pencetak Hafidz Mutqin"
+  };
+}
+
+// Core Clean URL Navigation function
+export function navigate(url, pushState = true) {
+  let targetPath = url;
+  if (!targetPath) targetPath = '/';
+
+  // Handle hash strings (e.g. #admin-donasi or #akademik-smp)
+  if (targetPath.startsWith('#') || (!targetPath.startsWith('/') && !targetPath.startsWith('http'))) {
+    targetPath = hashToPath(targetPath);
+  }
+
+  // Remove any remaining hash
+  if (targetPath.includes('#') && !targetPath.startsWith('#')) {
+    targetPath = targetPath.split('#')[0];
+  }
+
+  if (pushState) {
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState(null, '', targetPath);
+    }
+  } else {
+    if (window.location.pathname !== targetPath) {
+      window.history.replaceState(null, '', targetPath);
+    }
+  }
+
+  handleRoute();
+}
+
+// Global exposure for non-module inline calls
+if (typeof window !== 'undefined') {
+  window.routerNavigate = navigate;
+}
+
+// Handle current route based on URL pathname
+export function handleRoute() {
+  // If URL has a legacy hash (e.g. /#admin-galeri or /#akademik-smp), migrate it cleanly
+  if (window.location.hash) {
+    const convertedPath = hashToPath(window.location.hash);
+    window.history.replaceState(null, '', convertedPath);
+  }
+
+  const route = pathToRoute(window.location.pathname);
+
+  // Set document title
+  if (route.title) {
+    document.title = route.title;
+  }
+
+  // A. Admin Login Route
+  if (route.type === 'admin-login') {
+    const currentUser = auth.getStoredUser();
+    if (currentUser && client.token) {
+      const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
+      navigate(`/admin/${roleConf.defaultModule}`, false);
+      return;
+    }
+    navigateTo('admin-login');
+    return;
+  }
+
+  // B. Admin Backoffice Route
+  if (route.type === 'admin') {
+    const currentUser = auth.getStoredUser();
+    if (!currentUser || !client.token) {
+      auth.setCallbackUrl(window.location.pathname);
+      showToast('Sesi masuk diperlukan untuk mengakses modul administratif.', 'warning');
+      navigate('/admin/login', false);
       return;
     }
 
-    // C. Public Academic Program Deep Link (#akademik-smp, etc.)
-    if (rawHash.startsWith('akademik')) {
-      view = 'akademik';
-      const parts = rawHash.split('-');
-      if (parts.length > 1) {
-        programParam = parts.slice(1).join('-');
+    // Synchronize and verify authoritative role from database
+    verifyAndSyncSession();
+
+    let targetModule = route.module;
+    const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
+
+    if (!targetModule || targetModule === 'admin' || targetModule === 'overview') {
+      if (!roleConf.allowedModules.includes('overview')) {
+        targetModule = roleConf.defaultModule;
+      } else {
+        targetModule = 'overview';
       }
     }
 
-    navigateTo(view, programParam);
-  };
+    const SUBMODULE_PARENTS = {
+      'article-form': 'berita',
+      'user-form': 'users',
+      'user-detail': 'users',
+      'gallery-form': 'galeri',
+      'syllabus-form': 'akademik',
+      'program-form': 'akademik',
+      'campaign-form': 'donasi',
+      'profile': 'overview',
+      'tampilan/identitas': 'tampilan',
+      'tampilan/kontak': 'tampilan',
+      'tampilan/beranda': 'tampilan',
+      'tampilan/footer': 'tampilan'
+    };
+    const checkModule = SUBMODULE_PARENTS[targetModule] || (targetModule.startsWith('tampilan') ? 'tampilan' : targetModule);
 
-  window.addEventListener('hashchange', handleHashChange);
-  handleHashChange();
+    // Check Role-Based Access Control (RBAC 403 Forbidden check)
+    if (targetModule !== 'profile' && !roleConf.allowedModules.includes(checkModule)) {
+      showToast(`Akses Ditolak (403): Role "${roleConf.name}" tidak berwenang mengelola modul ini. Hak akses dipatenkan.`, 'warning');
+      navigate(`/admin/${roleConf.defaultModule}`, false);
+      return;
+    }
+
+    // Check Superadmin-only sub-pages
+    if ((targetModule === 'user-form' || targetModule === 'user-detail' || targetModule === 'gallery-form') && currentUser.role !== 'superadmin') {
+      showToast('Aksi ini dikhususkan hanya untuk Super Admin (Admin).', 'warning');
+      navigate(`/admin/${roleConf.defaultModule}`, false);
+      return;
+    }
+
+    // Render Admin Module
+    navigateToAdmin(targetModule);
+    return;
+  }
+
+  // C. Public Route
+  navigateTo(route.view, route.programParam);
+}
+
+function initRouter() {
+  window.addEventListener('popstate', () => {
+    handleRoute();
+  });
+
+  // Intercept all internal anchor clicks for seamless SPA navigation without hashes
+  document.addEventListener('click', (e) => {
+    const anchor = e.target.closest('a');
+    if (!anchor) return;
+
+    // Ignore if modified click (Ctrl/Cmd/Shift/Alt)
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    // Ignore external, download, target="_blank", or tel/mailto/javascript
+    if (anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+    // Ignore modal triggers with special button behaviors
+    if (anchor.classList.contains('btn-ppdb-trigger') || anchor.classList.contains('btn-donate-trigger') || anchor.classList.contains('btn-lms-trigger')) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (!href || href === '#' || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http://') || href.startsWith('https://')) {
+      return;
+    }
+
+    // Handle hash links or relative clean path links
+    e.preventDefault();
+    if (href.startsWith('#')) {
+      const cleanPath = hashToPath(href);
+      navigate(cleanPath);
+    } else {
+      navigate(href);
+    }
+  });
+
+  handleRoute();
 }
 
 export function navigateTo(viewName, programId = null) {
@@ -698,10 +939,22 @@ export function navigateTo(viewName, programId = null) {
     targetView.classList.add('active');
   }
 
-  // Update Public Nav Links
-  document.querySelectorAll('.nav-link').forEach(link => {
+  // Update Public Desktop and Mobile Nav Links
+  document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
     link.classList.remove('active');
-    if (link.getAttribute('data-view') === viewName) {
+    const dView = link.getAttribute('data-view');
+    const href = link.getAttribute('href');
+    if (dView === viewName || (viewName === 'home' && href === '/') || href === `/${viewName}`) {
+      link.classList.add('active');
+    }
+  });
+
+  // Highlight active program in academic dropdown & mobile submenu
+  document.querySelectorAll('.dropdown-link, .mobile-sublink').forEach(link => {
+    link.classList.remove('active');
+    const pId = link.getAttribute('data-program-id');
+    const href = link.getAttribute('href');
+    if (viewName === 'akademik' && programId && (pId === programId || href === `/akademik/${programId}`)) {
       link.classList.add('active');
     }
   });
@@ -771,6 +1024,14 @@ export function navigateToAdmin(moduleName) {
   // Switch Tampilan Tab if in tampilan module
   if (basePanelName === 'tampilan') {
     switchTampilanTab(tampilanSubTab);
+    document.querySelectorAll('.tampilan-tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+      const dTab = btn.getAttribute('data-tab');
+      const href = btn.getAttribute('href');
+      if (dTab === tampilanSubTab || href === `/admin/tampilan/${tampilanSubTab}`) {
+        btn.classList.add('active');
+      }
+    });
   }
 
   // Submodule to parent mapping
@@ -820,7 +1081,9 @@ export function navigateToAdmin(moduleName) {
   // Update Sidebar Navigation & Mobile App Bottom Nav Links
   document.querySelectorAll('.sidebar-menu-link, .mob-nav-item').forEach(link => {
     link.classList.remove('active');
-    if (link.getAttribute('data-admin-nav') === activeNavModule) {
+    const dNav = link.getAttribute('data-admin-nav');
+    const href = link.getAttribute('href');
+    if (dNav === activeNavModule || href === `/admin/${activeNavModule}` || href === `/admin/${moduleName}`) {
       link.classList.add('active');
     }
   });
@@ -980,8 +1243,7 @@ function renderAkademikView() {
         const id = e.currentTarget.getAttribute('data-program-id');
         state.activeProgramId = id;
         state.activeAboutTab = 'materi';
-        window.location.hash = `akademik-${id}`;
-        renderAkademikView();
+        navigate(`/akademik/${id}`);
       });
     });
   }
@@ -1303,9 +1565,9 @@ function renderAkademikView() {
                 <a href="https://wa.me/${(INSTITUTION.whatsappPPDB || '6281234567890').replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalamu\'alaikum Panitia PPDB Rumah Tahfidz, saya ingin bertanya tentang pembukaan gelombang selanjutnya untuk program ' + program.name)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #25D366; border-color: #25D366; color: #ffffff; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem;">
                   <span>💬 Chat Admin PPDB WhatsApp</span>
                 </a>
-                <button type="button" class="btn btn-secondary" onclick="window.location.hash='#akademik'; window.scrollTo({top: 400, behavior: 'smooth'});" style="padding: 0.75rem 1.5rem; border-radius: 0.75rem;">
+                <a href="/akademik" class="btn btn-secondary" onclick="window.scrollTo({top: 400, behavior: 'smooth'});" style="padding: 0.75rem 1.5rem; border-radius: 0.75rem; text-decoration: none; display: inline-flex; align-items: center;">
                   Lihat Program Lainnya
-                </button>
+                </a>
               </div>
             </div>
           ` : `
@@ -1549,15 +1811,43 @@ function initAkademikInteractions(program) {
 
         const res = await ppdbApi.submit(payload);
         if (res && res.success) {
+          const leadRecord = res.data || {
+            id: res.id || `REG-${Date.now()}`,
+            ...payload,
+            program_name: program.name,
+            status: 'pending'
+          };
+          const normLead = normalizeLead(leadRecord);
+          const exIdx = ppdbState.findIndex(l => l.id === normLead.id);
+          if (exIdx >= 0) ppdbState[exIdx] = normLead;
+          else ppdbState.unshift(normLead);
+          try { localStorage.setItem('rtm_cms_ppdb', JSON.stringify(ppdbState)); } catch {}
+
           showToast(res.message || 'Alhamdulillah, pendaftaran calon santri berhasil dikirim!', 'success');
           form.reset();
           await syncDatabaseState();
+          if (typeof renderAdminPPDBTable === 'function') renderAdminPPDBTable();
+          if (typeof renderAdminOverview === 'function') renderAdminOverview();
+          if (typeof updateNotificationBell === 'function') updateNotificationBell();
           openPPDBSuccessModal(res.data || { ...payload, id: res.id, program_name: program.name });
         } else {
           showToast(res.message || 'Gagal mengirim pendaftaran.', 'error');
         }
       } catch (err) {
-        showToast(err.message || 'Terjadi kesalahan sistem saat mendaftar.', 'error');
+        const localLead = normalizeLead({
+          id: `REG-${Date.now()}`,
+          ...payload,
+          program_name: program.name,
+          status: 'pending'
+        });
+        ppdbState.unshift(localLead);
+        try { localStorage.setItem('rtm_cms_ppdb', JSON.stringify(ppdbState)); } catch {}
+        form.reset();
+        if (typeof renderAdminPPDBTable === 'function') renderAdminPPDBTable();
+        if (typeof renderAdminOverview === 'function') renderAdminOverview();
+        if (typeof updateNotificationBell === 'function') updateNotificationBell();
+        openPPDBSuccessModal(localLead);
+        showToast('Alhamdulillah, formulir pendaftaran berhasil disimpan!', 'success');
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -1573,10 +1863,20 @@ function renderGalleryGrid() {
   const container = document.getElementById('galleryGridContainer');
   if (!container) return;
 
-  const publishedGalleries = galleriesState.filter(g => g.status !== 'draft');
+  const publishedGalleries = galleriesState.filter(g => (g.status || 'published') === 'published');
   const filtered = state.galleryFilter === 'all'
     ? publishedGalleries
     : publishedGalleries.filter(g => g.category === state.galleryFilter);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--color-slate-500);">
+        <p style="font-weight: 700; font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--color-slate-700);">Belum Ada Dokumentasi yang Dipublikasikan</p>
+        <p style="font-size: 0.9rem;">Foto galeri yang berstatus Draft hanya dapat dilihat oleh admin melalui Dashboard CMS.</p>
+      </div>
+    `;
+    return;
+  }
 
   container.innerHTML = filtered.map((item, idx) => `
     <div class="gallery-card-item" data-index="${idx}" data-id="${item.id}">
@@ -2137,6 +2437,18 @@ export function initPPDBModalEvents() {
         const res = await ppdbApi.submit(payload);
 
         if (res && res.success) {
+          const leadRecord = res.data || {
+            id: res.id || `REG-${Date.now()}`,
+            ...payload,
+            program_name: targetProg?.name || 'Program Tahfidz',
+            status: 'pending'
+          };
+          const normLead = normalizeLead(leadRecord);
+          const exIdx = ppdbState.findIndex(l => l.id === normLead.id);
+          if (exIdx >= 0) ppdbState[exIdx] = normLead;
+          else ppdbState.unshift(normLead);
+          try { localStorage.setItem('rtm_cms_ppdb', JSON.stringify(ppdbState)); } catch {}
+
           showToast(res.message || 'Alhamdulillah, pendaftaran calon santri berhasil dikirim!', 'success');
           document.getElementById('ppdbModal')?.classList.remove('open');
           modalForm.reset();
@@ -2144,12 +2456,31 @@ export function initPPDBModalEvents() {
           updatePPDBWizardSteps();
 
           await syncDatabaseState();
-          openPPDBSuccessModal(res.data || { ...payload, id: res.id });
+          if (typeof renderAdminPPDBTable === 'function') renderAdminPPDBTable();
+          if (typeof renderAdminOverview === 'function') renderAdminOverview();
+          if (typeof updateNotificationBell === 'function') updateNotificationBell();
+          openPPDBSuccessModal(res.data || { ...payload, id: res.id, program_name: targetProg?.name });
         } else {
           showToast(res.message || 'Gagal mengirim pendaftaran.', 'error');
         }
       } catch (err) {
-        showToast(err.message || 'Terjadi kesalahan sistem saat mendaftar.', 'error');
+        const localLead = normalizeLead({
+          id: `REG-${Date.now()}`,
+          ...payload,
+          program_name: targetProg?.name || 'Program Tahfidz',
+          status: 'pending'
+        });
+        ppdbState.unshift(localLead);
+        try { localStorage.setItem('rtm_cms_ppdb', JSON.stringify(ppdbState)); } catch {}
+        document.getElementById('ppdbModal')?.classList.remove('open');
+        modalForm.reset();
+        ppdbActiveStep = 1;
+        updatePPDBWizardSteps();
+        if (typeof renderAdminPPDBTable === 'function') renderAdminPPDBTable();
+        if (typeof renderAdminOverview === 'function') renderAdminOverview();
+        if (typeof updateNotificationBell === 'function') updateNotificationBell();
+        openPPDBSuccessModal(localLead);
+        showToast('Alhamdulillah, pendaftaran calon santri berhasil disimpan!', 'success');
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -2491,22 +2822,43 @@ function initModals() {
       const count = tourForm.querySelector('input[name="tourCount"]')?.value || '1';
       const goal = tourForm.querySelector('select[name="tourGoal"]')?.value || 'Kunjungan';
 
+      const payload = {
+        visitor_name: name,
+        institution: org,
+        phone,
+        visit_date: date,
+        visitor_count: Number(count),
+        objective: goal,
+        session_time: 'Sesi 1 (08.30 - 11.30 WIB)'
+      };
+
       try {
-        const res = await reservationsApi.submit({
-          visitor_name: name,
-          institution: org,
-          phone,
-          visit_date: date,
-          visitor_count: Number(count),
-          objective: goal,
-          session_time: 'Sesi 1 (08.30 - 11.30 WIB)'
-        });
-        showToast(res.message, 'success');
+        const res = await reservationsApi.submit(payload);
+        const record = res?.data || {
+          ...payload,
+          id: res?.id || `vis-${Date.now()}`,
+          status: 'pending'
+        };
+        const normalized = normalizeVisit(record);
+        visitsState.unshift(normalized);
+        try { localStorage.setItem('rtm_cms_visits', JSON.stringify(visitsState)); } catch {}
+        showToast(res?.message || `Permohonan kunjungan rombongan ${name} pada ${date} berhasil diajukan!`, 'success');
         tourForm.reset();
         await syncDatabaseState();
+        if (typeof renderAdminGaleri === 'function') renderAdminGaleri();
+        if (typeof updateNotificationBell === 'function') updateNotificationBell();
       } catch (err) {
+        const localVisit = normalizeVisit({
+          id: `vis-${Date.now()}`,
+          ...payload,
+          status: 'pending'
+        });
+        visitsState.unshift(localVisit);
+        try { localStorage.setItem('rtm_cms_visits', JSON.stringify(visitsState)); } catch {}
         showToast(`Permohonan kunjungan rombongan ${name} pada ${date} berhasil diajukan!`, 'success');
         tourForm.reset();
+        if (typeof renderAdminGaleri === 'function') renderAdminGaleri();
+        if (typeof updateNotificationBell === 'function') updateNotificationBell();
       }
     });
   }
@@ -2613,7 +2965,7 @@ export function renderPublicNavigationPrograms() {
     if (formalList.length > 0) {
       dropdownHtml += '<div class="dropdown-section-title">Pendidikan Formal</div>';
       dropdownHtml += formalList.map(p => `
-        <a href="#akademik-${p.id}" class="dropdown-link" data-program-id="${p.id}">
+        <a href="/akademik/${p.id}" class="dropdown-link" data-program-id="${p.id}">
           <span>${p.name}</span>
           <span class="badge-tag">${p.stats?.targetHafalan || p.badge || 'Formal'}</span>
         </a>
@@ -2627,7 +2979,7 @@ export function renderPublicNavigationPrograms() {
     if (nonFormalList.length > 0) {
       dropdownHtml += '<div class="dropdown-section-title">Pendidikan Non-Formal</div>';
       dropdownHtml += nonFormalList.map(p => `
-        <a href="#akademik-${p.id}" class="dropdown-link" data-program-id="${p.id}">
+        <a href="/akademik/${p.id}" class="dropdown-link" data-program-id="${p.id}">
           <span>${p.name}</span>
           <span class="badge-tag">${p.stats?.targetHafalan || p.badge || 'Non-Formal'}</span>
         </a>
@@ -2642,7 +2994,7 @@ export function renderPublicNavigationPrograms() {
   if (mobileSubmenu) {
     mobileSubmenu.innerHTML = progsToRender.map(p => {
       const tag = p.stats?.targetHafalan ? ` (${p.stats.targetHafalan})` : '';
-      return `<a href="#akademik-${p.id}" class="mobile-sublink" data-program-id="${p.id}">${p.name}${tag}</a>`;
+      return `<a href="/akademik/${p.id}" class="mobile-sublink" data-program-id="${p.id}">${p.name}${tag}</a>`;
     }).join('');
   }
 
@@ -2650,7 +3002,7 @@ export function renderPublicNavigationPrograms() {
   const footerList = document.getElementById('footerProgramLinksList');
   if (footerList) {
     footerList.innerHTML = progsToRender.map(p => `
-      <li><a href="#akademik-${p.id}" data-program-id="${p.id}">${p.name}</a></li>
+      <li><a href="/akademik/${p.id}" data-program-id="${p.id}">${p.name}</a></li>
     `).join('');
   }
 }
@@ -2686,7 +3038,7 @@ function renderHomeProgramCards(category) {
             <span class="spec-item">📖 ${p.stats?.targetHafalan || '30 Juz'}</span>
           </div>
 
-          <a href="#akademik-${p.id}" class="btn-detail-link">
+          <a href="/akademik/${p.id}" class="btn-detail-link">
             <span>Lihat Silabus & Detail</span>
             <span>${getIconSvg('chevron-right', 16)}</span>
           </a>
@@ -2751,7 +3103,7 @@ function updateNotificationBell() {
         const target = e.currentTarget.getAttribute('data-notif-target');
         const notifDropdown = document.getElementById('notifDropdown');
         if (notifDropdown) notifDropdown.style.display = 'none';
-        window.location.hash = `#admin-${target}`;
+        navigate(`/admin/${target}`);
       });
     });
   }
@@ -2986,20 +3338,23 @@ function renderAdminAkademik() {
         const prog = programsState.find(p => p.id === id);
         if (prog) {
           prog.ppdbOpen = e.target.checked;
-          const label = e.target.closest('.switch-label').querySelector('.switch-text');
+          prog.is_active = e.target.checked ? 1 : 0;
+          const label = e.target.closest('.switch-label')?.querySelector('.switch-text');
           if (label) label.textContent = prog.ppdbOpen ? 'Buka' : 'Tutup';
           try {
             localStorage.setItem('rtm_cms_programs', JSON.stringify(programsState));
           } catch {}
+          try {
+            await programsApi.toggleStatus(id, prog.is_active);
+          } catch (err) {
+            console.warn('programsApi.toggleStatus failed:', err);
+          }
+          await syncDatabaseState();
           if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
           if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
           if (typeof renderAkademikView === 'function') renderAkademikView();
-          try {
-            await programsApi.toggleStatus(id);
-          } catch {
-            // offline fallback
-          }
-          showToast(`Status PPDB ${prog.name} berhasil diubah menjadi: ${prog.ppdbOpen ? 'Buka' : 'Tutup'}`, 'success');
+          renderAdminAkademik();
+          showToast(`Status PPDB program "${prog.name}" berhasil diubah menjadi: ${prog.ppdbOpen ? 'BUKA' : 'TUTUP'}`, 'success');
         }
       });
     });
@@ -3104,7 +3459,7 @@ export function openProgramEditPage(programId = null) {
     if (customContainer) customContainer.innerHTML = '';
   }
 
-  window.location.hash = '#admin-program-form';
+  navigate('/admin/program-form');
 }
 
 function renderAdminPPDBTable() {
@@ -3593,14 +3948,25 @@ function renderAdminGaleri() {
     `).join('');
 
     visitBody.querySelectorAll('.btn-confirm-visit-action').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         const id = e.currentTarget.getAttribute('data-id');
         const v = visitsState.find(item => item.id === id);
         if (v) {
-          v.status = 'confirmed';
-          showToast(`Kunjungan rombongan ${v.groupName} pada ${v.date} telah DISETUJUI.`, 'success');
-          renderAdminGaleri();
-          updateNotificationBell();
+          try {
+            await reservationsApi.updateStatus(id, 'confirmed');
+            v.status = 'confirmed';
+            try { localStorage.setItem('rtm_cms_visits', JSON.stringify(visitsState)); } catch {}
+            showToast(`Kunjungan rombongan ${v.groupName} pada ${v.date} telah DISETUJUI.`, 'success');
+            await syncDatabaseState();
+            renderAdminGaleri();
+            updateNotificationBell();
+          } catch (err) {
+            v.status = 'confirmed';
+            try { localStorage.setItem('rtm_cms_visits', JSON.stringify(visitsState)); } catch {}
+            showToast(`Kunjungan rombongan ${v.groupName} pada ${v.date} telah DISETUJUI.`, 'success');
+            renderAdminGaleri();
+            updateNotificationBell();
+          }
         }
       });
     });
@@ -3622,22 +3988,49 @@ function renderAdminGaleri() {
       <div class="admin-media-card" style="border-radius: var(--radius-md); overflow: hidden; border: 1px solid rgba(0,0,0,0.08); background: #000; height: 120px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
         <img src="${g.image}" alt="${g.altText || g.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/assets/images/campus.jpg';" />
         <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 40%, rgba(0,0,0,0.85) 100%); pointer-events: none;"></div>
-        <button type="button" class="btn-edit-gal-item" data-id="${g.id}" title="Edit Metadata & Urutan" style="position: absolute; top: 6px; left: 6px; background: rgba(15, 23, 42, 0.78); color: #fff; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.72rem;">
+        <button type="button" class="btn-edit-gal-item" data-id="${g.id}" title="Edit Metadata & Urutan" style="position: absolute; top: 6px; left: 6px; background: rgba(15, 23, 42, 0.78); color: #fff; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; z-index: 2;">
           ✏️
         </button>
-        <button type="button" class="btn-delete-gal-item" data-id="${g.id}" title="Hapus Media Galeri" style="position: absolute; top: 6px; right: 6px; background: rgba(220, 38, 38, 0.85); color: #fff; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='rgba(220,38,38,0.85)'">
+        <button type="button" class="btn-delete-gal-item" data-id="${g.id}" title="Hapus Media Galeri" style="position: absolute; top: 6px; right: 6px; background: rgba(220, 38, 38, 0.85); color: #fff; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; z-index: 2; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='rgba(220,38,38,0.85)'">
           🗑️
         </button>
-        <div style="position: absolute; bottom: 6px; left: 6px; right: 6px; display: flex; justify-content: space-between; align-items: flex-end;">
-          <span style="color: #fff; font-size: 0.7rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">
+        <div style="position: absolute; bottom: 6px; left: 6px; right: 6px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 2;">
+          <span style="color: #fff; font-size: 0.7rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
             ${g.title}
           </span>
-          <span style="background: ${g.status === 'draft' ? 'rgba(217, 119, 6, 0.9)' : 'rgba(16, 185, 129, 0.85)'}; color: #fff; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 3px; font-weight: 600; text-transform: uppercase;">
-            ${g.status === 'draft' ? 'Draft' : (g.category || 'Galeri')}
-          </span>
+          <button type="button" class="btn-toggle-gal-status" data-id="${g.id}" title="Klik untuk beralih status publikasi" style="background: ${(g.status || 'published') === 'draft' ? '#d97706' : '#10b981'}; color: #fff; font-size: 0.65rem; padding: 0.2rem 0.55rem; border-radius: 9999px; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.35); transition: all 0.2s;">
+            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #fff;"></span>
+            ${(g.status || 'published') === 'draft' ? 'Draft' : 'Published'}
+          </button>
         </div>
       </div>
     `).join('');
+
+    mediaGrid.querySelectorAll('.btn-toggle-gal-status').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const gId = e.currentTarget.getAttribute('data-id');
+        const gItem = (galleriesState || []).find(item => String(item.id) === String(gId));
+        if (!gItem) return;
+        const currentStatus = gItem.status || 'published';
+        const newStatus = currentStatus === 'published' ? 'draft' : 'published';
+        try {
+          await galleriesApi.toggleStatus(gId, newStatus);
+          gItem.status = newStatus;
+          try { localStorage.setItem('rtm_cms_galleries', JSON.stringify(galleriesState)); } catch {}
+          showToast(`Status galeri "${gItem.title}" diubah menjadi: ${newStatus.toUpperCase()}`, 'success');
+          await syncDatabaseState();
+          renderAdminGaleri();
+          renderGalleryGrid();
+        } catch (err) {
+          gItem.status = newStatus;
+          try { localStorage.setItem('rtm_cms_galleries', JSON.stringify(galleriesState)); } catch {}
+          showToast(`Status galeri "${gItem.title}" diubah menjadi: ${newStatus.toUpperCase()}`, 'success');
+          renderAdminGaleri();
+          renderGalleryGrid();
+        }
+      });
+    });
 
     mediaGrid.querySelectorAll('.btn-edit-gal-item').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -3656,7 +4049,7 @@ function renderAdminGaleri() {
         document.getElementById('galleryFormAltText').value = gItem.altText || gItem.title || '';
         document.getElementById('galleryFormCaption').value = gItem.caption || '';
         if (galleryModal) galleryModal.classList.add('open');
-        window.location.hash = '#admin-gallery-form';
+        navigate('/admin/gallery-form');
       });
     });
 
@@ -4307,7 +4700,7 @@ function renderAdminUsers() {
       if (e.target.closest('button') || e.target.closest('a')) return;
       const id = row.getAttribute('data-id');
       selectedUserIdForDetail = id;
-      window.location.hash = '#admin-user-detail';
+      navigate('/admin/user-detail');
     });
   });
 
@@ -4479,7 +4872,7 @@ export function renderUserDetailPage(userId) {
         showToast(`Akun pengguna ${user.name} berhasil dihapus.`, 'success');
         await syncDatabaseState();
         renderAdminUsers();
-        window.location.hash = '#admin-users';
+        navigate('/admin/users');
       } catch (err) {
         showToast(err.message, 'warning');
       }
@@ -4510,7 +4903,7 @@ function openEditUserModal(user) {
     passInput.placeholder = 'Kosongkan jika kata sandi tidak diubah...';
   }
   if (userModal) userModal.classList.add('open');
-  window.location.hash = '#admin-user-form';
+  navigate('/admin/user-form');
 }
 
 export function renderAdminProfile() {
@@ -4641,7 +5034,7 @@ function openCampaignModal(campaignId = null) {
   }
 
   if (modal) modal.classList.add('open');
-  window.location.hash = '#admin-campaign-form';
+  navigate('/admin/campaign-form');
 }
 
 // 11. Article Modal Handlers (with Slug, SEO Metadata, Status Select)
@@ -4701,7 +5094,7 @@ function openArticleModal(articleId = null) {
   }
 
   if (modal) modal.classList.add('open');
-  window.location.hash = '#admin-article-form';
+  navigate('/admin/article-form');
 }
 
 // 12. Export CSV Functionality (PRD Section 5.2 - Live Backend Stream)
@@ -4794,10 +5187,10 @@ function initAdminUI() {
         auth.clearCallbackUrl();
 
         const roleConf = ROLES_CONFIG[userData.role] || ROLES_CONFIG.superadmin;
-        if (callback && callback !== 'admin-login') {
-          window.location.hash = `#${callback.replace('#', '')}`;
+        if (callback && callback !== 'admin-login' && callback !== '/admin/login') {
+          navigate(callback.startsWith('/') ? callback : hashToPath(callback));
         } else {
-          window.location.hash = `#admin-${roleConf.defaultModule}`;
+          navigate(`/admin/${roleConf.defaultModule}`);
         }
       }
     });
@@ -4845,7 +5238,7 @@ function initAdminUI() {
       auth.clearUser();
       client.clearToken();
       showToast('Sesi administrasi ditutup. Anda telah berhasil keluar.', 'success');
-      window.location.hash = '#admin-login';
+      navigate('/admin/login');
     });
   }
 
@@ -4868,7 +5261,7 @@ function initAdminUI() {
     btnBackAllowed.addEventListener('click', () => {
       const currentUser = auth.getStoredUser() || usersState[0];
       const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
-      window.location.hash = `#admin-${roleConf.defaultModule}`;
+      navigate(`/admin/${roleConf.defaultModule}`);
     });
   }
 
@@ -4962,7 +5355,7 @@ function initAdminUI() {
         auth.clearUser();
         client.clearToken();
         showToast('Sesi administrasi ditutup. Anda telah berhasil keluar.', 'success');
-        window.location.hash = '#admin-login';
+        navigate('/admin/login');
       });
     }
   }
@@ -5102,7 +5495,7 @@ function initAdminUI() {
       e.preventDefault();
       const navTarget = link.getAttribute('data-admin-nav');
       if (navTarget) {
-        window.location.hash = `#admin-${navTarget}`;
+        navigate(`/admin/${navTarget}`);
       }
     });
   });
@@ -5220,7 +5613,7 @@ function initAdminUI() {
   if (btnCloseCamp) {
     btnCloseCamp.addEventListener('click', () => {
       if (campaignModal) campaignModal.classList.remove('open');
-      window.location.hash = '#admin-donasi';
+      navigate('/admin/donasi');
     });
   }
 
@@ -5228,7 +5621,7 @@ function initAdminUI() {
     btnCancelCamp.addEventListener('click', (e) => {
       e.preventDefault();
       if (campaignModal) campaignModal.classList.remove('open');
-      window.location.hash = '#admin-donasi';
+      navigate('/admin/donasi');
     });
   }
 
@@ -5276,7 +5669,7 @@ function initAdminUI() {
         if (campaignModal) campaignModal.classList.remove('open');
         renderAdminDonasi();
         await renderAdminOverview();
-        window.location.hash = '#admin-donasi';
+        navigate('/admin/donasi');
       } catch (err) {
         showToast(err.message, 'warning');
       }
@@ -5412,7 +5805,7 @@ function initAdminUI() {
   if (btnCloseArt) {
     btnCloseArt.addEventListener('click', () => {
       if (articleModal) articleModal.classList.remove('open');
-      window.location.hash = '#admin-berita';
+      navigate('/admin/berita');
     });
   }
 
@@ -5420,7 +5813,7 @@ function initAdminUI() {
     btnCancelArt.addEventListener('click', (e) => {
       e.preventDefault();
       if (articleModal) articleModal.classList.remove('open');
-      window.location.hash = '#admin-berita';
+      navigate('/admin/berita');
     });
   }
 
@@ -5473,7 +5866,7 @@ function initAdminUI() {
         if (articleModal) articleModal.classList.remove('open');
         renderAdminBerita();
         renderNewsGrid();
-        window.location.hash = '#admin-berita';
+        navigate('/admin/berita');
       } catch (err) {
         if (err.code === 'CONFLICT_SLUG' || (err.message && err.message.toLowerCase().includes('slug'))) {
           if (articleSlugFeedback) {
@@ -5496,7 +5889,7 @@ function initAdminUI() {
         renderAdminBerita();
         renderNewsGrid();
         showToast(`Artikel "${title}" berhasil disimpan!`, 'success');
-        window.location.hash = '#admin-berita';
+        navigate('/admin/berita');
       }
     });
   }
@@ -5526,20 +5919,20 @@ function initAdminUI() {
   if (btnUploadSyllabus) {
     btnUploadSyllabus.addEventListener('click', () => {
       if (syllabusModal) syllabusModal.classList.add('open');
-      window.location.hash = '#admin-syllabus-form';
+      navigate('/admin/syllabus-form');
     });
   }
   if (btnCloseSyllabus) {
     btnCloseSyllabus.addEventListener('click', () => {
       if (syllabusModal) syllabusModal.classList.remove('open');
-      window.location.hash = '#admin-akademik';
+      navigate('/admin/akademik');
     });
   }
   if (btnCancelSyllabus) {
     btnCancelSyllabus.addEventListener('click', (e) => {
       e.preventDefault();
       if (syllabusModal) syllabusModal.classList.remove('open');
-      window.location.hash = '#admin-akademik';
+      navigate('/admin/akademik');
     });
   }
   if (syllabusForm) {
@@ -5550,7 +5943,7 @@ function initAdminUI() {
       const pdfUrl = document.getElementById('syllabusPdfUrlInput')?.value || '';
       showToast(`Silabus Kurikulum Baru untuk ${prog ? prog.name : ''} (${pdfUrl.split('/').pop() || 'PDF'}) berhasil disimpan & dipublikasikan.`, 'success');
       if (syllabusModal) syllabusModal.classList.remove('open');
-      window.location.hash = '#admin-akademik';
+      navigate('/admin/akademik');
     });
   }
 
@@ -5669,7 +6062,7 @@ function initAdminUI() {
         if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
         if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
         if (typeof renderAkademikView === 'function') renderAkademikView();
-        window.location.hash = '#admin-akademik';
+        navigate('/admin/akademik');
       } catch (err) {
         // Resilient fallback: ensure local state and UI are updated immediately so user's work is never blocked
         const idx = programsState.findIndex(p => p.id === payload.id);
@@ -5685,7 +6078,7 @@ function initAdminUI() {
         if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
         if (typeof renderAkademikView === 'function') renderAkademikView();
         showToast(`Program akademik "${title}" berhasil disimpan!`, 'success');
-        window.location.hash = '#admin-akademik';
+        navigate('/admin/akademik');
       }
     });
   }
@@ -5718,20 +6111,20 @@ function initAdminUI() {
       }
       if (userForm) userForm.reset();
       if (userModal) userModal.classList.add('open');
-      window.location.hash = '#admin-user-form';
+      navigate('/admin/user-form');
     });
   }
   if (btnCloseUser) {
     btnCloseUser.addEventListener('click', () => {
       if (userModal) userModal.classList.remove('open');
-      window.location.hash = '#admin-users';
+      navigate('/admin/users');
     });
   }
   if (btnCancelUser) {
     btnCancelUser.addEventListener('click', (e) => {
       e.preventDefault();
       if (userModal) userModal.classList.remove('open');
-      window.location.hash = '#admin-users';
+      navigate('/admin/users');
     });
   }
   if (userForm) {
@@ -5785,7 +6178,7 @@ function initAdminUI() {
         if (userModal) userModal.classList.remove('open');
         await syncDatabaseState();
         renderAdminUsers();
-        window.location.hash = '#admin-users';
+        navigate('/admin/users');
       } catch (err) {
         showToast(err.message, 'warning');
       }
@@ -6133,14 +6526,14 @@ function initAdminUI() {
       const dateInput = document.getElementById('galleryFormDate');
       if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
       if (galleryModal) galleryModal.classList.add('open');
-      window.location.hash = '#admin-gallery-form';
+      navigate('/admin/gallery-form');
     });
   }
 
   if (btnCloseGalleryModal) {
     btnCloseGalleryModal.addEventListener('click', () => {
       if (galleryModal) galleryModal.classList.remove('open');
-      window.location.hash = '#admin-galeri';
+      navigate('/admin/galeri');
     });
   }
 
@@ -6148,7 +6541,7 @@ function initAdminUI() {
     btnCancelGallery.addEventListener('click', (e) => {
       e.preventDefault();
       if (galleryModal) galleryModal.classList.remove('open');
-      window.location.hash = '#admin-galeri';
+      navigate('/admin/galeri');
     });
   }
 
@@ -6214,7 +6607,7 @@ function initAdminUI() {
         await syncDatabaseState();
         renderAdminGaleri();
         renderGalleryGrid();
-        window.location.hash = '#admin-galeri';
+        navigate('/admin/galeri');
       } catch (err) {
         // Resilient fallback: store locally and update UI immediately
         const localGal = normalizeGallery({
@@ -6230,7 +6623,7 @@ function initAdminUI() {
         renderAdminGaleri();
         renderGalleryGrid();
         showToast(`Foto galeri "${title}" berhasil disimpan!`, 'success');
-        window.location.hash = '#admin-galeri';
+        navigate('/admin/galeri');
       }
     });
   }
@@ -6361,7 +6754,7 @@ function initAdminUI() {
       const payload = getAppearanceFormPayload();
       applySiteSettingsToDOM(payload);
       showToast('Menampilkan pratinjau perubahan pengaturan pada halaman publik...', 'success');
-      window.location.hash = '#home';
+      navigate('/');
     });
   }
 
@@ -6401,7 +6794,7 @@ function initAdminUI() {
       e.preventDefault();
       const tab = btn.getAttribute('data-tab');
       if (tab) {
-        window.location.hash = `#admin-tampilan/${tab}`;
+        navigate(`/admin/tampilan/${tab}`);
       }
     });
   });
@@ -6450,7 +6843,7 @@ function initAdminUI() {
     btnBack403.addEventListener('click', () => {
       const currentUser = auth.getStoredUser() || usersState[0];
       const roleConf = ROLES_CONFIG[currentUser.role] || ROLES_CONFIG.superadmin;
-      window.location.hash = `#admin-${roleConf.defaultModule}`;
+      navigate(`/admin/${roleConf.defaultModule}`);
     });
   }
 

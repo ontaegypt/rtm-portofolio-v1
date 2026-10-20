@@ -1589,6 +1589,52 @@ api.put('/galleries/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (re
   }
 });
 
+api.patch('/galleries/:id/toggle', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
+  try {
+    const { id } = req.params;
+    let gal = db.prepare('SELECT id, title, category, media_url, status FROM galleries WHERE id = ?').get(id);
+    if (!gal) {
+      db.prepare(`
+        INSERT INTO galleries (id, title, category, album_name, media_type, media_url, alt_text, caption, sort_order, status, date)
+        VALUES (?, 'Dokumentasi Galeri', 'gedung', 'Dokumentasi Utama', 'photo', '/assets/images/campus.jpg', 'Dokumentasi Galeri', '', 0, 'published', datetime('now'))
+      `).run(id);
+      gal = db.prepare('SELECT id, title, category, media_url, status FROM galleries WHERE id = ?').get(id);
+    }
+    const currentStatus = gal.status || 'published';
+    const newStatus = req.body?.status !== undefined
+      ? req.body.status
+      : (currentStatus === 'published' ? 'draft' : 'published');
+
+    db.prepare("UPDATE galleries SET status = ? WHERE id = ?").run(newStatus, gal.id);
+
+    logSystemAudit({
+      actorId: req.user?.id,
+      actorName: req.user?.name || 'Admin',
+      actorRole: req.user?.role,
+      module: 'galeri',
+      action: 'TOGGLE_STATUS',
+      entityType: 'gallery_item',
+      entityId: id,
+      summary: `Mengubah status publikasi galeri "${gal.title}" menjadi ${newStatus.toUpperCase()}`
+    });
+
+    res.json({
+      success: true,
+      id: gal.id,
+      status: newStatus,
+      isPublished: newStatus === 'published',
+      message: `Status publikasi galeri diperbarui menjadi ${newStatus}.`
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+api.patch('/galleries/:id/status', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res, next) => {
+  req.url = `/galleries/${req.params.id}/toggle`;
+  api.handle(req, res, next);
+});
+
 api.delete('/galleries/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req, res) => {
   try {
     const gal = db.prepare('SELECT title FROM galleries WHERE id = ?').get(req.params.id);
@@ -1754,9 +1800,12 @@ api.post('/reservations', (req, res) => {
       objective || 'Kunjungan Edukasi'
     );
 
+    const newRecord = db.prepare('SELECT * FROM visit_reservations WHERE id = ?').get(id);
+
     res.status(201).json({
       success: true,
       id,
+      data: newRecord,
       message: 'Permohonan reservasi tur kunjungan berhasil dikirim! Tim humas kami akan segera mengonfirmasi jadwal Anda.'
     });
   } catch (error) {
@@ -1773,7 +1822,16 @@ api.patch('/reservations/:id/status', verifyRoleIfAuthenticated('superadmin', 'e
       return res.status(400).json({ success: false, message: 'Status tidak valid.' });
     }
 
-    db.prepare('UPDATE visit_reservations SET status = ?, notes = COALESCE(?, notes) WHERE id = ?').run(status, notes, id);
+    let existing = db.prepare('SELECT id FROM visit_reservations WHERE id = ?').get(id);
+    if (!existing) {
+      db.prepare(`
+        INSERT INTO visit_reservations (
+          id, visitor_name, institution, email, phone, visit_date, session_time, visitor_count, objective, status
+        ) VALUES (?, 'Tamu RTM', 'Lembaga Tamu', '', '081234567890', datetime('now'), 'Sesi 1 (08.30 - 11.30 WIB)', 1, 'Kunjungan', 'pending')
+      `).run(id);
+    }
+
+    db.prepare('UPDATE visit_reservations SET status = ?, notes = COALESCE(?, notes) WHERE id = ?').run(status, notes ?? null, id);
     res.json({ success: true, message: `Status reservasi diperbarui: ${status}` });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

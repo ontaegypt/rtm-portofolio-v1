@@ -123,7 +123,7 @@ export const programsApi = {
   getById: (id) => client.get(`/programs/${id}`),
   create: (data) => client.post('/programs', data),
   update: (id, data) => client.put(`/programs/${id}`, data),
-  toggleStatus: (id) => client.patch(`/programs/${id}/toggle`)
+  toggleStatus: (id, is_active) => client.patch(`/programs/${id}/toggle`, is_active !== undefined ? { is_active } : {})
 };
 
 export const articlesApi = {
@@ -139,6 +139,7 @@ export const galleriesApi = {
   getAll: (params) => client.get('/galleries', typeof params === 'string' ? { category: params } : params),
   create: (data) => client.post('/galleries', data),
   update: (id, data) => client.put(`/galleries/${id}`, data),
+  toggleStatus: (id, status) => client.patch(`/galleries/${id}/toggle`, status ? { status } : {}),
   delete: (id) => client.delete(`/galleries/${id}`)
 };
 

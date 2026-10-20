@@ -81,7 +81,7 @@
   <header class="site-header">
     <div class="container nav-container">
       <!-- Brand Logo Header -->
-      <a href="#home" class="brand-logo" id="navLogo" aria-label="Beranda Rumah Tahfidz Madani">
+      <a href="/" class="brand-logo" id="navLogo" aria-label="Beranda Rumah Tahfidz Madani">
         <img src="/assets/images/logo-header-RTM.png" alt="Rumah Tahfidz Madani" class="brand-logo-img header-logo" />
       </a>
 
@@ -89,12 +89,12 @@
       <nav>
         <ul class="nav-menu">
           <li class="nav-item">
-            <a href="#home" class="nav-link active" data-view="home">Home</a>
+            <a href="/" class="nav-link active" data-view="home">Home</a>
           </li>
 
           <!-- Dropdown Akademik (Formal & Non-Formal) -->
           <li class="nav-item has-dropdown">
-            <a href="#akademik" class="nav-link" data-view="akademik">
+            <a href="/akademik" class="nav-link" data-view="akademik">
               <span>Akademik</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9" />
@@ -102,15 +102,15 @@
             </a>
             <div class="nav-dropdown" id="navbarAcademicDropdown">
               <div class="dropdown-section-title">Pendidikan Formal</div>
-              <a href="#akademik-smp" class="dropdown-link">
+              <a href="/akademik/smp" class="dropdown-link">
                 <span>SMP Tahfidz</span>
                 <span class="badge-tag">15 Juz</span>
               </a>
-              <a href="#akademik-sma" class="dropdown-link">
+              <a href="/akademik/sma" class="dropdown-link">
                 <span>SMA Tahfidz Sains</span>
                 <span class="badge-tag">30 Juz</span>
               </a>
-              <a href="#akademik-mahasantri" class="dropdown-link">
+              <a href="/akademik/mahasantri" class="dropdown-link">
                 <span>Mahasantri Aly</span>
                 <span class="badge-tag">Qira'at</span>
               </a>
@@ -118,15 +118,15 @@
               <div class="dropdown-divider"></div>
 
               <div class="dropdown-section-title">Pendidikan Non-Formal</div>
-              <a href="#akademik-tpa" class="dropdown-link">
+              <a href="/akademik/tpa" class="dropdown-link">
                 <span>TPA Al-Qur'an Anak</span>
                 <span class="badge-tag">Sore</span>
               </a>
-              <a href="#akademik-online" class="dropdown-link">
+              <a href="/akademik/online" class="dropdown-link">
                 <span>Ngaji Online Global</span>
                 <span class="badge-tag">Zoom</span>
               </a>
-              <a href="#akademik-halaqoh-ibu" class="dropdown-link">
+              <a href="/akademik/halaqoh-ibu" class="dropdown-link">
                 <span>Halaqoh Ibu & Muslimah</span>
                 <span class="badge-tag">Ummahat</span>
               </a>
@@ -134,25 +134,19 @@
           </li>
 
           <li class="nav-item">
-            <a href="#visit" class="nav-link" data-view="visit">Visit & Galeri</a>
+            <a href="/visit" class="nav-link" data-view="visit">Visit & Galeri</a>
           </li>
           <li class="nav-item">
-            <a href="#about" class="nav-link" data-view="about">About</a>
+            <a href="/about" class="nav-link" data-view="about">About</a>
           </li>
           <li class="nav-item">
-            <a href="#news" class="nav-link" data-view="news">News & Artikel</a>
+            <a href="/news" class="nav-link" data-view="news">News & Artikel</a>
           </li>
         </ul>
       </nav>
 
       <!-- Right Action Buttons (Branch Kanan Navbar) -->
       <div class="nav-actions">
-        <!-- 0. PPDB Button (Penerimaan Santri Baru) -->
-        <button class="btn btn-primary btn-sm btn-ppdb-trigger" id="btnNavbarPPDB"
-          style="padding: 0.5rem 1.15rem; font-size: 0.85rem; font-weight: 700; border-radius: 9999px;">
-          Daftar PPDB
-        </button>
-
         <!-- 1. [Icon + Donasi] (Primary CTA Button - Status Coming Soon) -->
         <button class="btn btn-donate btn-donate-trigger" id="btnNavbarDonasi" title="Wakaf & Donasi Terpadu">
           <span class="btn-icon-leading">
@@ -199,21 +193,21 @@
         style="height: 48px; width: auto;" />
     </div>
     <ul class="mobile-nav-list">
-      <li><a href="#home" class="mobile-nav-link">Home</a></li>
+      <li><a href="/" class="mobile-nav-link">Home</a></li>
       <li>
         <span class="mobile-nav-link" style="color: var(--primary-700);">Program Akademik</span>
         <div class="mobile-nav-sublinks" id="mobileAcademicSubmenu">
-          <a href="#akademik-smp" class="mobile-sublink">SMP Tahfidz (15 Juz)</a>
-          <a href="#akademik-sma" class="mobile-sublink">SMA Tahfidz Sains (30 Juz)</a>
-          <a href="#akademik-mahasantri" class="mobile-sublink">Mahasantri Aly (Qira'at)</a>
-          <a href="#akademik-tpa" class="mobile-sublink">TPA Anak (Kelas Sore)</a>
-          <a href="#akademik-online" class="mobile-sublink">Ngaji Online Bersanad</a>
-          <a href="#akademik-halaqoh-ibu" class="mobile-sublink">Halaqoh Ibu & Muslimah</a>
+          <a href="/akademik/smp" class="mobile-sublink">SMP Tahfidz (15 Juz)</a>
+          <a href="/akademik/sma" class="mobile-sublink">SMA Tahfidz Sains (30 Juz)</a>
+          <a href="/akademik/mahasantri" class="mobile-sublink">Mahasantri Aly (Qira'at)</a>
+          <a href="/akademik/tpa" class="mobile-sublink">TPA Anak (Kelas Sore)</a>
+          <a href="/akademik/online" class="mobile-sublink">Ngaji Online Bersanad</a>
+          <a href="/akademik/halaqoh-ibu" class="mobile-sublink">Halaqoh Ibu & Muslimah</a>
         </div>
       </li>
-      <li><a href="#visit" class="mobile-nav-link">Visit & Galeri</a></li>
-      <li><a href="#about" class="mobile-nav-link">Tentang Kami</a></li>
-      <li><a href="#news" class="mobile-nav-link">Artikel & Berita</a></li>
+      <li><a href="/visit" class="mobile-nav-link">Visit & Galeri</a></li>
+      <li><a href="/about" class="mobile-nav-link">Tentang Kami</a></li>
+      <li><a href="/news" class="mobile-nav-link">Artikel & Berita</a></li>
     </ul>
 
     <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
@@ -247,10 +241,10 @@
                 A.</p>
 
               <div class="hero-actions" data-rise style="--i:2">
-                <a href="#ppdb" class="btn btn-primary btn-ppdb-trigger">
+                <a href="javascript:void(0)" role="button" class="btn btn-primary btn-ppdb-trigger">
                   Daftar PPDB Sekarang
                 </a>
-                <a href="#akademik" class="btn btn-secondary" onclick="window.location.hash='akademik'">
+                <a href="/akademik" class="btn btn-secondary">
                   Pelajari Program
                 </a>
               </div>
@@ -1023,7 +1017,7 @@
       <div class="admin-login-wrapper">
         <div class="admin-login-card">
           <div class="admin-login-header">
-            <a href="#home" class="admin-login-back-link">
+            <a href="/" class="admin-login-back-link">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="15 18 9 12 15 6" />
               </svg>
@@ -1140,7 +1134,7 @@
             <div class="nav-group-title">MENU UTAMA</div>
             <ul class="sidebar-menu-list">
               <li class="sidebar-menu-item" data-module="overview">
-                <a href="#admin-overview" class="sidebar-menu-link active" data-admin-nav="overview">
+                <a href="/admin/overview" class="sidebar-menu-link active" data-admin-nav="overview">
                   <span class="menu-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
@@ -1150,7 +1144,7 @@
                 </a>
               </li>
               <li class="sidebar-menu-item" data-module="akademik">
-                <a href="#admin-akademik" class="sidebar-menu-link" data-admin-nav="akademik">
+                <a href="/admin/akademik" class="sidebar-menu-link" data-admin-nav="akademik">
                   <span class="menu-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
@@ -1161,7 +1155,7 @@
                 </a>
               </li>
               <li class="sidebar-menu-item" data-module="donasi">
-                <a href="#admin-donasi" class="sidebar-menu-link" data-admin-nav="donasi">
+                <a href="/admin/donasi" class="sidebar-menu-link" data-admin-nav="donasi">
                   <span class="menu-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <rect width="20" height="12" x="2" y="6" rx="2" />
@@ -1173,7 +1167,7 @@
                 </a>
               </li>
               <li class="sidebar-menu-item" data-module="galeri">
-                <a href="#admin-galeri" class="sidebar-menu-link" data-admin-nav="galeri">
+                <a href="/admin/galeri" class="sidebar-menu-link" data-admin-nav="galeri">
                   <span class="menu-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polygon points="23 7 16 12 23 17 23 7" />
@@ -1184,7 +1178,7 @@
                 </a>
               </li>
               <li class="sidebar-menu-item" data-module="berita">
-                <a href="#admin-berita" class="sidebar-menu-link" data-admin-nav="berita">
+                <a href="/admin/berita" class="sidebar-menu-link" data-admin-nav="berita">
                   <span class="menu-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
@@ -1199,7 +1193,7 @@
             <div class="nav-group-title" style="margin-top: 1.5rem;">PENGATURAN SISTEM</div>
             <ul class="sidebar-menu-list">
               <li class="sidebar-menu-item" data-module="tampilan">
-                <a href="#admin-tampilan" class="sidebar-menu-link" data-admin-nav="tampilan">
+                <a href="/admin/tampilan" class="sidebar-menu-link" data-admin-nav="tampilan">
                   <span class="menu-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <rect width="20" height="14" x="2" y="3" rx="2" />
@@ -1211,7 +1205,7 @@
                 </a>
               </li>
               <li class="sidebar-menu-item" data-module="users">
-                <a href="#admin-users" class="sidebar-menu-link" data-admin-nav="users">
+                <a href="/admin/users" class="sidebar-menu-link" data-admin-nav="users">
                   <span class="menu-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -1228,7 +1222,7 @@
 
 
           <div class="sidebar-footer">
-            <a href="#home" class="sidebar-footer-link" title="Buka Website Publik">
+            <a href="/" class="sidebar-footer-link" title="Buka Website Publik">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                 <polyline points="15 3 21 3 21 9" />
@@ -1269,7 +1263,7 @@
 
             <div class="topbar-right">
               <!-- 1. Fitur 'Lihat Web' -->
-              <a href="#home" class="btn btn-secondary btn-sm topbar-web-btn" target="_blank">
+              <a href="/" class="btn btn-secondary btn-sm topbar-web-btn" target="_blank">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                   <polyline points="15 3 21 3 21 9" />
@@ -1325,7 +1319,7 @@
                   <!-- Menu List -->
                   <div class="account-card-menu">
                     <!-- 1. Profil Saya -->
-                    <a href="#admin-profile" class="account-menu-item active-style" id="accountMenuProfile" role="menuitem">
+                    <a href="/admin/profile" class="account-menu-item active-style" id="accountMenuProfile" role="menuitem">
                       <span class="account-menu-icon">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -1438,8 +1432,8 @@
                     <p class="cockpit-banner-subtitle" id="welcomeBannerSubtitle">Sistem operasional dan verifikasi
                       santri berjalan optimal berdasarkan data riil database.</p>
                     <div class="cockpit-banner-actions">
-                      <a href="#admin-donasi" class="cockpit-pill-btn">Verifikasi Donasi &rarr;</a>
-                      <a href="#admin-akademik" class="cockpit-pill-btn cockpit-pill-secondary">Data PPDB</a>
+                      <a href="/admin/donasi" class="cockpit-pill-btn">Verifikasi Donasi &rarr;</a>
+                      <a href="/admin/akademik" class="cockpit-pill-btn cockpit-pill-secondary">Data PPDB</a>
                     </div>
                   </div>
                   <!-- Rightmost Feature: Visitor Analytics (Google Analytics Ready) -->
@@ -1560,7 +1554,7 @@
                 <!-- Section Title for Verification & Tables -->
                 <div class="cockpit-section-row" style="margin-top: 0.5rem;">
                   <h3 class="cockpit-section-heading">Verifikasi Menunggu</h3>
-                  <a href="#admin-donasi" class="cockpit-section-link">Buka Semua &rarr;</a>
+                  <a href="/admin/donasi" class="cockpit-section-link">Buka Semua &rarr;</a>
                 </div>
 
                 <!-- 4. Tables Row (Pending Donations & Recent PPDB) -->
@@ -1568,7 +1562,7 @@
                   <div class="admin-card">
                     <div class="admin-card-header">
                       <span class="admin-card-title">Verifikasi Donasi Masuk</span>
-                      <a href="#admin-donasi" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Buka
+                      <a href="/admin/donasi" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Buka
                         Semua</a>
                     </div>
                     <div class="admin-table-wrapper">
@@ -1592,7 +1586,7 @@
                   <div class="admin-card">
                     <div class="admin-card-header">
                       <span class="admin-card-title">Pendaftar PPDB Santri</span>
-                      <a href="#admin-akademik" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Kelola
+                      <a href="/admin/akademik" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">Kelola
                         PPDB</a>
                     </div>
                     <div class="admin-table-wrapper">
@@ -1894,7 +1888,7 @@
               <div
                 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                  <a href="#admin-donasi" class="btn btn-secondary btn-sm" id="btnBackToDonationList"
+                  <a href="/admin/donasi" class="btn btn-secondary btn-sm" id="btnBackToDonationList"
                     style="display: inline-flex; align-items: center; gap: 0.4rem;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
@@ -1985,7 +1979,7 @@
                   </div>
 
                   <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
-                    <a href="#admin-donasi" class="btn btn-secondary" id="btnCancelCampaign"
+                    <a href="/admin/donasi" class="btn btn-secondary" id="btnCancelCampaign"
                       style="padding: 0.7rem 1.25rem;">Batal</a>
                     <button type="submit" class="btn btn-primary" id="btnSubmitCampaign"
                       style="padding: 0.7rem 1.5rem;">Simpan Program</button>
@@ -2164,27 +2158,27 @@
               <!-- WordPress-style Pill Tabs Navigation (Identitas, Kontak, Beranda, Footer) -->
               <div class="tampilan-tabs-wrapper">
                 <nav class="tampilan-tabs-nav" aria-label="Navigasi Menu Tampilan">
-                  <a href="#admin-tampilan/identitas" class="tampilan-tab-btn active" data-tab="identitas" title="Identitas & Logo Lembaga" aria-label="Identitas & Logo Lembaga">
+                  <a href="/admin/tampilan/identitas" class="tampilan-tab-btn active" data-tab="identitas" title="Identitas & Logo Lembaga" aria-label="Identitas & Logo Lembaga">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
                     </svg>
                     <span>Identitas & Logo</span>
                   </a>
-                  <a href="#admin-tampilan/kontak" class="tampilan-tab-btn" data-tab="kontak" title="Kontak & Rekening Bank" aria-label="Kontak & Rekening Bank">
+                  <a href="/admin/tampilan/kontak" class="tampilan-tab-btn" data-tab="kontak" title="Kontak & Rekening Bank" aria-label="Kontak & Rekening Bank">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                     <span>Kontak & Rekening</span>
                   </a>
-                  <a href="#admin-tampilan/beranda" class="tampilan-tab-btn" data-tab="beranda" title="Konten Beranda & Visi Misi" aria-label="Konten Beranda & Visi Misi">
+                  <a href="/admin/tampilan/beranda" class="tampilan-tab-btn" data-tab="beranda" title="Konten Beranda & Visi Misi" aria-label="Konten Beranda & Visi Misi">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                       <polyline points="9 22 9 12 15 12 15 22" />
                     </svg>
                     <span>Konten Beranda</span>
                   </a>
-                  <a href="#admin-tampilan/footer" class="tampilan-tab-btn" data-tab="footer" title="Sosial Media & Footer" aria-label="Sosial Media & Footer">
+                  <a href="/admin/tampilan/footer" class="tampilan-tab-btn" data-tab="footer" title="Sosial Media & Footer" aria-label="Sosial Media & Footer">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
@@ -2476,7 +2470,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               <div
                 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                  <a href="#admin-berita" class="btn btn-secondary btn-sm" id="btnBackToArticleList"
+                  <a href="/admin/berita" class="btn btn-secondary btn-sm" id="btnBackToArticleList"
                     style="display: inline-flex; align-items: center; gap: 0.4rem;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
@@ -2643,7 +2637,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
 
                   <div
                     style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                    <a href="#admin-berita" class="btn btn-secondary" id="btnCancelArticle"
+                    <a href="/admin/berita" class="btn btn-secondary" id="btnCancelArticle"
                       style="padding: 0.7rem 1.25rem;">Batal</a>
                     <button type="submit" class="btn btn-primary" id="btnSubmitArticle"
                       style="padding: 0.7rem 1.5rem;">Simpan Artikel</button>
@@ -2659,7 +2653,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               <div
                 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                  <a href="#admin-users" class="btn btn-secondary btn-sm" id="btnBackToUserList"
+                  <a href="/admin/users" class="btn btn-secondary btn-sm" id="btnBackToUserList"
                     style="display: inline-flex; align-items: center; gap: 0.4rem;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
@@ -2723,7 +2717,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                   </div>
 
                   <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
-                    <a href="#admin-users" class="btn btn-secondary" id="btnCancelUser"
+                    <a href="/admin/users" class="btn btn-secondary" id="btnCancelUser"
                       style="padding: 0.7rem 1.25rem;">Batal</a>
                     <button type="submit" class="btn btn-primary" id="btnSubmitUser"
                       style="padding: 0.7rem 1.5rem;">Simpan Pengguna</button>
@@ -2739,7 +2733,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               <div
                 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                  <a href="#admin-users" class="btn btn-secondary btn-sm" id="btnBackToUserListFromDetail"
+                  <a href="/admin/users" class="btn btn-secondary btn-sm" id="btnBackToUserListFromDetail"
                     style="display: inline-flex; align-items: center; gap: 0.4rem;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
@@ -2870,7 +2864,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               <div
                 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                  <a href="#admin-galeri" class="btn btn-secondary btn-sm" id="btnBackToGalleryList"
+                  <a href="/admin/galeri" class="btn btn-secondary btn-sm" id="btnBackToGalleryList"
                     style="display: inline-flex; align-items: center; gap: 0.4rem;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
@@ -2990,7 +2984,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                   </div>
 
                   <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
-                    <a href="#admin-galeri" class="btn btn-secondary" id="btnCancelGallery"
+                    <a href="/admin/galeri" class="btn btn-secondary" id="btnCancelGallery"
                       style="padding: 0.7rem 1.25rem;">Batal</a>
                     <button type="submit" class="btn btn-primary" id="btnSubmitGallery"
                       style="padding: 0.7rem 1.5rem;">Simpan & Publikasikan</button>
@@ -3006,7 +3000,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               <div
                 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                  <a href="#admin-akademik" class="btn btn-secondary btn-sm" id="btnBackToSyllabusList"
+                  <a href="/admin/akademik" class="btn btn-secondary btn-sm" id="btnBackToSyllabusList"
                     style="display: inline-flex; align-items: center; gap: 0.4rem;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
@@ -3076,7 +3070,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                   </div>
 
                   <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
-                    <a href="#admin-akademik" class="btn btn-secondary" id="btnCancelSyllabus"
+                    <a href="/admin/akademik" class="btn btn-secondary" id="btnCancelSyllabus"
                       style="padding: 0.7rem 1.25rem;">Batal</a>
                     <button type="submit" class="btn btn-primary" style="padding: 0.7rem 1.5rem;">Simpan & Publikasikan
                       Silabus</button>
@@ -3092,7 +3086,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               <div
                 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                  <a href="#admin-overview" class="btn btn-secondary btn-sm" id="btnBackToDashboardFromProfile"
+                  <a href="/admin/overview" class="btn btn-secondary btn-sm" id="btnBackToDashboardFromProfile"
                     style="display: inline-flex; align-items: center; gap: 0.4rem;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
@@ -3167,7 +3161,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                   </div>
 
                   <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
-                    <a href="#admin-overview" class="btn btn-secondary" id="btnCancelProfile"
+                    <a href="/admin/overview" class="btn btn-secondary" id="btnCancelProfile"
                       style="padding: 0.7rem 1.25rem;">Batal</a>
                     <button type="submit" class="btn btn-primary" id="btnSubmitProfile"
                       style="padding: 0.7rem 1.5rem;">Simpan Perubahan Profil</button>
@@ -3184,7 +3178,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               <div
                 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                  <a href="#admin-akademik" class="btn btn-secondary btn-sm" id="btnBackToProgramList"
+                  <a href="/admin/akademik" class="btn btn-secondary btn-sm" id="btnBackToProgramList"
                     style="display: inline-flex; align-items: center; gap: 0.4rem;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="15 18 9 12 15 6" />
@@ -3320,7 +3314,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                   </div>
 
                   <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
-                    <a href="#admin-akademik" class="btn btn-secondary" id="btnCancelProgramEdit"
+                    <a href="/admin/akademik" class="btn btn-secondary" id="btnCancelProgramEdit"
                       style="padding: 0.7rem 1.25rem;">Batal</a>
                     <button type="submit" class="btn btn-primary" id="btnSubmitProgramEdit"
                       style="padding: 0.7rem 1.5rem;">Simpan Program & Skema Form</button>
@@ -3332,7 +3326,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
           </main>
           <!-- Floating Mobile App Bottom Navigation Bar (4 Menus Only) -->
           <nav class="mobile-app-bottom-nav" id="mobileAppBottomNav" aria-label="Navigasi Cepat Mobile">
-            <a href="#admin-overview" class="mob-nav-item active" data-admin-nav="overview" aria-label="Dashboard">
+            <a href="/admin/overview" class="mob-nav-item active" data-admin-nav="overview" aria-label="Dashboard">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7" rx="1.5" />
                 <rect x="14" y="3" width="7" height="7" rx="1.5" />
@@ -3341,14 +3335,14 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               </svg>
               <span class="mob-nav-dot"></span>
             </a>
-            <a href="#admin-akademik" class="mob-nav-item" data-admin-nav="akademik" aria-label="Akademik">
+            <a href="/admin/akademik" class="mob-nav-item" data-admin-nav="akademik" aria-label="Akademik">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
               </svg>
               <span class="mob-nav-dot"></span>
             </a>
-            <a href="#admin-donasi" class="mob-nav-item" data-admin-nav="donasi" aria-label="Wakaf & Donasi">
+            <a href="/admin/donasi" class="mob-nav-item" data-admin-nav="donasi" aria-label="Wakaf & Donasi">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect width="20" height="12" x="2" y="6" rx="2" />
                 <circle cx="12" cy="12" r="2.5"/>
@@ -3356,7 +3350,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
               </svg>
               <span class="mob-nav-dot"></span>
             </a>
-            <a href="#admin-users" class="mob-nav-item" data-admin-nav="users" aria-label="Pengguna">
+            <a href="/admin/users" class="mob-nav-item" data-admin-nav="users" aria-label="Pengguna">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
@@ -3397,12 +3391,12 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         <div>
           <h4 class="footer-col-title">Program Pendidikan</h4>
           <ul class="footer-links-list" id="footerProgramLinksList">
-            <li><a href="#akademik-smp">SMP Tahfidz Al-Qur'an</a></li>
-            <li><a href="#akademik-sma">SMA Tahfidz Sains</a></li>
-            <li><a href="#akademik-mahasantri">Mahasantri Aly Qira'at</a></li>
-            <li><a href="#akademik-tpa">TPA Al-Qur'an Anak</a></li>
-            <li><a href="#akademik-online">Ngaji Online Bersanad</a></li>
-            <li><a href="#akademik-halaqoh-ibu">Halaqoh Ibu & Muslimah</a></li>
+            <li><a href="/akademik/smp">SMP Tahfidz Al-Qur'an</a></li>
+            <li><a href="/akademik/sma">SMA Tahfidz Sains</a></li>
+            <li><a href="/akademik/mahasantri">Mahasantri Aly Qira'at</a></li>
+            <li><a href="/akademik/tpa">TPA Al-Qur'an Anak</a></li>
+            <li><a href="/akademik/online">Ngaji Online Bersanad</a></li>
+            <li><a href="/akademik/halaqoh-ibu">Halaqoh Ibu & Muslimah</a></li>
           </ul>
         </div>
 
@@ -3410,12 +3404,12 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         <div>
           <h4 class="footer-col-title">Informasi & Kontak</h4>
           <ul class="footer-links-list">
-            <li><a href="#about">Tentang Lembaga & Visi</a></li>
-            <li><a href="#visit">Galeri & Fasilitas Gedung</a></li>
-            <li><a href="#visit">Reservasi Kunjungan Tur</a></li>
-            <li><a href="#news">Kabar Berita & Artikel</a></li>
+            <li><a href="/about">Tentang Lembaga & Visi</a></li>
+            <li><a href="/visit">Galeri & Fasilitas Gedung</a></li>
+            <li><a href="/visit">Reservasi Kunjungan Tur</a></li>
+            <li><a href="/news">Kabar Berita & Artikel</a></li>
             <li><a href="https://wa.me/6281234567890" target="_blank">WhatsApp Center PPDB</a></li>
-            <li><a href="#home">Kebijakan Privasi</a></li>
+            <li><a href="/">Kebijakan Privasi</a></li>
           </ul>
         </div>
 
@@ -3443,7 +3437,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         </div>
         <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
           <span>Izin Kemenag RI No. Kd.10.04/PP.00.7/3492/2018 • NPSN: 69982341 (Akreditasi A)</span>
-          <a href="#admin-login"
+          <a href="/admin/login"
             style="color: var(--secondary-yellow); text-decoration: underline; font-size: 0.82rem; font-weight: 600;">Masuk
             Portal Admin</a>
         </div>
@@ -3578,7 +3572,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
 
       <div style="margin-top: 1.25rem; padding-top: 1rem;  text-align: center; font-size: 0.85rem;">
         <span style="color: var(--text-muted);">Khusus Asatidz & Staf Manajemen:</span>
-        <a href="#admin-login"
+        <a href="/admin/login"
           style="color: var(--primary-600); font-weight: 600; margin-left: 0.35rem; text-decoration: underline;"
           onclick="document.getElementById('lmsModal').classList.remove('open');">
           Masuk ke Portal Administrasi Backoffice

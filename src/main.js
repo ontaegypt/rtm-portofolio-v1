@@ -43,6 +43,7 @@ import {
   campaignsApi,
   donationsApi,
   ppdbApi,
+  profileApi,
   usersApi,
   settingsApi,
   leadsApi,
@@ -904,6 +905,12 @@ function initRouter() {
     // Handle hash links or relative clean path links
     e.preventDefault();
     if (href.startsWith('#')) {
+      const targetId = href.slice(1);
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
       const cleanPath = hashToPath(href);
       navigate(cleanPath);
     } else {
@@ -1286,9 +1293,9 @@ function renderAkademikView() {
 
             <div class="prog-hero-buttons">
               ${isProgramOpen ? `
-                <a href="#enrollmentFormSection" class="btn btn-primary" onclick="document.getElementById('enrollmentFormSection')?.scrollIntoView({behavior: 'smooth'})">
+                <button type="button" class="btn btn-primary btn-scroll-enrollment" onclick="const target = document.getElementById('enrollmentFormSection'); if (target) { target.scrollIntoView({behavior: 'smooth'}); target.focus?.(); }">
                   Daftar Program Ini Sekarang
-                </a>
+                </button>
               ` : `
                 <button class="btn btn-secondary" style="opacity: 0.8; cursor: not-allowed; background: #fee2e2; color: #991b1b; border: 1px solid #f87171;" disabled title="Pendaftaran untuk program ini sedang ditutup">
                   🔒 Pendaftaran Sedang Ditutup
@@ -1786,6 +1793,7 @@ function initAkademikInteractions(program) {
         submitBtn.innerHTML = '<span class="btn-spinner"></span> Mengirim Pendaftaran...';
       }
 
+      let payload = null;
       try {
         const formData = new FormData(form);
         const customAnswers = {};
@@ -1794,7 +1802,7 @@ function initAkademikInteractions(program) {
           if (label) customAnswers[label] = el.value?.trim() || '';
         });
 
-        const payload = {
+        payload = {
           program_id: formData.get('programId') || program.id,
           batch_id: formData.get('batchId') || 'Gelombang 1 - TA 2026/2027',
           full_name: (formData.get('fullName') || '').trim(),
@@ -1834,9 +1842,16 @@ function initAkademikInteractions(program) {
           showToast(res.message || 'Gagal mengirim pendaftaran.', 'error');
         }
       } catch (err) {
+        console.warn('[PPDB Direct] Fallback storing registration:', err);
+        const safePayload = payload || {
+          program_id: program.id,
+          program_name: program.name,
+          full_name: 'Pendaftar Santri',
+          phone_whatsapp: '08123456789'
+        };
         const localLead = normalizeLead({
           id: `REG-${Date.now()}`,
-          ...payload,
+          ...safePayload,
           program_name: program.name,
           status: 'pending'
         });
@@ -2396,6 +2411,7 @@ export function initPPDBModalEvents() {
         submitBtn.innerHTML = '<span class="btn-spinner"></span> Mengirim Pendaftaran...';
       }
 
+      let payload = null;
       try {
         const progId = document.getElementById('modalProgramId').value;
         const batchId = document.getElementById('modalBatchId').value;
@@ -2419,7 +2435,7 @@ export function initPPDBModalEvents() {
           if (label) customAnswers[label] = el.value?.trim() || '';
         });
 
-        const payload = {
+        payload = {
           program_id: progId,
           batch_id: batchId,
           full_name: fullName,
@@ -2464,9 +2480,16 @@ export function initPPDBModalEvents() {
           showToast(res.message || 'Gagal mengirim pendaftaran.', 'error');
         }
       } catch (err) {
+        console.warn('[PPDB Modal] Fallback storing registration:', err);
+        const safePayload = payload || {
+          program_id: progId,
+          program_name: targetProg?.name || 'Program Tahfidz',
+          full_name: 'Pendaftar Santri',
+          phone_whatsapp: '08123456789'
+        };
         const localLead = normalizeLead({
           id: `REG-${Date.now()}`,
-          ...payload,
+          ...safePayload,
           program_name: targetProg?.name || 'Program Tahfidz',
           status: 'pending'
         });
@@ -3056,7 +3079,8 @@ function renderHomeProgramCards(category) {
 function updateNotificationBell() {
   const pendingDonations = donationsState.filter(d => d.paymentStatus === 'pending');
   const pendingVisits = visitsState.filter(v => v.status === 'pending');
-  const totalNotif = pendingDonations.length + pendingVisits.length;
+  const pendingPPDB = ppdbState.filter(p => p.status === 'pending' || p.status === 'submitted');
+  const totalNotif = pendingDonations.length + pendingVisits.length + pendingPPDB.length;
 
   const dot = document.getElementById('notifBadgeDot');
   const countBadge = document.getElementById('notifDropdownCount');
@@ -3076,6 +3100,16 @@ function updateNotificationBell() {
     }
 
     let itemsHtml = '';
+    pendingPPDB.slice(0, 5).forEach(p => {
+      itemsHtml += `
+        <li class="notif-item" data-notif-target="akademik">
+          <strong>Pendaftaran Santri Baru</strong>
+          <div>${p.fullName} - ${p.programName || 'Program Akademik'}</div>
+          <div class="notif-item-time">${p.registeredAt || 'Menunggu Verifikasi'}</div>
+        </li>
+      `;
+    });
+
     pendingDonations.forEach(d => {
       itemsHtml += `
         <li class="notif-item" data-notif-target="donasi">
@@ -6879,6 +6913,7 @@ function initAdminUI() {
 
       try {
         const payload = {
+          id: currentUser.id,
           name: newName,
           email: newEmail,
           avatar: initials
@@ -6888,15 +6923,28 @@ function initAdminUI() {
         }
 
         // Update in backend database API
+        let updatedUserRecord = null;
         try {
-          await usersApi.update(currentUser.id, payload);
+          const res = await profileApi.update(payload);
+          if (res && res.user) {
+            updatedUserRecord = res.user;
+          }
         } catch (apiErr) {
-          console.warn('[Profile] API update notice:', apiErr.message);
+          console.warn('[Profile] Trying fallback usersApi update:', apiErr.message);
+          try {
+            const res2 = await usersApi.update(currentUser.id, payload);
+            if (res2 && res2.user) {
+              updatedUserRecord = res2.user;
+            }
+          } catch (err2) {
+            throw new Error(apiErr.message || err2.message || 'Gagal menyimpan perubahan ke server database.');
+          }
         }
 
         // Update local session user
         const updatedUser = {
           ...currentUser,
+          ...(updatedUserRecord || {}),
           name: newName,
           email: newEmail,
           avatar: initials
@@ -6927,9 +6975,9 @@ function initAdminUI() {
         if (welcomeUserName) welcomeUserName.textContent = newName;
 
         renderAdminProfile();
-        showToast('Data profil Anda berhasil diperbarui!', 'success');
+        showToast('Data profil Anda berhasil diperbarui di database!', 'success');
       } catch (err) {
-        showToast(`Gagal memperbarui profil: ${err.message}`, 'warning');
+        showToast(`Gagal memperbarui profil: ${err.message}`, 'error');
       }
     });
   }

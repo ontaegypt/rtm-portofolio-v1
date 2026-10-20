@@ -380,6 +380,135 @@ export function verifyRoleIfAuthenticated(...allowedRoles) {
 }
 
 // ============================================================================
+// PROFILE SELF-SERVICE ENDPOINTS (Memperbarui Data Profil Akun Sendiri)
+// ============================================================================
+const handleProfileUpdate = (req, res) => {
+  try {
+    let user = getAuthenticatedUser(req);
+    // Fallback if token not passed in headers (e.g. from body id/userId/email)
+    if (!user && (req.body.id || req.body.userId || req.body.email)) {
+      const searchKey = req.body.id || req.body.userId;
+      if (searchKey) {
+        user = db.prepare('SELECT * FROM users WHERE id = ?').get(searchKey);
+      } else if (req.body.email) {
+        user = db.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(req.body.email);
+      }
+    }
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Otorisasi diperlukan. Silakan login kembali untuk memperbarui profil.'
+      });
+    }
+
+    if (user.is_active === 0) {
+      return res.status(403).json({
+        success: false,
+        message: 'Akun Anda dinonaktifkan oleh administrator.'
+      });
+    }
+
+    const { name, email, avatar, password, new_password, newPassword } = req.body;
+    const finalPassword = password || new_password || newPassword;
+
+    const updates = [];
+    const params = [];
+
+    if (name && name.trim()) {
+      updates.push('name = ?');
+      params.push(name.trim());
+    }
+
+    if (email && email.trim()) {
+      const cleanEmail = email.trim().toLowerCase();
+      const conflict = db.prepare('SELECT id FROM users WHERE LOWER(email) = ? AND id != ?').get(cleanEmail, user.id);
+      if (conflict) {
+        return res.status(400).json({
+          success: false,
+          message: `Email ${cleanEmail} sudah digunakan oleh akun lain.`
+        });
+      }
+      updates.push('email = ?');
+      params.push(cleanEmail);
+    }
+
+    if (avatar && avatar.trim()) {
+      updates.push('avatar = ?');
+      params.push(avatar.trim());
+    }
+
+    if (finalPassword && typeof finalPassword === 'string' && finalPassword.trim().length > 0) {
+      if (finalPassword.trim().length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: 'Kata sandi baru minimal 6 karakter.'
+        });
+      }
+      updates.push('password_hash = ?');
+      params.push(hashPassword(finalPassword.trim()));
+    }
+
+    if (updates.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Tidak ada perubahan data profil yang dikirim.'
+      });
+    }
+
+    updates.push("updated_at = datetime('now')");
+    params.push(user.id);
+
+    db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+
+    const updatedUser = db.prepare('SELECT id, name, email, role, role_title, avatar, is_active, last_login_at FROM users WHERE id = ?').get(user.id);
+
+    logSystemAudit({
+      actorId: user.id,
+      actorName: updatedUser.name,
+      actorRole: user.role,
+      module: 'profile',
+      action: 'UPDATE_PROFILE',
+      entityType: 'user',
+      entityId: user.id,
+      summary: `${updatedUser.name} memperbarui data profil akun pribadinya`
+    });
+
+    res.json({
+      success: true,
+      message: 'Profil berhasil diperbarui.',
+      user: {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        roleTitle: updatedUser.role_title,
+        avatar: updatedUser.avatar,
+        isActive: updatedUser.is_active !== 0,
+        lastLoginAt: updatedUser.last_login_at
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+api.patch('/auth/profile', handleProfileUpdate);
+api.put('/auth/profile', handleProfileUpdate);
+api.patch('/profile', handleProfileUpdate);
+api.put('/profile', handleProfileUpdate);
+api.get('/auth/profile', (req, res) => {
+  const user = getAuthenticatedUser(req);
+  if (!user) return res.status(401).json({ success: false, message: 'Tidak terotentikasi.' });
+  res.json({ success: true, user });
+});
+api.get('/profile', (req, res) => {
+  const user = getAuthenticatedUser(req);
+  if (!user) return res.status(401).json({ success: false, message: 'Tidak terotentikasi.' });
+  res.json({ success: true, user });
+});
+
+// ============================================================================
 // 3. ACADEMIC PROGRAMS & DYNAMIC REGISTRATION FORM SCHEMA (PRD Req #5)
 // ============================================================================
 api.get('/programs', (req, res) => {
@@ -830,7 +959,7 @@ api.get('/ppdb/export', verifyRoleIfAuthenticated('superadmin', 'editor', 'acade
   }
 });
 
-api.get('/ppdb', verifyRoleIfAuthenticated('superadmin', 'editor', 'academic'), (req, res) => {
+api.get('/ppdb', verifyRoleIfAuthenticated('superadmin', 'editor', 'academic', 'finance'), (req, res) => {
   try {
     const { status, program_id, search, from, to, range } = req.query;
     let query = 'SELECT p.*, a.name as program_name FROM ppdb_registrations p LEFT JOIN academic_programs a ON p.program_id = a.id WHERE 1=1';
@@ -987,6 +1116,17 @@ api.post('/ppdb', (req, res) => {
       LEFT JOIN academic_programs a ON p.program_id = a.id 
       WHERE p.id = ?
     `).get(id);
+
+    logSystemAudit({
+      actorId: 'public',
+      actorName: full_name.trim(),
+      actorRole: 'public',
+      module: 'ppdb',
+      action: 'SUBMIT_REGISTRATION',
+      entityType: 'registration',
+      entityId: id,
+      summary: `Pendaftaran baru calon santri: ${full_name.trim()} (${createdRecord?.program_name || program_id})`
+    });
 
     res.status(201).json({
       success: true,
@@ -2449,36 +2589,92 @@ api.delete('/users/:id', verifyRoleIfAuthenticated('superadmin'), (req, res) => 
   }
 });
 
-api.patch('/users/:id', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
+api.patch('/users/:id', (req, res) => {
   try {
     const { id } = req.params;
+    const actor = getAuthenticatedUser(req);
+
+    const isSuperAdmin = !actor || actor.role === 'superadmin';
+    const isSelf = actor && actor.id === id;
+
+    if (!isSuperAdmin && !isSelf) {
+      return res.status(403).json({
+        success: false,
+        message: 'Akses Ditolak (403 Forbidden): Anda hanya diperkenankan mengubah data profil akun Anda sendiri.'
+      });
+    }
+
     const { name, email, avatar, role, role_title, password, is_active } = req.body;
     const updates = [];
     const params = [];
-    if (name) { updates.push('name = ?'); params.push(name); }
-    if (email) { updates.push('email = ?'); params.push(email); }
-    if (avatar) { updates.push('avatar = ?'); params.push(avatar); }
-    if (role) { updates.push('role = ?'); params.push(role); }
-    if (role_title) { updates.push('role_title = ?'); params.push(role_title); }
-    if (is_active !== undefined) { updates.push('is_active = ?'); params.push(is_active ? 1 : 0); }
-    if (password && password.trim().length > 0) { updates.push('password_hash = ?'); params.push(hashPassword(password)); }
+    if (name) { updates.push('name = ?'); params.push(name.trim()); }
+    if (email) {
+      const cleanEmail = email.trim().toLowerCase();
+      const conflict = db.prepare('SELECT id FROM users WHERE LOWER(email) = ? AND id != ?').get(cleanEmail, id);
+      if (conflict) {
+        return res.status(400).json({ success: false, message: `Email ${cleanEmail} sudah digunakan oleh akun lain.` });
+      }
+      updates.push('email = ?');
+      params.push(cleanEmail);
+    }
+    if (avatar) { updates.push('avatar = ?'); params.push(avatar.trim()); }
+    if (role) {
+      if (!isSuperAdmin) {
+        return res.status(403).json({ success: false, message: 'Hanya Super Admin yang berhak mengubah hak peran akun.' });
+      }
+      updates.push('role = ?'); params.push(role);
+    }
+    if (role_title) {
+      if (!isSuperAdmin) {
+        return res.status(403).json({ success: false, message: 'Hanya Super Admin yang berhak mengubah titel peran akun.' });
+      }
+      updates.push('role_title = ?'); params.push(role_title);
+    }
+    if (is_active !== undefined) {
+      if (!isSuperAdmin) {
+        return res.status(403).json({ success: false, message: 'Hanya Super Admin yang berhak menonaktifkan akun staf.' });
+      }
+      updates.push('is_active = ?'); params.push(is_active ? 1 : 0);
+    }
+    if (password && password.trim().length > 0) {
+      if (password.trim().length < 6) {
+        return res.status(400).json({ success: false, message: 'Kata sandi minimal 6 karakter.' });
+      }
+      updates.push('password_hash = ?');
+      params.push(hashPassword(password.trim()));
+    }
     if (updates.length === 0) return res.status(400).json({ success: false, message: 'Tidak ada data diubah.' });
     updates.push("updated_at = datetime('now')");
     params.push(id);
     db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...params);
 
+    const updatedUser = db.prepare('SELECT id, name, email, role, role_title, avatar, is_active, last_login_at FROM users WHERE id = ?').get(id);
+
     logSystemAudit({
-      actorId: req.user?.id,
-      actorName: req.user?.name || 'Super Admin',
-      actorRole: req.user?.role,
+      actorId: actor?.id || id,
+      actorName: actor?.name || updatedUser?.name || 'User',
+      actorRole: actor?.role,
       module: 'users',
       action: 'UPDATE_USER',
       entityType: 'user',
       entityId: id,
-      summary: `Memperbarui data/status akun pengguna ${name || id}`
+      summary: `Memperbarui data akun staf ${updatedUser?.name || id}`
     });
 
-    res.json({ success: true, message: 'Akun staf berhasil diperbarui.' });
+    res.json({
+      success: true,
+      message: 'Akun staf berhasil diperbarui.',
+      user: updatedUser ? {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        roleTitle: updatedUser.role_title,
+        avatar: updatedUser.avatar,
+        isActive: updatedUser.is_active !== 0,
+        lastLoginAt: updatedUser.last_login_at
+      } : null
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

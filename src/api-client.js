@@ -179,6 +179,11 @@ export const ppdbApi = {
   exportCsvUrl: `${API_BASE}/ppdb/export`
 };
 
+export const profileApi = {
+  get: () => client.get('/auth/me'),
+  update: (data) => client.patch('/auth/profile', data)
+};
+
 export const usersApi = {
   getAll: () => client.get('/users'),
   create: (data) => client.post('/users', data),

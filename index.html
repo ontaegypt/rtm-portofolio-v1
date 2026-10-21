@@ -180,11 +180,20 @@
     </div>
   </header>
 
-  <!-- Mobile Drawer Menu -->
+  <!-- Mobile Drawer Menu (Full viewport overlay covering site-header so only 1 logo is visible) -->
   <div class="mobile-drawer" id="mobileDrawer">
-    <div style="padding-bottom: 0.75rem;  margin-bottom: 0.75rem;">
-      <img src="/assets/images/logo-header-RTM.png" alt="Rumah Tahfidz Madani" class="brand-logo-img"
-        style="height: 48px; width: auto;" />
+    <div class="mobile-drawer-header">
+      <a href="/" class="mobile-drawer-brand">
+        <img src="/assets/images/logo-header-RTM.png" alt="Rumah Tahfidz Madani" class="brand-logo-img"
+          style="height: 46px; width: auto;" />
+      </a>
+      <button type="button" class="mobile-drawer-close" id="mobileDrawerClose" aria-label="Tutup Menu Navigasi">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
     <ul class="mobile-nav-list">
       <li><a href="/" class="mobile-nav-link">Home</a></li>

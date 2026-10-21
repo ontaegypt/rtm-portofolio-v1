@@ -3069,12 +3069,29 @@ function initGlobalUI() {
   window.addEventListener('scroll', updateHeaderState, { passive: true });
   updateHeaderState();
 
-  // Mobile Drawer Toggle
+  // Mobile Drawer Toggle & Close
   const mobileToggle = document.getElementById('mobileToggle');
   const mobileDrawer = document.getElementById('mobileDrawer');
+  const mobileDrawerClose = document.getElementById('mobileDrawerClose');
+
   if (mobileToggle && mobileDrawer) {
     mobileToggle.addEventListener('click', () => {
       mobileDrawer.classList.toggle('open');
+    });
+  }
+
+  if (mobileDrawerClose && mobileDrawer) {
+    mobileDrawerClose.addEventListener('click', () => {
+      mobileDrawer.classList.remove('open');
+    });
+  }
+
+  // Close drawer when any navigation link inside is clicked
+  if (mobileDrawer) {
+    mobileDrawer.querySelectorAll('a, button:not(#mobileDrawerClose)').forEach(el => {
+      el.addEventListener('click', () => {
+        mobileDrawer.classList.remove('open');
+      });
     });
   }
 

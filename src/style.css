@@ -3427,14 +3427,27 @@ body.page-home .site-header.scrolled {
     text-align: center;
     padding: 0;
     gap: 1.75rem;
+    align-items: center;
   }
   .donasi-badge-tag {
     margin-left: auto;
     margin-right: auto;
   }
   .donasi-callout-banner .btn {
-    width: 100%;
-    justify-content: center;
+    width: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.52rem 1.05rem !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-full, 9999px) !important;
+    gap: 0.45rem !important;
+    box-shadow: 0 4px 14px rgba(253, 202, 24, 0.3) !important;
+  }
+  .donasi-callout-banner .btn svg {
+    width: 15px !important;
+    height: 15px !important;
   }
   .home-stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -3495,12 +3508,35 @@ body.page-home .site-header.scrolled {
     font-size: 0.98rem;
     margin-bottom: 1.25rem;
   }
+  .home-article-read-btn {
+    font-size: 0.82rem;
+    font-weight: 600;
+    gap: 0.45rem;
+  }
+  .home-article-read-btn svg {
+    width: 14px;
+    height: 14px;
+  }
   .home-articles-footer {
-    margin-top: 3rem;
+    margin-top: 2.5rem;
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
   .home-articles-more-btn {
-    width: 100%;
-    justify-content: center;
+    width: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.52rem 1.05rem !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-full, 9999px) !important;
+    gap: 0.45rem !important;
+  }
+  .home-articles-more-btn svg {
+    width: 15px !important;
+    height: 15px !important;
   }
   .home-cta-daftar-section {
     padding: 4rem 0;
@@ -3518,13 +3554,52 @@ body.page-home .site-header.scrolled {
     margin-bottom: 1.75rem;
   }
   .cta-daftar-actions {
+    display: flex;
     justify-content: center;
-    flex-direction: column;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.65rem;
     width: 100%;
   }
-  .cta-daftar-actions .btn {
-    width: 100%;
-    justify-content: center;
+  .cta-daftar-actions .btn,
+  .cta-btn-purple,
+  .cta-btn-orange,
+  .cta-btn-navy {
+    width: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.52rem 1.05rem !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-full, 9999px) !important;
+    gap: 0.45rem !important;
+  }
+  .cta-daftar-actions .btn svg,
+  .cta-btn-purple svg,
+  .cta-btn-orange svg,
+  .cta-btn-navy svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  /* Universal rule: All buttons & CTAs in #view-home on mobile match hero button sizing */
+  #view-home .btn:not(.hero-video-toggle-btn) {
+    padding: 0.52rem 1.05rem !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-full, 9999px) !important;
+    gap: 0.45rem !important;
+    width: auto !important;
+    max-width: 100%;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  #view-home .btn:not(.hero-video-toggle-btn) svg {
+    width: 15px !important;
+    height: 15px !important;
   }
   .cta-daftar-collage {
     gap: 0.75rem;

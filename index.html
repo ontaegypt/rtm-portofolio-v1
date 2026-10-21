@@ -73,23 +73,23 @@
   <link rel="stylesheet" href="/src/style.css" />
 </head>
 
-<body>
+<body class="page-home">
 
   <!-- ==========================================================================
        SITE HEADER / NAVBAR (PRD Section 3 & 3.1)
        ========================================================================== -->
-  <header class="site-header">
+  <header class="site-header header-transparent">
     <div class="container nav-container">
       <!-- Brand Logo Header -->
       <a href="/" class="brand-logo" id="navLogo" aria-label="Beranda Rumah Tahfidz Madani">
-        <img src="/assets/images/logo-header-RTM.png" alt="Rumah Tahfidz Madani" class="brand-logo-img header-logo" />
+        <img src="/assets/images/logo-footer-RTM.png" alt="Rumah Tahfidz Madani" class="brand-logo-img header-logo" />
       </a>
 
       <!-- Primary Desktop Menu -->
       <nav>
         <ul class="nav-menu">
           <li class="nav-item">
-            <a href="/" class="nav-link active" data-view="home">Home</a>
+            <a href="/" class="nav-link active" data-view="home">Beranda</a>
           </li>
 
           <!-- Dropdown Akademik (Formal & Non-Formal) -->
@@ -102,33 +102,27 @@
             </a>
             <div class="nav-dropdown" id="navbarAcademicDropdown">
               <div class="dropdown-section-title">Pendidikan Formal</div>
-              <a href="/akademik/smp" class="dropdown-link">
-                <span>SMP Tahfidz</span>
-                <span class="badge-tag">15 Juz</span>
+              <a href="/akademik/smp" class="dropdown-link" data-program-id="smp">
+                <span>SMP</span>
               </a>
-              <a href="/akademik/sma" class="dropdown-link">
-                <span>SMA Tahfidz Sains</span>
-                <span class="badge-tag">30 Juz</span>
+              <a href="/akademik/sma" class="dropdown-link" data-program-id="sma">
+                <span>SMA</span>
               </a>
-              <a href="/akademik/mahasantri" class="dropdown-link">
-                <span>Mahasantri Aly</span>
-                <span class="badge-tag">Qira'at</span>
+              <a href="/akademik/mahasantri" class="dropdown-link" data-program-id="mahasantri">
+                <span>Mahasantri</span>
               </a>
 
               <div class="dropdown-divider"></div>
 
               <div class="dropdown-section-title">Pendidikan Non-Formal</div>
-              <a href="/akademik/tpa" class="dropdown-link">
+              <a href="/akademik/tpa" class="dropdown-link" data-program-id="tpa">
                 <span>TPA Al-Qur'an Anak</span>
-                <span class="badge-tag">Sore</span>
               </a>
-              <a href="/akademik/online" class="dropdown-link">
+              <a href="/akademik/online" class="dropdown-link" data-program-id="online">
                 <span>Ngaji Online Global</span>
-                <span class="badge-tag">Zoom</span>
               </a>
-              <a href="/akademik/halaqoh-ibu" class="dropdown-link">
+              <a href="/akademik/halaqoh-ibu" class="dropdown-link" data-program-id="halaqoh-ibu">
                 <span>Halaqoh Ibu & Muslimah</span>
-                <span class="badge-tag">Ummahat</span>
               </a>
             </div>
           </li>
@@ -197,12 +191,13 @@
       <li>
         <span class="mobile-nav-link" style="color: var(--primary-700);">Program Akademik</span>
         <div class="mobile-nav-sublinks" id="mobileAcademicSubmenu">
-          <a href="/akademik/smp" class="mobile-sublink">SMP Tahfidz (15 Juz)</a>
-          <a href="/akademik/sma" class="mobile-sublink">SMA Tahfidz Sains (30 Juz)</a>
-          <a href="/akademik/mahasantri" class="mobile-sublink">Mahasantri Aly (Qira'at)</a>
-          <a href="/akademik/tpa" class="mobile-sublink">TPA Anak (Kelas Sore)</a>
-          <a href="/akademik/online" class="mobile-sublink">Ngaji Online Bersanad</a>
-          <a href="/akademik/halaqoh-ibu" class="mobile-sublink">Halaqoh Ibu & Muslimah</a>
+          <a href="/akademik/smp" class="mobile-sublink" data-program-id="smp">SMP</a>
+          <a href="/akademik/sma" class="mobile-sublink" data-program-id="sma">SMA</a>
+          <a href="/akademik/mahasantri" class="mobile-sublink" data-program-id="mahasantri">Mahasantri</a>
+          <a href="/akademik/tpa" class="mobile-sublink" data-program-id="tpa">TPA Al-Qur'an Anak</a>
+          <a href="/akademik/online" class="mobile-sublink" data-program-id="online">Ngaji Online Global</a>
+          <a href="/akademik/halaqoh-ibu" class="mobile-sublink" data-program-id="halaqoh-ibu">Halaqoh Ibu &
+            Muslimah</a>
         </div>
       </li>
       <li><a href="/visit" class="mobile-nav-link">Visit & Galeri</a></li>
@@ -230,65 +225,65 @@
          ======================================================================== -->
     <div id="view-home" class="page-view active">
       <!-- 1. Hero Section (Brand Positioning) -->
-      <section class="hero-section">
-        <div class="container">
-          <div class="hero-grid">
-            <div class="hero-content">
-              <h1 class="hero-title" data-rise style="--i:0">Generasi Qur'ani <br class="hero-break">Berakhlak Mulia
-              </h1>
-              <p class="hero-subtitle" data-rise style="--i:1">Pondok Pesantren dan Rumah Tahfidz modern berbasis adab
-                samawi, dibimbing asatidz bersanad muttashil dengan perpaduan sains dan kurikulum formal terakreditasi
-                A.</p>
+      <!-- 1. Hero Section (Video Background Looping & Centered Majestic Typography) -->
+      <section class="hero-section hero-video-section">
+        <!-- Looping Background Video with Dark Vignette Overlay -->
+        <div class="hero-video-wrap" aria-hidden="true">
+          <video id="heroBgVideo" class="hero-video-media" autoplay muted loop playsinline preload="metadata"
+            poster="/assets/images/hero-santri.jpg">
+            <source src="/assets/images/section-hero-medium.mp4" type="video/mp4" />
+            <source src="/assets/images/section-hero-compressed.mp4" type="video/mp4" />
+          </video>
+          <div class="hero-video-overlay"></div>
+        </div>
 
-              <div class="hero-actions" data-rise style="--i:2">
-                <a href="javascript:void(0)" role="button" class="btn btn-primary btn-ppdb-trigger">
-                  Daftar PPDB Sekarang
-                </a>
-                <a href="/akademik" class="btn btn-secondary">
-                  Pelajari Program
-                </a>
-              </div>
+        <div class="container hero-container-centered">
+          <div class="hero-center-content">
+            <!-- Greeting / Pre-headline: Selamat Datang di Rumah Tahfidz Muslimah (Clean Text) -->
+            <p class="hero-welcome-plain" data-rise style="--i:0">
+              Selamat Datang di Rumah Tahfidz Muslimah
+            </p>
 
-              <!-- Quick Highlights Counter Bar -->
-              <div class="hero-stats-bar" data-rise style="--i:3">
-                <div class="stat-item">
-                  <span class="stat-number">850+</span>
-                  <span class="stat-label">Santri Aktif</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-number">42</span>
-                  <span class="stat-label">Asatidz Bersanad</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-number">1.280+</span>
-                  <span class="stat-label">Alumni Mutqin</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-number">A</span>
-                  <span class="stat-label">Akreditasi Unggul</span>
-                </div>
-              </div>
-            </div>
+            <!-- Main Headline (Single Line): Dengan Al Quran, Kami Membangun Peradaban -->
+            <h1 class="hero-title hero-video-headline" data-rise style="--i:1">
+              Dengan Al Quran, Kami Membangun Peradaban
+            </h1>
 
-            <!-- Hero Media Visual Frame -->
-            <div class="hero-media-wrapper">
-              <div class="hero-image-card shutter" data-rise style="--i:2">
-                <img src="/assets/images/hero-santri.jpg" alt="Santri menghafal Al-Qur'an di Masjid Al-Muhajirin" />
-              </div>
-              <div class="hero-floating-card">
-                <div class="floating-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <div>
-                  <div class="floating-text-title">Metode Sabaq & Sabqi</div>
-                  <div class="floating-text-desc">Muraja'ah terukur & hafalan melekat kuat</div>
-                </div>
-              </div>
+            <!-- Centered Action Buttons (Compact CTA) -->
+            <div class="hero-actions hero-video-actions" data-rise style="--i:2">
+              <a href="javascript:void(0)" role="button" class="btn btn-primary btn-ppdb-trigger">
+                <span>Daftar PPDB Sekarang</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+              <a href="/akademik" class="btn btn-video-glass">
+                <span>Pelajari Program</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 16 16 12 12 8"></polyline>
+                  <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+              </a>
             </div>
           </div>
         </div>
+
+        <!-- Video Control Button for Accessibility & Mobile Power Saving -->
+        <button type="button" class="hero-video-toggle-btn" id="btnHeroVideoToggle"
+          aria-label="Jeda atau putar video latar belakang" title="Jeda/Putar video latar belakang">
+          <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+          <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span class="video-toggle-label">Video</span>
+        </button>
       </section>
 
       <!-- 2. Section Keunggulan & Mengapa Memilih Kami (Why Choose Us) -->
@@ -315,9 +310,9 @@
 
           <!-- Section 5 Pilar USP -->
           <div class="section-header">
-            <h3 class="section-title">Mengapa Memilih Rumah Tahfidz?</h3>
+            <h3 class="section-title">Tiga Pilar Pendidikan Kami</h3>
             <p class="section-description">
-              5 Pilar keunggulan unik yang menjamin kualitas hafalan mutqin dan perkembangan karakter santri secara
+              3 Pilar keunggulan unik yang menjamin kualitas hafalan mutqin dan perkembangan karakter santri secara
               menyeluruh.
             </p>
           </div>
@@ -365,34 +360,236 @@
         </div>
       </section>
 
-      <!-- 3. Section Program Akademik (Katalog Program Singkat) -->
-      <section class="academic-catalog-section">
+      <!-- 2.5 Section Statistik Lembaga & Rekam Jejak Nyata -->
+      <section class="home-stats-section" aria-label="Statistik Rumah Tahfidz Muslimah">
         <div class="container">
-          <div class="section-header">
-            <h3 class="section-title">Program Pendidikan Pilihan</h3>
-            <p class="section-description">Pilihan jenjang pendidikan formal berbasis asrama maupun program non-formal
-              fleksibel untuk masyarakat luas.</p>
-          </div>
+          <div class="home-stats-card" data-reveal>
+            <div class="home-stats-header">
+              <span class="home-stats-eyebrow">Dampak & Rekam Jejak Nyata</span>
+              <h2 class="home-stats-title">Statistik Keunggulan Rumah Tahfidz</h2>
+              <p class="home-stats-desc">Dedikasi berkesinambungan dalam mencetak huffazh Al-Qur'an mutqin, berakhlak
+                mulia, dan berprestasi unggul.</p>
+            </div>
+            <div class="home-stats-grid">
+              <div class="home-stat-item">
+                <div class="home-stat-icon-wrap">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <div class="home-stat-content">
+                  <div class="home-stat-number-wrap">
+                    <span class="home-stat-number" data-target="850">850</span><span class="home-stat-plus">+</span>
+                  </div>
+                  <span class="home-stat-label">Santri Aktif</span>
+                  <span class="home-stat-sub">Mukim Asrama & Non-Mukim</span>
+                </div>
+              </div>
 
-          <!-- Filter Tabs Formal vs Non-Formal -->
-          <div class="catalog-tabs">
-            <button class="catalog-tab-btn active" data-category="all">Semua Program (6)</button>
-            <button class="catalog-tab-btn" data-category="formal">Pendidikan Formal</button>
-            <button class="catalog-tab-btn" data-category="non_formal">Non-Formal & Umum</button>
-          </div>
+              <div class="home-stat-item">
+                <div class="home-stat-icon-wrap">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5"></path>
+                    <path d="M2 12l10 5 10-5"></path>
+                  </svg>
+                </div>
+                <div class="home-stat-content">
+                  <div class="home-stat-number-wrap">
+                    <span class="home-stat-number" data-target="42">42</span>
+                  </div>
+                  <span class="home-stat-label">Asatidz Bersanad</span>
+                  <span class="home-stat-sub">Sanad Riwayat Hafsh 'an 'Ashim</span>
+                </div>
+              </div>
 
-          <!-- Cards Grid Container -->
-          <div class="program-cards-grid" id="homeProgramCardsContainer">
-            <!-- Rendered dynamically by JavaScript -->
+              <div class="home-stat-item">
+                <div class="home-stat-icon-wrap">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                  </svg>
+                </div>
+                <div class="home-stat-content">
+                  <div class="home-stat-number-wrap">
+                    <span class="home-stat-number" data-target="1280">1.280</span><span class="home-stat-plus">+</span>
+                  </div>
+                  <span class="home-stat-label">Alumni Mutqin</span>
+                  <span class="home-stat-sub">Kiprah di Univ. Luar Negeri & PTN</span>
+                </div>
+              </div>
+
+              <div class="home-stat-item">
+                <div class="home-stat-icon-wrap">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                  </svg>
+                </div>
+                <div class="home-stat-content">
+                  <div class="home-stat-number-wrap">
+                    <span class="home-stat-number">Predikat A</span>
+                  </div>
+                  <span class="home-stat-label">Akreditasi Unggul</span>
+                  <span class="home-stat-sub">Standar Kemenag RI & BAN-SM</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- 4. Section Prestasi & Testimoni (Social Proof) -->
-      <section class="social-proof-section">
+      <!-- 3. Section Artikel Pilihan: Bertumbuh Bersama, Menginspirasi Sesama -->
+      <section class="home-articles-section" aria-label="Artikel dan Kabar Inspiratif">
         <div class="container">
-          <div class="section-header">
-            <h3 class="section-title">Capaian Gemilang Santri Rumah Tahfidz</h3>
+          <div class="section-header" data-reveal>
+            <span class="section-eyebrow-tag">Kabar &amp; Mutiara Hikmah</span>
+            <h2 class="section-title">Bertumbuh Bersama, Menginspirasi Sesama</h2>
+            <p class="section-description">
+              Ragam kisah inspiratif, mutiara hikmah, dan kabar perkembangan dakwah Al-Qur'an dari santri dan asatidzah
+              di lingkungan Rumah Tahfidz Muslimah.
+            </p>
+          </div>
+
+          <!-- Zigzag Articles Showcase -->
+          <div class="home-articles-zigzag" id="homeArticlesContainer">
+            <!-- Article 1: [Kiri] Title & Isi | [Kanan] Featured Image -->
+            <article class="home-article-row zigzag-text-left" data-article-id="art-1">
+              <div class="home-article-content">
+                <div class="home-article-meta">
+                  <span class="home-article-cat">Prestasi &amp; Event</span>
+                  <span class="home-article-dot">•</span>
+                  <span class="home-article-date">10 Oktober 2026</span>
+                </div>
+                <h3 class="home-article-title">
+                  <a href="/artikel" class="home-article-title-link" data-article-target="art-1">
+                    Alhamdulillah! 42 Santri Al-Hikmah Diwisuda 30 Juz Mutqin Sekali Duduk
+                  </a>
+                </h3>
+                <p class="home-article-excerpt">
+                  Sebanyak 42 santri jenjang SMA dan Mahasantri Aly berhasil menuntaskan tasmi' akbar 30 juz Al-Qur'an
+                  bil-ghaib di hadapan dewan penguji dan para wali santri yang penuh haru. Momentum bersejarah ini
+                  menjadi saksi keteguhan para mujahidah Al-Qur'an dalam menjaga kemurnian kalamullah.
+                </p>
+                <div class="home-article-action">
+                  <a href="/artikel" class="home-article-read-btn" data-article-target="art-1">
+                    <span>Baca Selengkapnya</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              <div class="home-article-media">
+                <a href="/artikel" class="home-article-img-frame" data-article-target="art-1"
+                  aria-label="Baca selengkapnya artikel wisuda 42 santri tahfidz">
+                  <img src="/assets/images/wisuda.jpg" alt="Wisuda 42 Santri Tahfidz 30 Juz Mutqin Sekali Duduk"
+                    loading="lazy" />
+                  <span class="home-article-read-badge">4 Menit Baca</span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Article 2: [Kiri] Featured Image | [Kanan] Title & Isi -->
+            <article class="home-article-row zigzag-text-right" data-article-id="art-2">
+              <div class="home-article-media">
+                <a href="/artikel" class="home-article-img-frame" data-article-target="art-2"
+                  aria-label="Baca selengkapnya artikel PPDB 2026/2027">
+                  <img src="/assets/images/campus.jpg" alt="Penerimaan Peserta Didik Baru TA 2026/2027"
+                    loading="lazy" />
+                  <span class="home-article-read-badge">3 Menit Baca</span>
+                </a>
+              </div>
+              <div class="home-article-content">
+                <div class="home-article-meta">
+                  <span class="home-article-cat">Info PPDB</span>
+                  <span class="home-article-dot">•</span>
+                  <span class="home-article-date">1 Oktober 2026</span>
+                </div>
+                <h3 class="home-article-title">
+                  <a href="/artikel" class="home-article-title-link" data-article-target="art-2">
+                    Penerimaan Peserta Didik Baru (PPDB) TA 2026/2027 Resmi Dibuka
+                  </a>
+                </h3>
+                <p class="home-article-excerpt">
+                  Pondok Pesantren &amp; Rumah Tahfidz Al-Hikmah membuka pendaftaran santri baru untuk jenjang SMP
+                  Tahfidz, SMA Tahfidz Sains, dan Mahasantri Aly beasiswa. Kesempatan terbaik membina putri tercinta
+                  menjadi generasi qur'ani berwawasan global dalam suasana kampus asri 4 hektar.
+                </p>
+                <div class="home-article-action">
+                  <a href="/artikel" class="home-article-read-btn" data-article-target="art-2">
+                    <span>Baca Selengkapnya</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Section Footer: Action to view all articles -->
+          <div class="home-articles-footer" data-reveal>
+            <a href="/artikel" class="btn btn-outline home-articles-more-btn">
+              <span>Jelajahi Seluruh Artikel &amp; Berita</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3.5 Section Ajakan Berwakaf & Donasi (Antara Program Pilihan & Capaian Gemilang) -->
+      <section class="home-wakaf-section" aria-label="Ajakan Berwakaf dan Donasi">
+        <div class="container">
+          <div class="donasi-callout-banner" data-reveal>
+            <div class="donasi-callout-text">
+              <span class="donasi-badge-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  aria-hidden="true">
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                  </path>
+                </svg>
+                Amal Jariyah Berkelanjutan
+              </span>
+              <h3>Wakaf Pembangunan Asrama Santri</h3>
+              <p>Salurkan infaq dan wakaf terbaik Anda untuk pembangunan sarana air bersih, ranjang santri tahfidz
+                yatim, dan perluasan masjid pesantren.</p>
+            </div>
+            <button type="button" class="btn btn-primary btn-donate-trigger"
+              style="background: var(--accent-gold-400); color: var(--primary-950);">
+              <span>Salurkan Wakaf</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Section Capaian Gemilang Santri -->
+      <section class="achievements-section" aria-label="Capaian Gemilang Santri Rumah Tahfidz">
+        <div class="container">
+          <div class="section-header" data-reveal>
+            <span class="section-eyebrow-tag">Rekam Jejak Prestasi</span>
+            <h2 class="section-title">Capaian Gemilang Santri Rumah Tahfidz</h2>
             <p class="section-description">Bukti komitmen pembinaan melahirkan generasi berprestasi di kancah nasional
               maupun internasional.</p>
           </div>
@@ -400,26 +597,113 @@
           <!-- Achievements Grid -->
           <div class="achievements-grid">
             <div class="achievement-card">
-              <div class="achievement-medal"></div>
+              <div class="achievement-medal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="8" r="7"></circle>
+                  <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                </svg>
+              </div>
               <h4 class="achievement-title">Juara 1 MHQ Nasional 30 Juz</h4>
               <p class="achievement-desc">Musabaqah Hifdzil Qur'an tingkat nasional Kementerian Agama RI Tahun 2025.</p>
             </div>
             <div class="achievement-card">
-              <div class="achievement-medal"></div>
+              <div class="achievement-medal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                  <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                </svg>
+              </div>
               <h4 class="achievement-title">100% Lulusan Diterima PTN / Beasiswa Luar Negeri</h4>
               <p class="achievement-desc">Alumni tersebar di Al-Azhar Kairo, Universitas Islam Madinah, ITB, UI, dan
                 Unpad.</p>
             </div>
             <div class="achievement-card">
-              <div class="achievement-medal"></div>
+              <div class="achievement-medal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+              </div>
               <h4 class="achievement-title">640+ Santri Meraih Syahadah Sanad</h4>
               <p class="achievement-desc">Penerima sanad muttashil Qira'at Hafsh 'an 'Ashim jalur Asy-Syathibiyyah.</p>
             </div>
           </div>
+        </div>
+      </section>
 
-          <!-- Testimonial Cards -->
-          <div class="section-header" style="margin-bottom: 2.5rem;">
-            <h3 class="section-title">Kisah Nyata Transformasi Santri</h3>
+      <!-- 4.5 Section CTA Pendaftaran Santri Baru (Layout Squircle Collage Sesuai Referensi) -->
+      <section class="home-cta-daftar-section" aria-label="Ajakan Pendaftaran Santri Baru">
+        <div class="container">
+          <div class="cta-daftar-card">
+            <div class="cta-daftar-content">
+              <h2 class="cta-daftar-title">Siap Membina Putri Menjadi Generasi Qur'ani?</h2>
+              <p class="cta-daftar-desc">
+                Buka gerbang masa depan ananda bersama Al-Qur'an. Program tahfidz intensif berasrama, bimbingan
+                asatidzah bersanad 30 juz mutqin, dan kurikulum sains terpadu dalam kawasan kampus 4 hektar yang asri.
+              </p>
+              <div class="cta-daftar-actions">
+                <button type="button" class="btn btn-primary btn-ppdb-trigger cta-btn-purple">
+                  <span>Daftar Santri Baru</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+                <a href="https://wa.me/6281234567890?text=Assalamu%27alaikum,%20saya%20ingin%20konsultasi%20pendaftaran%20santri%20baru%20Rumah%20Tahfidz"
+                  target="_blank" rel="noopener noreferrer" class="btn cta-btn-navy">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path
+                      d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                    </path>
+                  </svg>
+                  <span>Konsultasi PPDB</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Squircle Photo Collage (Sesuai Layout Gambar: 1 Kiri, 2 Tengah Stacked, 1 Kanan) -->
+            <div class="cta-daftar-collage" aria-hidden="true">
+              <!-- Kolom 1: 1 Foto Vertikal Kiri -->
+              <div class="collage-col collage-col-1">
+                <div class="collage-item collage-item-left">
+                  <img src="/assets/images/halaqoh.jpg" alt="Santriwati belajar Al-Qur'an" loading="lazy" />
+                </div>
+              </div>
+
+              <!-- Kolom 2: 2 Foto Stacked Tengah -->
+              <div class="collage-col collage-col-2">
+                <div class="collage-item collage-item-mid-top">
+                  <img src="/assets/images/wisuda.jpg" alt="Santriwati berprestasi tahfidz" loading="lazy" />
+                </div>
+                <div class="collage-item collage-item-mid-bottom">
+                  <img src="/assets/images/campus.jpg" alt="Suasana kampus asri Rumah Tahfidz" loading="lazy" />
+                </div>
+              </div>
+
+              <!-- Kolom 3: 1 Foto Vertikal Kanan -->
+              <div class="collage-col collage-col-3">
+                <div class="collage-item collage-item-right">
+                  <img src="/assets/images/archery.jpg" alt="Santri mandiri berkarakter" loading="lazy" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4.8 Section Kisah Nyata Transformasi Santri -->
+      <section class="testimonials-section" aria-label="Kisah Nyata Transformasi Santri">
+        <div class="container">
+          <div class="section-header" data-reveal>
+            <span class="section-eyebrow-tag">Kesan &amp; Pengalaman</span>
+            <h2 class="section-title">Kisah Nyata Transformasi Santri</h2>
+            <p class="section-description">Kesan mendalam dari para orang tua dan alumni tentang pembentukan adab,
+              hafalan mutqin, dan kemandirian hidup di Rumah Tahfidz Muslimah.</p>
           </div>
 
           <div class="testimonials-grid">
@@ -474,113 +758,6 @@
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 5. Section Informasi Pendaftaran PPDB -->
-      <section class="ppdb-section">
-        <div class="container">
-          <div class="section-header">
-            <h3 class="section-title">Alur & Informasi Pendaftaran Santri Baru</h3>
-            <p class="section-description">Tahapan seleksi transparan untuk menyambut calon santri penghafal Al-Qur'an.
-            </p>
-          </div>
-
-          <!-- Infografis 5 Tahap Seleksi -->
-          <div class="ppdb-flow-timeline">
-            <div class="ppdb-step-card">
-              <span class="step-num-badge">1</span>
-              <h5 class="step-card-title">Registrasi Online</h5>
-              <p class="step-card-desc">Pengisian formulir web & upload KK serta Akta.</p>
-            </div>
-            <div class="ppdb-step-card">
-              <span class="step-num-badge">2</span>
-              <h5 class="step-card-title">Tes Baca Al-Qur'an</h5>
-              <p class="step-card-desc">Ujian observasi makhraj & tes daya serap hafalan.</p>
-            </div>
-            <div class="ppdb-step-card">
-              <span class="step-num-badge">3</span>
-              <h5 class="step-card-title">Wawancara Orang Tua</h5>
-              <p class="step-card-desc">Penyamaan visi pendidikan keluarga dan pesantren.</p>
-            </div>
-            <div class="ppdb-step-card">
-              <span class="step-num-badge">4</span>
-              <h5 class="step-card-title">Pengumuman Hasil</h5>
-              <p class="step-card-desc">Penerbitan surat kelulusan via portal resmi & WA.</p>
-            </div>
-            <div class="ppdb-step-card">
-              <span class="step-num-badge">5</span>
-              <h5 class="step-card-title">Daftar Ulang</h5>
-              <p class="step-card-desc">Pengukuran seragam & orientasi Khutbatul 'Arsy.</p>
-            </div>
-          </div>
-
-          <!-- Transparansi Biaya & Gelombang Pendaftaran -->
-          <div class="ppdb-info-grid">
-            <div>
-              <h4 class="ppdb-column-title">Jadwal & Gelombang Penerimaan</h4>
-
-              <div class="wave-card active-wave">
-                <div>
-                  <div class="wave-name">Gelombang 1 (Prioritas Asrama)</div>
-                  <div class="wave-meta">Periode: 1 Oktober - 28 Desember 2026</div>
-                  <div class="wave-meta">Tes Seleksi: Ahad, 3 Januari 2027</div>
-                </div>
-                <span class="wave-badge-open">Kouta Terbatas</span>
-              </div>
-
-              <div class="wave-card">
-                <div>
-                  <div class="wave-name">Gelombang 2 (Reguler)</div>
-                  <div class="wave-meta">Periode: 2 Januari - 15 Maret 2027</div>
-                  <div class="wave-meta">Tes Seleksi: Ahad, 20 Maret 2027</div>
-                </div>
-                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">Segera Dibuka</span>
-              </div>
-            </div>
-
-            <div>
-              <h4 class="ppdb-column-title">Transparansi Investasi Pendidikan</h4>
-              <div class="fee-item-row">
-                <span class="fee-name">Biaya Pendaftaran Formulir & Tes</span>
-                <span class="fee-value">Rp 350.000</span>
-              </div>
-              <div class="fee-item-row">
-                <span class="fee-name">Uang Pangkal / Fasilitas Awal (SMP)</span>
-                <span class="fee-value">Rp 16.500.000</span>
-              </div>
-              <div class="fee-item-row">
-                <span class="fee-name">SPP Bulanan (Boarding Penuh + Makan + Laundry)</span>
-                <span class="fee-value">Rp 1.850.000 / bln</span>
-              </div>
-              <div class="fee-item-row">
-                <span class="fee-name">Program Mahasantri Aly</span>
-                <span class="fee-value" style="color: var(--mint-500);">Beasiswa Penuh 100%</span>
-              </div>
-            </div>
-
-            <div class="ppdb-cta-box">
-              <button class="btn btn-primary btn-ppdb-trigger">
-                Pilih Program & Isi Formulir PPDB
-              </button>
-              <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-secondary">
-                Konsultasi via WhatsApp Center PPDB
-              </a>
-            </div>
-          </div>
-
-          <!-- Callout Wakaf & Donasi Banner (Status: Coming Soon Preview) -->
-          <div class="donasi-callout-banner">
-            <div class="donasi-callout-text">
-              <h3>Wakaf Pembangunan Asrama Santri</h3>
-              <p>Salurkan infaq dan wakaf terbaik Anda untuk pembangunan sarana air bersih, ranjang santri tahfidz
-                yatim, dan perluasan masjid pesantren.</p>
-            </div>
-            <button class="btn btn-primary btn-donate-trigger"
-              style="background: var(--accent-gold-400); color: var(--primary-950);">
-              Salurkan Wakaf / Donasi
-            </button>
           </div>
         </div>
       </section>
@@ -810,7 +987,7 @@
         <!-- Sejarah & Visi Misi -->
         <div class="about-intro-grid">
           <div>
-            <h2 style="font-size: 2.2rem; color: var(--primary-950); margin: 0.75rem 0 1.25rem;">
+            <h2 class="section-title" style="text-align: left; margin: 0.75rem 0 1.25rem;">
               Berawal dari 12 Santri Menuju Ribuan Penghafal Al-Qur'an
             </h2>
             <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-body); margin-bottom: 1.25rem;">
@@ -1105,18 +1282,22 @@
         <!-- Sidebar Navigation -->
         <aside class="admin-sidebar" id="adminSidebar">
           <!-- Floating Collapse/Expand Button on Right Center of Menu -->
-          <button class="sidebar-collapse-toggle-btn" id="sidebarCollapseToggleBtn" aria-label="Collapse Menu" title="Collapse Menu">
-            <svg class="icon-collapse" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <button class="sidebar-collapse-toggle-btn" id="sidebarCollapseToggleBtn" aria-label="Collapse Menu"
+            title="Collapse Menu">
+            <svg class="icon-collapse" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6" />
             </svg>
-            <svg class="icon-expand" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="icon-expand" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </button>
 
           <div class="sidebar-header">
             <div class="sidebar-brand">
-              <img src="/assets/images/logo-footer-RTM.png" alt="Rumah Tahfidz Madani" class="dashboard-brand-logo" id="sidebarBrandLogo" />
+              <img src="/assets/images/logo-footer-RTM.png" alt="Rumah Tahfidz Madani" class="dashboard-brand-logo"
+                id="sidebarBrandLogo" />
             </div>
           </div>
 
@@ -1294,12 +1475,14 @@
 
               <!-- 3. Fitur Account Dropdown (Sebelah Kanan Atas) -->
               <div class="topbar-profile-pill" id="topbarAccountWrapper">
-                <button type="button" class="topbar-avatar-btn" id="topbarAvatarTrigger" aria-label="Menu Akun Pengguna" aria-haspopup="true" aria-expanded="false" title="Menu Akun & Profil">
+                <button type="button" class="topbar-avatar-btn" id="topbarAvatarTrigger" aria-label="Menu Akun Pengguna"
+                  aria-haspopup="true" aria-expanded="false" title="Menu Akun & Profil">
                   <div class="topbar-avatar" id="topbarAvatar">MZ</div>
                 </button>
 
                 <!-- Account Dropdown Card (Styled like reference image) -->
-                <div class="account-dropdown-card" id="accountDropdownCard" style="display: none;" role="menu" aria-label="Menu Akun Pengguna">
+                <div class="account-dropdown-card" id="accountDropdownCard" style="display: none;" role="menu"
+                  aria-label="Menu Akun Pengguna">
                   <!-- Header Card: User Information & Rainbow Ring Avatar -->
                   <div class="account-card-header">
                     <div class="account-card-info">
@@ -1319,11 +1502,13 @@
                   <!-- Menu List -->
                   <div class="account-card-menu">
                     <!-- 1. Profil Saya -->
-                    <a href="/admin/profile" class="account-menu-item active-style" id="accountMenuProfile" role="menuitem">
+                    <a href="/admin/profile" class="account-menu-item active-style" id="accountMenuProfile"
+                      role="menuitem">
                       <span class="account-menu-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                          <circle cx="12" cy="7" r="4"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
                         </svg>
                       </span>
                       <span class="account-menu-label">Profil Saya</span>
@@ -1332,10 +1517,11 @@
                     <!-- 2. Bahasa -->
                     <button type="button" class="account-menu-item" id="accountMenuLanguage" role="menuitem">
                       <span class="account-menu-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <circle cx="12" cy="12" r="10"/>
-                          <line x1="2" y1="12" x2="22" y2="12"/>
-                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="2" y1="12" x2="22" y2="12" />
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z" />
                         </svg>
                       </span>
                       <span class="account-menu-label">Bahasa</span>
@@ -1345,10 +1531,11 @@
                     <!-- 3. Bantuan -->
                     <button type="button" class="account-menu-item" id="accountMenuHelp" role="menuitem">
                       <span class="account-menu-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <circle cx="12" cy="12" r="10"/>
-                          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                          <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10" />
+                          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                          <line x1="12" y1="17" x2="12.01" y2="17" />
                         </svg>
                       </span>
                       <span class="account-menu-label">Bantuan</span>
@@ -1357,8 +1544,9 @@
                     <!-- 4. Kirim Masukan -->
                     <button type="button" class="account-menu-item" id="accountMenuFeedback" role="menuitem">
                       <span class="account-menu-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                         </svg>
                       </span>
                       <span class="account-menu-label">Kirim Masukan</span>
@@ -1368,12 +1556,14 @@
                     <hr class="account-card-divider" />
 
                     <!-- 5. Keluar -->
-                    <button type="button" class="account-menu-item account-menu-logout" id="accountMenuLogout" role="menuitem">
+                    <button type="button" class="account-menu-item account-menu-logout" id="accountMenuLogout"
+                      role="menuitem">
                       <span class="account-menu-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                          <polyline points="16 17 21 12 16 7"/>
-                          <line x1="21" y1="12" x2="9" y2="12"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                          <polyline points="16 17 21 12 16 7" />
+                          <line x1="21" y1="12" x2="9" y2="12" />
                         </svg>
                       </span>
                       <span class="account-menu-label">Keluar</span>
@@ -1414,7 +1604,8 @@
                     style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
                     <button class="btn btn-primary btn-sm btn-rekap-purple" id="btnQuickExportCSV"
                       style="font-size: 0.8rem; padding: 0.45rem 1rem; background: var(--primary-purple); border: none; color: #fff; display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 700;">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="7 10 12 15 17 10" />
                         <line x1="12" y1="15" x2="12" y2="3" />
@@ -1440,10 +1631,11 @@
                   <div class="cockpit-visitor-analytics-card" id="cockpitVisitorAnalytics">
                     <div class="visitor-analytics-header">
                       <div class="visitor-analytics-title-wrap">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M18 20V10"/>
-                          <path d="M12 20V4"/>
-                          <path d="M6 20v-6"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M18 20V10" />
+                          <path d="M12 20V4" />
+                          <path d="M6 20v-6" />
                         </svg>
                         <span>Analytics Pengunjung</span>
                       </div>
@@ -1464,10 +1656,11 @@
                     </div>
 
                     <div class="visitor-analytics-notice">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="16" x2="12" y2="12"/>
-                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="16" x2="12" y2="12" />
+                        <line x1="12" y1="8" x2="12.01" y2="8" />
                       </svg>
                       <span>Siap disambungkan ke Google Analytics saat web siap diluncurkan.</span>
                     </div>
@@ -2001,16 +2194,16 @@
                 <div class="panel-header-actions galeri-header-actions">
                   <button class="btn btn-secondary btn-sm" id="btnOpenMediaLibrary">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <circle cx="8.5" cy="8.5" r="1.5"/>
-                      <polyline points="21 15 16 10 5 21"/>
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
                     </svg>
                     <span>Media Library</span>
                   </button>
                   <button class="btn btn-primary btn-sm" id="btnAddGalleryMedia">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="12" y1="5" x2="12" y2="19"/>
-                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
                     <span>Tambah Media</span>
                   </button>
@@ -2158,27 +2351,32 @@
               <!-- WordPress-style Pill Tabs Navigation (Identitas, Kontak, Beranda, Footer) -->
               <div class="tampilan-tabs-wrapper">
                 <nav class="tampilan-tabs-nav" aria-label="Navigasi Menu Tampilan">
-                  <a href="/admin/tampilan/identitas" class="tampilan-tab-btn active" data-tab="identitas" title="Identitas & Logo Lembaga" aria-label="Identitas & Logo Lembaga">
+                  <a href="/admin/tampilan/identitas" class="tampilan-tab-btn active" data-tab="identitas"
+                    title="Identitas & Logo Lembaga" aria-label="Identitas & Logo Lembaga">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
                     </svg>
                     <span>Identitas & Logo</span>
                   </a>
-                  <a href="/admin/tampilan/kontak" class="tampilan-tab-btn" data-tab="kontak" title="Kontak & Rekening Bank" aria-label="Kontak & Rekening Bank">
+                  <a href="/admin/tampilan/kontak" class="tampilan-tab-btn" data-tab="kontak"
+                    title="Kontak & Rekening Bank" aria-label="Kontak & Rekening Bank">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      <path
+                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                     <span>Kontak & Rekening</span>
                   </a>
-                  <a href="/admin/tampilan/beranda" class="tampilan-tab-btn" data-tab="beranda" title="Konten Beranda & Visi Misi" aria-label="Konten Beranda & Visi Misi">
+                  <a href="/admin/tampilan/beranda" class="tampilan-tab-btn" data-tab="beranda"
+                    title="Konten Beranda & Visi Misi" aria-label="Konten Beranda & Visi Misi">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                       <polyline points="9 22 9 12 15 12 15 22" />
                     </svg>
                     <span>Konten Beranda</span>
                   </a>
-                  <a href="/admin/tampilan/footer" class="tampilan-tab-btn" data-tab="footer" title="Sosial Media & Footer" aria-label="Sosial Media & Footer">
+                  <a href="/admin/tampilan/footer" class="tampilan-tab-btn" data-tab="footer"
+                    title="Sosial Media & Footer" aria-label="Sosial Media & Footer">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
@@ -2195,7 +2393,8 @@
                   <div class="admin-card-header">
                     <div>
                       <span class="admin-card-title">Identitas Yayasan & Logo Lembaga</span>
-                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Atur identitas resmi lembaga, nama yayasan, tagline, pengasuh pesantren, dan logo header utama.</p>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Atur identitas resmi
+                        lembaga, nama yayasan, tagline, pengasuh pesantren, dan logo header utama.</p>
                     </div>
                   </div>
                   <form id="formAppearanceIdentity" style="display: flex; flex-direction: column; gap: 1rem;">
@@ -2228,8 +2427,10 @@
                       </div>
                     </div>
                     <div class="tampilan-tab-footer">
-                      <button type="button" class="btn btn-primary btn-sm btn-tampilan-save" id="btnSaveTampilanIdentitas">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <button type="button" class="btn btn-primary btn-sm btn-tampilan-save"
+                        id="btnSaveTampilanIdentitas">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                           <polyline points="17 21 17 13 7 13 7 21" />
                           <polyline points="7 3 7 8 15 8" />
@@ -2247,7 +2448,8 @@
                   <div class="admin-card-header">
                     <div>
                       <span class="admin-card-title">Kontak Resmi & Rekening Bank</span>
-                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Kelola nomor WhatsApp layanan PPDB, konfirmasi donasi, email, alamat fisik, dan nomor rekening bank yayasan.</p>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Kelola nomor WhatsApp
+                        layanan PPDB, konfirmasi donasi, email, alamat fisik, dan nomor rekening bank yayasan.</p>
                     </div>
                   </div>
                   <form id="formAppearanceContact" style="display: flex; flex-direction: column; gap: 1rem;">
@@ -2275,7 +2477,8 @@
                     </div>
                     <div class="tampilan-tab-footer">
                       <button type="button" class="btn btn-primary btn-sm btn-tampilan-save" id="btnSaveTampilanKontak">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                           <polyline points="17 21 17 13 7 13 7 21" />
                           <polyline points="7 3 7 8 15 8" />
@@ -2293,7 +2496,9 @@
                   <div class="admin-card-header">
                     <div>
                       <span class="admin-card-title">Konten Beranda (Hero), Tentang Kami & Visi Misi</span>
-                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Konfigurasi judul utama banner hero beranda, rangkuman profil singkat tentang kami, visi lembaga, dan butir-butir misi.</p>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Konfigurasi judul
+                        utama banner hero beranda, rangkuman profil singkat tentang kami, visi lembaga, dan butir-butir
+                        misi.</p>
                     </div>
                   </div>
                   <form id="formAppearanceHeroAbout" style="display: flex; flex-direction: column; gap: 1rem;">
@@ -2319,8 +2524,10 @@ Mengintegrasikan kurikulum agama dan kurikulum sains nasional.
 Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                     </div>
                     <div class="tampilan-tab-footer">
-                      <button type="button" class="btn btn-primary btn-sm btn-tampilan-save" id="btnSaveTampilanBeranda">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <button type="button" class="btn btn-primary btn-sm btn-tampilan-save"
+                        id="btnSaveTampilanBeranda">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                           <polyline points="17 21 17 13 7 13 7 21" />
                           <polyline points="7 3 7 8 15 8" />
@@ -2338,7 +2545,9 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                   <div class="admin-card-header">
                     <div>
                       <span class="admin-card-title">Tautan Sosial Media, Navigasi CTA & Footer</span>
-                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Pengaturan tautan sosial media resmi Instagram & YouTube, teks tombol Call to Action navigasi, dan hak cipta/legalitas footer.</p>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Pengaturan tautan
+                        sosial media resmi Instagram & YouTube, teks tombol Call to Action navigasi, dan hak
+                        cipta/legalitas footer.</p>
                     </div>
                   </div>
                   <form id="formAppearanceFooterSocial" style="display: flex; flex-direction: column; gap: 1rem;">
@@ -2363,7 +2572,8 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                     </div>
                     <div class="tampilan-tab-footer">
                       <button type="button" class="btn btn-primary btn-sm btn-tampilan-save" id="btnSaveTampilanFooter">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                           <polyline points="17 21 17 13 7 13 7 21" />
                           <polyline points="7 3 7 8 15 8" />
@@ -2389,8 +2599,8 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                 <div class="panel-header-actions users-header-actions">
                   <button class="btn btn-primary btn-sm" id="btnCreateUser">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="12" y1="5" x2="12" y2="19"/>
-                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
                     <span>Tambah Pengguna Baru</span>
                   </button>
@@ -3041,16 +3251,19 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label" style="font-weight: 600; color: #374151;">File Dokumen PDF Kurikulum *</label>
+                    <label class="form-label" style="font-weight: 600; color: #374151;">File Dokumen PDF Kurikulum
+                      *</label>
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.65rem;">
                       <input type="text" id="syllabusPdfUrlInput" class="form-input"
-                        value="/assets/docs/silabus-smp-tahfidz-2026.pdf" placeholder="/assets/docs/... atau https://..."
-                        style="padding: 0.7rem 1rem; flex: 1;" required />
+                        value="/assets/docs/silabus-smp-tahfidz-2026.pdf"
+                        placeholder="/assets/docs/... atau https://..." style="padding: 0.7rem 1rem; flex: 1;"
+                        required />
                       <button type="button" class="btn btn-secondary btn-sm" id="btnPickMediaForSyllabus"
                         style="display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap;">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                          <polyline points="14 2 14 8 20 8"/>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
                         </svg>
                         <span>Pilih dari Media Library</span>
                       </button>
@@ -3062,10 +3275,12 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                         <polyline points="14 2 14 8 20 8" />
                       </svg>
-                      <p id="syllabusPreviewTitle" style="font-size: 0.92rem; color: var(--text-dark); font-weight: 600; margin-bottom: 0.25rem;">
+                      <p id="syllabusPreviewTitle"
+                        style="font-size: 0.92rem; color: var(--text-dark); font-weight: 600; margin-bottom: 0.25rem;">
                         silabus-smp-tahfidz-2026.pdf
                       </p>
-                      <span id="syllabusPreviewSub" style="font-size: 0.78rem; color: var(--text-muted);">Dokumen PDF resmi kurikulum akademik santri (dapat dipilih dari Media Library)</span>
+                      <span id="syllabusPreviewSub" style="font-size: 0.78rem; color: var(--text-muted);">Dokumen PDF
+                        resmi kurikulum akademik santri (dapat dipilih dari Media Library)</span>
                     </div>
                   </div>
 
@@ -3345,7 +3560,7 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
             <a href="/admin/donasi" class="mob-nav-item" data-admin-nav="donasi" aria-label="Wakaf & Donasi">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect width="20" height="12" x="2" y="6" rx="2" />
-                <circle cx="12" cy="12" r="2.5"/>
+                <circle cx="12" cy="12" r="2.5" />
                 <path d="M6 12h.01M18 12h.01" />
               </svg>
               <span class="mob-nav-dot"></span>
@@ -3718,20 +3933,23 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
           <!-- Action Buttons: 3 Tombol dalam 1 Baris (Setujui, Tolak, Kirim Kwitansi) -->
           <div class="receipt-modal-actions">
             <button class="btn btn-primary btn-receipt-approve" id="btnApproveReceiptAction">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
               <span>Setujui</span>
             </button>
             <button class="btn btn-secondary btn-receipt-reject" id="btnRejectReceiptAction">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
               <span>Tolak</span>
             </button>
             <a id="btnSendWAReceipt" href="#" target="_blank" class="btn btn-secondary btn-receipt-share">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13" />
                 <polygon points="22 2 15 22 11 13 2 9 22 2" />
               </svg>
@@ -4342,41 +4560,56 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
        ADMIN MODAL 8: PUSTAKA MEDIA BERSAMA / WORDPRESS-STYLE MEDIA LIBRARY (PRD Req #4 & #9)
        ========================================================================== -->
   <div class="modal-backdrop wp-media-backdrop" id="mediaLibraryPickerModal" role="dialog" aria-modal="true">
-    <div class="modal-card wp-media-frame" style="max-width: 980px; width: 95vw; height: 86vh; max-height: 740px; padding: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 12px; background: #f8fafc;">
-      
+    <div class="modal-card wp-media-frame"
+      style="max-width: 980px; width: 95vw; height: 86vh; max-height: 740px; padding: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 12px; background: #f8fafc;">
+
       <!-- WP Modal Header -->
-      <div class="wp-media-header" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem; background: #ffffff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;">
+      <div class="wp-media-header"
+        style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem; background: #ffffff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;">
         <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #4338ca, #811ce5); display: flex; align-items: center; justify-content: center; color: #ffffff;">
+            <div
+              style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #4338ca, #811ce5); display: flex; align-items: center; justify-content: center; color: #ffffff;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
               </svg>
             </div>
             <div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.2;">Media Library</h3>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.2;">Media
+                Library</h3>
               <p style="font-size: 0.74rem; color: #64748b; margin: 0;">Pustaka Aset Terpadu RTM (Foto, Video, PDF)</p>
             </div>
           </div>
 
           <!-- WordPress Router Tabs -->
-          <div class="wp-media-router" style="display: flex; gap: 0.25rem; background: #f1f5f9; padding: 0.25rem; border-radius: 8px;">
+          <div class="wp-media-router"
+            style="display: flex; gap: 0.25rem; background: #f1f5f9; padding: 0.25rem; border-radius: 8px;">
             <button type="button" class="wp-media-nav-tab active" id="wpTabBrowse" data-tab="browse"
               style="padding: 0.4rem 0.95rem; font-size: 0.82rem; font-weight: 600; border-radius: 6px; border: none; background: #ffffff; color: #4338ca; box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
               <span>Pustaka Media</span>
             </button>
             <button type="button" class="wp-media-nav-tab" id="wpTabUpload" data-tab="upload"
               style="padding: 0.4rem 0.95rem; font-size: 0.82rem; font-weight: 600; border-radius: 6px; border: none; background: transparent; color: #64748b; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
               <span>Unggah Berkas Baru</span>
             </button>
           </div>
         </div>
 
-        <button class="modal-close-btn" id="btnCloseMediaLibraryModal" aria-label="Tutup Media Library" style="position: static; margin: 0;">
+        <button class="modal-close-btn" id="btnCloseMediaLibraryModal" aria-label="Tutup Media Library"
+          style="position: static; margin: 0;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
@@ -4385,25 +4618,37 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
       </div>
 
       <!-- VIEW 1: BROWSE MEDIA -->
-      <div class="wp-media-view" id="wpViewBrowse" style="display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;">
-        
+      <div class="wp-media-view" id="wpViewBrowse"
+        style="display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;">
+
         <!-- Filter Toolbar -->
-        <div class="wp-media-toolbar" style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1.25rem; background: #ffffff; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap;">
+        <div class="wp-media-toolbar"
+          style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1.25rem; background: #ffffff; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap;">
           <!-- Filter Tabs / Pills -->
           <div class="wp-media-filters" style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
             <button type="button" class="wp-filter-pill active" data-type="all">
               Semua Media
             </button>
             <button type="button" class="wp-filter-pill" data-type="image">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
+              </svg>
               <span>Foto / Gambar</span>
             </button>
             <button type="button" class="wp-filter-pill" data-type="video">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" />
+              </svg>
               <span>Video</span>
             </button>
             <button type="button" class="wp-filter-pill" data-type="pdf">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
               <span>Dokumen (PDF)</span>
             </button>
           </div>
@@ -4415,50 +4660,60 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                 style="padding: 0.4rem 0.65rem 0.4rem 2rem; font-size: 0.8rem; height: 34px; border-radius: 6px;" />
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"
                 style="position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%); pointer-events: none;">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
             </div>
-            <span id="wpMediaCountBadge" style="font-size: 0.74rem; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 0.35rem 0.65rem; border-radius: 6px; white-space: nowrap;">
+            <span id="wpMediaCountBadge"
+              style="font-size: 0.74rem; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 0.35rem 0.65rem; border-radius: 6px; white-space: nowrap;">
               0 Berkas
             </span>
           </div>
         </div>
 
         <!-- Media Main Body (Grid + Details Sidebar) -->
-        <div class="wp-media-body" style="display: flex; flex: 1; min-height: 0; overflow: hidden; background: #f8fafc;">
-          
+        <div class="wp-media-body"
+          style="display: flex; flex: 1; min-height: 0; overflow: hidden; background: #f8fafc;">
+
           <!-- Media Grid Container -->
-          <div id="mediaLibraryGridContainer" class="wp-media-grid-container" style="flex: 1; overflow-y: auto; padding: 1rem; min-height: 0;">
+          <div id="mediaLibraryGridContainer" class="wp-media-grid-container"
+            style="flex: 1; overflow-y: auto; padding: 1rem; min-height: 0;">
             <div id="mediaLibraryGrid" class="wp-media-grid">
               <!-- Rendered via JS -->
             </div>
           </div>
 
           <!-- Attachment Details Sidebar (WordPress Classic) -->
-          <div class="wp-media-details-sidebar" id="wpMediaSidebar" style="width: 290px; background: #ffffff; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; padding: 1rem;">
-            
+          <div class="wp-media-details-sidebar" id="wpMediaSidebar"
+            style="width: 290px; background: #ffffff; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; padding: 1rem;">
+
             <div id="wpSidebarEmpty" style="margin: auto; text-align: center; color: #94a3b8; padding: 1.5rem 0.5rem;">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.5rem; opacity: 0.6;">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                style="margin-bottom: 0.5rem; opacity: 0.6;">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
               </svg>
-              <p style="font-size: 0.8rem; margin: 0;">Pilih salah satu media untuk melihat rincian & menggunakannya.</p>
+              <p style="font-size: 0.8rem; margin: 0;">Pilih salah satu media untuk melihat rincian & menggunakannya.
+              </p>
             </div>
 
             <div id="wpSidebarContent" style="display: none; flex-direction: column; gap: 0.85rem;">
-              <div style="font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
+              <div
+                style="font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
                 Rincian Berkas
               </div>
 
               <!-- Media Preview Box -->
-              <div id="wpSidebarPreviewBox" style="width: 100%; height: 160px; border-radius: 8px; overflow: hidden; background: #0f172a; display: flex; align-items: center; justify-content: center; position: relative;">
+              <div id="wpSidebarPreviewBox"
+                style="width: 100%; height: 160px; border-radius: 8px; overflow: hidden; background: #0f172a; display: flex; align-items: center; justify-content: center; position: relative;">
                 <!-- Preview injected via JS -->
               </div>
 
               <!-- Media Meta Info -->
               <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 0.65rem;">
-                <div id="wpSidebarFileName" style="font-weight: 700; font-size: 0.84rem; color: #1e293b; word-break: break-all; margin-bottom: 0.2rem;">
+                <div id="wpSidebarFileName"
+                  style="font-weight: 700; font-size: 0.84rem; color: #1e293b; word-break: break-all; margin-bottom: 0.2rem;">
                   filename.jpg
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
@@ -4476,27 +4731,34 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                   <div style="display: flex; gap: 0.35rem;">
                     <input type="text" id="wpSidebarUrlInput" class="form-input" readonly
                       style="font-size: 0.75rem; padding: 0.35rem 0.5rem; background: #f8fafc; height: 32px;" />
-                    <button type="button" class="btn btn-secondary btn-sm" id="btnWpCopyUrl" style="padding: 0 0.5rem; height: 32px;" title="Salin URL">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnWpCopyUrl"
+                      style="padding: 0 0.5rem; height: 32px;" title="Salin URL">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                       </svg>
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <label class="form-label" style="font-size: 0.72rem; margin-bottom: 0.2rem;">Alt Text Aksesibilitas / Judul</label>
+                  <label class="form-label" style="font-size: 0.72rem; margin-bottom: 0.2rem;">Alt Text Aksesibilitas /
+                    Judul</label>
                   <input type="text" id="wpSidebarAltInput" class="form-input" readonly
                     style="font-size: 0.75rem; padding: 0.35rem 0.5rem; background: #f8fafc; height: 32px;" />
                 </div>
               </div>
 
               <!-- Danger Action -->
-              <div style="margin-top: auto; padding-top: 0.5rem; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+              <div
+                style="margin-top: auto; padding-top: 0.5rem; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
                 <button type="button" id="btnWpDeleteAsset" class="btn btn-secondary btn-sm"
                   style="color: #dc2626; font-size: 0.74rem; padding: 0.35rem 0.65rem; border-color: #fecaca;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
                   Hapus Permanen
                 </button>
               </div>
@@ -4506,12 +4768,14 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         </div>
 
         <!-- WordPress Selection Footer -->
-        <div class="wp-media-footer" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; background: #ffffff; border-top: 1px solid #e2e8f0; flex-shrink: 0;">
+        <div class="wp-media-footer"
+          style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; background: #ffffff; border-top: 1px solid #e2e8f0; flex-shrink: 0;">
           <div id="wpFooterSelectionStatus" style="font-size: 0.8rem; color: #64748b;">
             <span id="wpFooterSelectionText">Belum ada berkas dipilih</span>
           </div>
           <div style="display: flex; align-items: center; gap: 0.65rem;">
-            <button type="button" class="btn btn-secondary btn-sm" id="btnCancelMediaPicker" style="font-size: 0.8rem; height: 36px; padding: 0.4rem 0.85rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnCancelMediaPicker"
+              style="font-size: 0.8rem; height: 36px; padding: 0.4rem 0.85rem;">
               Batal
             </button>
             <button type="button" class="btn btn-primary btn-sm" id="btnApplyMediaSelection" disabled
@@ -4524,16 +4788,19 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
       </div>
 
       <!-- VIEW 2: UNGGAH BERKAS (UPLOAD DROPZONE) -->
-      <div class="wp-media-view" id="wpViewUpload" style="display: none; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; padding: 1.5rem; background: #ffffff;">
-        <form id="mediaLibraryUploadForm" style="max-width: 680px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 1.25rem;">
-          
+      <div class="wp-media-view" id="wpViewUpload"
+        style="display: none; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; padding: 1.5rem; background: #ffffff;">
+        <form id="mediaLibraryUploadForm"
+          style="max-width: 680px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 1.25rem;">
+
           <div id="wpDropzoneBox" class="wp-dropzone"
             style="border: 2px dashed rgba(67, 56, 202, 0.35); border-radius: 12px; padding: 3rem 1.5rem; text-align: center; background: #faf8fe; transition: all 0.2s;">
-            <div style="width: 54px; height: 54px; margin: 0 auto 1rem; border-radius: 50%; background: #e0e7ff; display: flex; align-items: center; justify-content: center; color: #4338ca;">
+            <div
+              style="width: 54px; height: 54px; margin: 0 auto 1rem; border-radius: 50%; background: #e0e7ff; display: flex; align-items: center; justify-content: center; color: #4338ca;">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
               </svg>
             </div>
             <h4 style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin: 0 0 0.4rem;">
@@ -4542,34 +4809,47 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
             <p style="font-size: 0.84rem; color: #64748b; margin: 0 0 1.25rem;">
               Mendukung berkas Foto/Gambar, Video dokumentasi, dan Dokumen Silabus (PDF).
             </p>
-            
-            <label class="btn btn-primary" style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.5rem; font-weight: 600;">
-              <input type="file" id="mediaUploadFileInput" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,video/mp4,video/webm,application/pdf" style="display: none;" />
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+
+            <label class="btn btn-primary"
+              style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.5rem; font-weight: 600;">
+              <input type="file" id="mediaUploadFileInput"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,video/mp4,video/webm,application/pdf"
+                style="display: none;" />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
               <span>Pilih Berkas dari Komputer</span>
             </label>
 
             <!-- File Selected Preview Container -->
-            <div id="wpUploadSelectedFileInfo" style="display: none; margin-top: 1.25rem; padding: 0.75rem 1rem; background: #ffffff; border: 1px solid #c7d2fe; border-radius: 8px; text-align: left;">
+            <div id="wpUploadSelectedFileInfo"
+              style="display: none; margin-top: 1.25rem; padding: 0.75rem 1rem; background: #ffffff; border: 1px solid #c7d2fe; border-radius: 8px; text-align: left;">
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 0.65rem;">
                   <span id="wpSelectedFileIcon" style="font-size: 1.25rem;">📄</span>
                   <div>
-                    <div id="wpSelectedFileName" style="font-weight: 600; font-size: 0.85rem; color: #1e293b;">file.pdf</div>
+                    <div id="wpSelectedFileName" style="font-weight: 600; font-size: 0.85rem; color: #1e293b;">file.pdf
+                    </div>
                     <div id="wpSelectedFileSize" style="font-size: 0.74rem; color: #64748b;">1.2 MB</div>
                   </div>
                 </div>
-                <button type="button" id="btnWpClearUploadFile" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 0.2rem 0.5rem;">Ganti</button>
+                <button type="button" id="btnWpClearUploadFile" class="btn btn-secondary btn-sm"
+                  style="font-size: 0.72rem; padding: 0.2rem 0.5rem;">Ganti</button>
               </div>
             </div>
           </div>
 
           <!-- Metadata Fields -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.9rem;">
+          <div
+            style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.9rem;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
               <div>
-                <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #334155;">Tipe Media</label>
-                <select id="mediaUploadTypeSelect" class="form-input" style="font-size: 0.85rem; padding: 0.55rem 0.75rem;">
+                <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #334155;">Tipe
+                  Media</label>
+                <select id="mediaUploadTypeSelect" class="form-input"
+                  style="font-size: 0.85rem; padding: 0.55rem 0.75rem;">
                   <option value="auto">Otomatis Deteksi dari Berkas</option>
                   <option value="image">Foto / Gambar (JPG, PNG, WebP)</option>
                   <option value="video">Video (MP4, WebM)</option>
@@ -4577,15 +4857,19 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
                 </select>
               </div>
               <div>
-                <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #334155;">Alt Text / Judul Aksesibilitas *</label>
-                <input type="text" id="mediaUploadAltText" class="form-input" placeholder="Contoh: Silabus SMP Tahfidz 2026 atau Kampus RTM"
+                <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #334155;">Alt Text / Judul
+                  Aksesibilitas *</label>
+                <input type="text" id="mediaUploadAltText" class="form-input"
+                  placeholder="Contoh: Silabus SMP Tahfidz 2026 atau Kampus RTM"
                   style="font-size: 0.85rem; padding: 0.55rem 0.75rem;" required />
               </div>
             </div>
 
             <div>
-              <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #334155;">Keterangan / Caption Dokumen</label>
-              <input type="text" id="mediaUploadCaption" class="form-input" placeholder="Keterangan opsional untuk arsip..."
+              <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #334155;">Keterangan /
+                Caption Dokumen</label>
+              <input type="text" id="mediaUploadCaption" class="form-input"
+                placeholder="Keterangan opsional untuk arsip..."
                 style="font-size: 0.85rem; padding: 0.55rem 0.75rem;" />
             </div>
 
@@ -4619,37 +4903,46 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         </svg>
       </button>
       <div style="text-align: center; margin-bottom: 1.25rem;">
-        <div style="width: 52px; height: 52px; border-radius: 50%; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">
+        <div
+          style="width: 52px; height: 52px; border-radius: 50%; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="2" y1="12" x2="22" y2="12"/>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
           </svg>
         </div>
         <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0 0 0.25rem;">Pilih Bahasa Sistem</h3>
         <p style="font-size: 0.85rem; color: #64748b; margin: 0;">Pilih bahasa tampilan untuk dashboard administrasi</p>
       </div>
       <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem;">
-        <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border: 2px solid #10b981; border-radius: 12px; background: #f0fdf4; cursor: pointer;">
-          <span style="display: flex; align-items: center; gap: 0.75rem; font-weight: 600; font-size: 0.9rem; color: #0f172a;">
+        <label
+          style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border: 2px solid #10b981; border-radius: 12px; background: #f0fdf4; cursor: pointer;">
+          <span
+            style="display: flex; align-items: center; gap: 0.75rem; font-weight: 600; font-size: 0.9rem; color: #0f172a;">
             <span style="font-size: 1.25rem;">🇮🇩</span> Bahasa Indonesia
           </span>
-          <span style="font-size: 0.75rem; font-weight: 700; color: #059669; background: #dcfce7; padding: 2px 8px; border-radius: 9999px;">Aktif</span>
+          <span
+            style="font-size: 0.75rem; font-weight: 700; color: #059669; background: #dcfce7; padding: 2px 8px; border-radius: 9999px;">Aktif</span>
         </label>
-        <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; cursor: pointer; opacity: 0.85;">
-          <span style="display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.9rem; color: #334155;">
+        <label
+          style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; cursor: pointer; opacity: 0.85;">
+          <span
+            style="display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.9rem; color: #334155;">
             <span style="font-size: 1.25rem;">🇬🇧</span> English (US)
           </span>
           <span style="font-size: 0.75rem; color: #64748b;">Segera Hadir</span>
         </label>
-        <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; cursor: pointer; opacity: 0.85;">
-          <span style="display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.9rem; color: #334155;">
+        <label
+          style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; cursor: pointer; opacity: 0.85;">
+          <span
+            style="display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.9rem; color: #334155;">
             <span style="font-size: 1.25rem;">🇸🇦</span> العربية (Arabic)
           </span>
           <span style="font-size: 0.75rem; color: #64748b;">Segera Hadir</span>
         </label>
       </div>
-      <button type="button" class="btn btn-primary" id="btnSaveLanguage" style="width: 100%; justify-content: center; padding: 0.75rem;">
+      <button type="button" class="btn btn-primary" id="btnSaveLanguage"
+        style="width: 100%; justify-content: center; padding: 0.75rem;">
         Simpan Pengaturan Bahasa
       </button>
     </div>
@@ -4665,23 +4958,28 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         </svg>
       </button>
       <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.25rem;">
-        <div style="width: 48px; height: 48px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <div
+          style="width: 48px; height: 48px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
         </div>
         <div>
-          <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0;">Pusat Bantuan & Panduan RTM CMS</h3>
-          <p style="font-size: 0.82rem; color: #64748b; margin: 2px 0 0;">Petunjuk singkat penggunaan dashboard dan bantuan teknis</p>
+          <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0;">Pusat Bantuan & Panduan RTM CMS
+          </h3>
+          <p style="font-size: 0.82rem; color: #64748b; margin: 2px 0 0;">Petunjuk singkat penggunaan dashboard dan
+            bantuan teknis</p>
         </div>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.5rem; font-size: 0.88rem; color: #334155;">
+      <div
+        style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.5rem; font-size: 0.88rem; color: #334155;">
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.9rem;">
           <strong style="color: #0f172a;">1. Navigasi Cepat & Modul CMS</strong>
           <p style="margin: 0.35rem 0 0; font-size: 0.82rem; color: #64748b; line-height: 1.5;">
-            Gunakan sidebar di sebelah kiri untuk berpindah modul: Ringkasan, Akademik & PPDB, Wakaf & Donasi, Galeri, Berita, Tampilan, dan Pengguna.
+            Gunakan sidebar di sebelah kiri untuk berpindah modul: Ringkasan, Akademik & PPDB, Wakaf & Donasi, Galeri,
+            Berita, Tampilan, dan Pengguna.
           </p>
         </div>
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.9rem;">
@@ -4698,7 +4996,8 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         </div>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-        <button type="button" class="btn btn-secondary" id="btnCloseHelpModalBtn" style="padding: 0.65rem 1.25rem;">Tutup</button>
+        <button type="button" class="btn btn-secondary" id="btnCloseHelpModalBtn"
+          style="padding: 0.65rem 1.25rem;">Tutup</button>
       </div>
     </div>
   </div>
@@ -4713,12 +5012,15 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         </svg>
       </button>
       <div style="margin-bottom: 1.25rem;">
-        <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0 0 0.25rem;">Kirim Masukan & Saran</h3>
-        <p style="font-size: 0.82rem; color: #64748b; margin: 0;">Bantu kami menyempurnakan Portal CMS Rumah Tahfidz Madani</p>
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0 0 0.25rem;">Kirim Masukan & Saran
+        </h3>
+        <p style="font-size: 0.82rem; color: #64748b; margin: 0;">Bantu kami menyempurnakan Portal CMS Rumah Tahfidz
+          Madani</p>
       </div>
       <form id="adminFeedbackForm" style="display: flex; flex-direction: column; gap: 1rem;">
         <div>
-          <label class="form-label" style="font-weight: 600; font-size: 0.82rem; color: #334155;">Kategori Masukan</label>
+          <label class="form-label" style="font-weight: 600; font-size: 0.82rem; color: #334155;">Kategori
+            Masukan</label>
           <select id="feedbackCategory" class="form-input" style="font-size: 0.85rem;" required>
             <option value="feature">Saran Fitur Baru</option>
             <option value="bug">Laporan Kendala / Bug</option>
@@ -4728,15 +5030,20 @@ Membiasakan penanaman adab dan kemandirian santri 24 jam.</textarea>
         </div>
         <div>
           <label class="form-label" style="font-weight: 600; font-size: 0.82rem; color: #334155;">Subjek Masukan</label>
-          <input type="text" id="feedbackSubject" class="form-input" placeholder="Ringkasan singkat masukan Anda..." style="font-size: 0.85rem;" required />
+          <input type="text" id="feedbackSubject" class="form-input" placeholder="Ringkasan singkat masukan Anda..."
+            style="font-size: 0.85rem;" required />
         </div>
         <div>
           <label class="form-label" style="font-weight: 600; font-size: 0.82rem; color: #334155;">Detail Masukan</label>
-          <textarea id="feedbackMessage" class="form-textarea" rows="4" placeholder="Tuliskan pengalaman atau saran perbaikan Anda secara rinci..." style="font-size: 0.85rem;" required></textarea>
+          <textarea id="feedbackMessage" class="form-textarea" rows="4"
+            placeholder="Tuliskan pengalaman atau saran perbaikan Anda secara rinci..." style="font-size: 0.85rem;"
+            required></textarea>
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
-          <button type="button" class="btn btn-secondary" id="btnCloseFeedbackModalBtn" style="padding: 0.65rem 1.25rem;">Batal</button>
-          <button type="submit" class="btn btn-primary" id="btnSubmitFeedback" style="padding: 0.65rem 1.5rem; font-weight: 600;">
+          <button type="button" class="btn btn-secondary" id="btnCloseFeedbackModalBtn"
+            style="padding: 0.65rem 1.25rem;">Batal</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitFeedback"
+            style="padding: 0.65rem 1.5rem; font-weight: 600;">
             Kirim Masukan
           </button>
         </div>

@@ -1,17 +1,26 @@
 
+let appMotionIO = null;
+export function observeMotionElements(root = document) {
+  if (appMotionIO && root && root.querySelectorAll) {
+    root.querySelectorAll("[data-reveal], .shutter, section").forEach((el) => {
+      appMotionIO.observe(el);
+    });
+  }
+}
+
 function initMotion() {
   if (typeof IntersectionObserver !== "undefined") {
-    const io = new IntersectionObserver((entries) => {
+    appMotionIO = new IntersectionObserver((entries) => {
       for (const e of entries) {
         if (e.isIntersecting) {
           e.target.classList.add("is-in");
-          io.unobserve(e.target);
+          appMotionIO.unobserve(e.target);
         }
       }
     }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
 
     document.querySelectorAll("[data-reveal], .shutter, section").forEach((el) => {
-      io.observe(el);
+      appMotionIO.observe(el);
     });
   }
 }
@@ -333,6 +342,7 @@ export async function syncDatabaseState() {
     if (artRes.status === 'fulfilled' && artRes.value.data) {
       articlesState = artRes.value.data.map(normalizeArticle);
       try { localStorage.setItem('rtm_cms_articles', JSON.stringify(articlesState)); } catch {}
+      if (typeof renderHomeFeaturedArticles === 'function') renderHomeFeaturedArticles();
     }
     if (galRes.status === 'fulfilled' && galRes.value.data) {
       galleriesState = galRes.value.data.map(normalizeGallery);
@@ -946,6 +956,8 @@ export function navigateTo(viewName, programId = null) {
     targetView.classList.add('active');
   }
 
+  updateHeaderState();
+
   // Update Public Desktop and Mobile Nav Links
   document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
     link.classList.remove('active');
@@ -974,12 +986,25 @@ export function navigateTo(viewName, programId = null) {
   // Re-render sub-views if needed
   if (viewName === 'home') {
     if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
-  } else if (viewName === 'akademik') {
-    renderAkademikView();
-  } else if (viewName === 'news') {
-    renderNewsGrid();
-  } else if (viewName === 'visit') {
-    renderGalleryGrid();
+    if (typeof renderHomeFeaturedArticles === 'function') renderHomeFeaturedArticles();
+    if (typeof initHomeStatsCounters === 'function') initHomeStatsCounters();
+    const heroVid = document.getElementById('heroBgVideo');
+    if (heroVid && heroVid.paused && !heroVid.dataset.manuallyPaused) {
+      heroVid.play().catch(() => {});
+    }
+  } else {
+    // Pause hero background video when not on home view to conserve battery and CPU
+    const heroVid = document.getElementById('heroBgVideo');
+    if (heroVid && !heroVid.paused) {
+      heroVid.pause();
+    }
+    if (viewName === 'akademik') {
+      renderAkademikView();
+    } else if (viewName === 'news') {
+      renderNewsGrid();
+    } else if (viewName === 'visit') {
+      renderGalleryGrid();
+    }
   }
 
   // Scroll to Top Smoothly
@@ -2018,6 +2043,102 @@ function openArticleReader(article) {
   modal.classList.add('open');
 }
 
+// Render Featured Articles on Home ("Bertumbuh Bersama, Menginspirasi Sesama")
+function renderHomeFeaturedArticles() {
+  const container = document.getElementById('homeArticlesContainer');
+  if (!container) return;
+
+  // Filter only published articles
+  let published = (articlesState || []).filter(a => a.status !== 'draft' && a.status !== 'archived');
+  if (published.length < 2) {
+    published = (NEWS_ARTICLES || []).filter(a => a.status !== 'draft' && a.status !== 'archived');
+  }
+  if (published.length === 0) return;
+
+  const art1 = published[0];
+  const art2 = published[1] || published[0];
+
+  container.innerHTML = `
+    <!-- Article 1: [Kiri] Title & Isi | [Kanan] Featured Image -->
+    <article class="home-article-row zigzag-text-left" data-article-id="${art1.id}">
+      <div class="home-article-content">
+        <div class="home-article-meta">
+          <span class="home-article-cat">${art1.category || 'Prestasi & Event'}</span>
+          <span class="home-article-dot">•</span>
+          <span class="home-article-date">${art1.date || ''}</span>
+        </div>
+        <h3 class="home-article-title">
+          <a href="/artikel" class="home-article-title-link" data-article-target="${art1.id}">
+            ${art1.title}
+          </a>
+        </h3>
+        <p class="home-article-excerpt">${art1.excerpt || ''}</p>
+        <div class="home-article-action">
+          <a href="/artikel" class="home-article-read-btn" data-article-target="${art1.id}">
+            <span>Baca Selengkapnya</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="home-article-media">
+        <a href="/artikel" class="home-article-img-frame" data-article-target="${art1.id}" aria-label="Baca selengkapnya artikel ${art1.title}">
+          <img src="${art1.image || '/assets/images/wisuda.jpg'}" alt="${art1.title}" loading="lazy" />
+          <span class="home-article-read-badge">${art1.readTime || '4 Menit Baca'}</span>
+        </a>
+      </div>
+    </article>
+
+    <!-- Article 2: [Kiri] Featured Image | [Kanan] Title & Isi -->
+    <article class="home-article-row zigzag-text-right" data-article-id="${art2.id}">
+      <div class="home-article-media">
+        <a href="/artikel" class="home-article-img-frame" data-article-target="${art2.id}" aria-label="Baca selengkapnya artikel ${art2.title}">
+          <img src="${art2.image || '/assets/images/campus.jpg'}" alt="${art2.title}" loading="lazy" />
+          <span class="home-article-read-badge">${art2.readTime || '3 Menit Baca'}</span>
+        </a>
+      </div>
+      <div class="home-article-content">
+        <div class="home-article-meta">
+          <span class="home-article-cat">${art2.category || 'Info PPDB'}</span>
+          <span class="home-article-dot">•</span>
+          <span class="home-article-date">${art2.date || ''}</span>
+        </div>
+        <h3 class="home-article-title">
+          <a href="/artikel" class="home-article-title-link" data-article-target="${art2.id}">
+            ${art2.title}
+          </a>
+        </h3>
+        <p class="home-article-excerpt">${art2.excerpt || ''}</p>
+        <div class="home-article-action">
+          <a href="/artikel" class="home-article-read-btn" data-article-target="${art2.id}">
+            <span>Baca Selengkapnya</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </article>
+  `;
+
+  // Attach interactive click listeners: open article modal or navigate
+  container.querySelectorAll('[data-article-target]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = el.getAttribute('data-article-target');
+      const article = (articlesState || []).find(a => a.id === targetId) || (NEWS_ARTICLES || []).find(a => a.id === targetId);
+      if (article && typeof openArticleReader === 'function') {
+        openArticleReader(article);
+      } else {
+        navigate('/artikel');
+      }
+    });
+  });
+}
+
 // ============================================================================
 // PPDB CLIENT-SIDE CONTROLLERS & WIZARD (PRD Section 4.1 & 4.2)
 // ============================================================================
@@ -2906,19 +3027,47 @@ function initModals() {
   }
 }
 
+// Dynamic Header Transparency & Scroll State Manager
+export function updateHeaderState() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+  const isHome = state.currentView === 'home';
+  const logoImg = header.querySelector('.header-logo');
+
+  if (isHome) {
+    document.body.classList.add('page-home');
+    const heroSection = document.querySelector('.hero-video-section');
+    const heroThreshold = heroSection ? (heroSection.offsetHeight - 90) : 550;
+
+    if (window.scrollY < heroThreshold) {
+      header.classList.add('header-transparent');
+      header.classList.remove('scrolled');
+      if (logoImg && !logoImg.src.includes('logo-footer-RTM.png')) {
+        logoImg.src = '/assets/images/logo-footer-RTM.png';
+      }
+      return;
+    }
+  } else {
+    document.body.classList.remove('page-home');
+  }
+
+  // Scrolled past hero or on non-home pages
+  header.classList.remove('header-transparent');
+  if (logoImg && !logoImg.src.includes('logo-header-RTM.png')) {
+    logoImg.src = '/assets/images/logo-header-RTM.png';
+  }
+  if (window.scrollY > 30) {
+    header.classList.add('scrolled');
+  } else {
+    header.classList.remove('scrolled');
+  }
+}
+
 // Global UI Handlers
 function initGlobalUI() {
-  // Sticky Header Scroll Listener
-  window.addEventListener('scroll', () => {
-    const header = document.querySelector('.site-header');
-    if (header) {
-      if (window.scrollY > 30) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    }
-  });
+  // Dynamic Header Scroll & Transparency Listener
+  window.addEventListener('scroll', updateHeaderState, { passive: true });
+  updateHeaderState();
 
   // Mobile Drawer Toggle
   const mobileToggle = document.getElementById('mobileToggle');
@@ -2978,6 +3127,17 @@ export function renderPublicNavigationPrograms() {
   const publishedPrograms = activePrograms.filter(p => p.publicationStatus !== 'draft' && p.publicationStatus !== 'archived');
   const progsToRender = publishedPrograms.length > 0 ? publishedPrograms : activePrograms;
 
+  // Format program name in menu:
+  // khusus smp --> cukup 'SMP', sma --> cukup 'SMA', mahasantri --> cukup 'Mahasantri' saja.
+  // selebihnya program lain sesuai yang diisi di dashboard CMS (p.name). Target program tidak dicantumkan.
+  const getNavProgramName = (p) => {
+    const id = (p.id || '').toLowerCase();
+    if (id === 'smp' || id.includes('smp')) return 'SMP';
+    if (id === 'sma' || id.includes('sma')) return 'SMA';
+    if (id === 'mahasantri' || id.includes('mahasantri')) return 'Mahasantri';
+    return p.name || p.title || 'Program';
+  };
+
   // 1. Desktop Navbar Academic Dropdown (#navbarAcademicDropdown)
   const desktopDropdown = document.getElementById('navbarAcademicDropdown');
   if (desktopDropdown) {
@@ -2989,8 +3149,7 @@ export function renderPublicNavigationPrograms() {
       dropdownHtml += '<div class="dropdown-section-title">Pendidikan Formal</div>';
       dropdownHtml += formalList.map(p => `
         <a href="/akademik/${p.id}" class="dropdown-link" data-program-id="${p.id}">
-          <span>${p.name}</span>
-          <span class="badge-tag">${p.stats?.targetHafalan || p.badge || 'Formal'}</span>
+          <span>${getNavProgramName(p)}</span>
         </a>
       `).join('');
     }
@@ -3003,8 +3162,7 @@ export function renderPublicNavigationPrograms() {
       dropdownHtml += '<div class="dropdown-section-title">Pendidikan Non-Formal</div>';
       dropdownHtml += nonFormalList.map(p => `
         <a href="/akademik/${p.id}" class="dropdown-link" data-program-id="${p.id}">
-          <span>${p.name}</span>
-          <span class="badge-tag">${p.stats?.targetHafalan || p.badge || 'Non-Formal'}</span>
+          <span>${getNavProgramName(p)}</span>
         </a>
       `).join('');
     }
@@ -3015,17 +3173,16 @@ export function renderPublicNavigationPrograms() {
   // 2. Mobile Drawer Academic Submenu (#mobileAcademicSubmenu)
   const mobileSubmenu = document.getElementById('mobileAcademicSubmenu');
   if (mobileSubmenu) {
-    mobileSubmenu.innerHTML = progsToRender.map(p => {
-      const tag = p.stats?.targetHafalan ? ` (${p.stats.targetHafalan})` : '';
-      return `<a href="/akademik/${p.id}" class="mobile-sublink" data-program-id="${p.id}">${p.name}${tag}</a>`;
-    }).join('');
+    mobileSubmenu.innerHTML = progsToRender.map(p => `
+      <a href="/akademik/${p.id}" class="mobile-sublink" data-program-id="${p.id}">${getNavProgramName(p)}</a>
+    `).join('');
   }
 
   // 3. Footer Academic Program Links (#footerProgramLinksList)
   const footerList = document.getElementById('footerProgramLinksList');
   if (footerList) {
     footerList.innerHTML = progsToRender.map(p => `
-      <li><a href="/akademik/${p.id}" data-program-id="${p.id}">${p.name}</a></li>
+      <li><a href="/akademik/${p.id}" data-program-id="${p.id}">${getNavProgramName(p)}</a></li>
     `).join('');
   }
 }
@@ -4521,6 +4678,7 @@ function renderAdminBerita() {
         }
         showToast(`Status artikel "${art.title}" diubah menjadi: ${art.status.toUpperCase()}`, 'success');
         renderNewsGrid();
+        if (typeof renderHomeFeaturedArticles === 'function') renderHomeFeaturedArticles();
       }
     });
   });
@@ -4558,6 +4716,7 @@ function renderAdminBerita() {
         showToast('Artikel berhasil dihapus dari sistem.', 'success');
         renderAdminBerita();
         renderNewsGrid();
+        if (typeof renderHomeFeaturedArticles === 'function') renderHomeFeaturedArticles();
       }
     });
   });
@@ -5900,6 +6059,7 @@ function initAdminUI() {
         if (articleModal) articleModal.classList.remove('open');
         renderAdminBerita();
         renderNewsGrid();
+        if (typeof renderHomeFeaturedArticles === 'function') renderHomeFeaturedArticles();
         navigate('/admin/berita');
       } catch (err) {
         if (err.code === 'CONFLICT_SLUG' || (err.message && err.message.toLowerCase().includes('slug'))) {
@@ -5922,6 +6082,7 @@ function initAdminUI() {
         if (articleModal) articleModal.classList.remove('open');
         renderAdminBerita();
         renderNewsGrid();
+        if (typeof renderHomeFeaturedArticles === 'function') renderHomeFeaturedArticles();
         showToast(`Artikel "${title}" berhasil disimpan!`, 'success');
         navigate('/admin/berita');
       }
@@ -6983,16 +7144,150 @@ function initAdminUI() {
   }
 }
 
+// Video Background Performance & Autoplay Manager
+export function initHeroVideoBackground() {
+  const video = document.getElementById('heroBgVideo');
+  if (!video) return;
+
+  const toggleBtn = document.getElementById('btnHeroVideoToggle');
+  const iconPause = toggleBtn?.querySelector('.icon-pause');
+  const iconPlay = toggleBtn?.querySelector('.icon-play');
+  const label = toggleBtn?.querySelector('.video-toggle-label');
+
+  // Ensure muted is explicitly set for modern mobile browser autoplay policies
+  video.muted = true;
+  video.defaultMuted = true;
+
+  // Respect user preference for reduced motion or data saver
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isDataSaver = navigator.connection?.saveData || false;
+
+  if (prefersReducedMotion || isDataSaver) {
+    video.pause();
+    video.dataset.manuallyPaused = 'true';
+    if (iconPause) iconPause.style.display = 'none';
+    if (iconPlay) iconPlay.style.display = 'inline';
+    if (label) label.textContent = 'Putar';
+  } else {
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Autoplay policy prevented playback, show play state
+        if (iconPause) iconPause.style.display = 'none';
+        if (iconPlay) iconPlay.style.display = 'inline';
+        if (label) label.textContent = 'Putar';
+      });
+    }
+  }
+
+  // Toggle button click listener
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (video.paused) {
+        delete video.dataset.manuallyPaused;
+        video.play().then(() => {
+          if (iconPause) iconPause.style.display = 'inline';
+          if (iconPlay) iconPlay.style.display = 'none';
+          if (label) label.textContent = 'Video';
+          toggleBtn.setAttribute('title', 'Jeda video latar belakang');
+        }).catch(() => {});
+      } else {
+        video.dataset.manuallyPaused = 'true';
+        video.pause();
+        if (iconPause) iconPause.style.display = 'none';
+        if (iconPlay) iconPlay.style.display = 'inline';
+        if (label) label.textContent = 'Putar';
+        toggleBtn.setAttribute('title', 'Putar video latar belakang');
+      }
+    });
+  }
+
+  // Optimize battery/CPU: Pause background video when scrolled away from Hero
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          if (!video.paused) {
+            video.dataset.pausedByScroll = 'true';
+            video.pause();
+          }
+        } else {
+          if (video.dataset.pausedByScroll === 'true') {
+            delete video.dataset.pausedByScroll;
+            if (!prefersReducedMotion && !isDataSaver && !video.dataset.manuallyPaused) {
+              video.play().catch(() => {});
+            }
+          }
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const heroSection = document.querySelector('.hero-video-section');
+    if (heroSection) observer.observe(heroSection);
+  }
+}
+
+// Interactive Stats Counter Animation for Dedicated Stats Section
+export function initHomeStatsCounters() {
+  const statNumbers = document.querySelectorAll('.home-stat-number[data-target]');
+  if (!statNumbers.length) return;
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.getAttribute('data-target'), 10);
+        if (isNaN(target)) return;
+
+        const duration = 1600;
+        const startTime = performance.now();
+
+        const step = (now) => {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easeProgress = 1 - Math.pow(1 - progress, 3);
+          const currentVal = Math.floor(easeProgress * target);
+
+          if (target >= 1000) {
+            el.textContent = currentVal.toLocaleString('id-ID');
+          } else {
+            el.textContent = currentVal.toString();
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            if (target >= 1000) {
+              el.textContent = target.toLocaleString('id-ID');
+            } else {
+              el.textContent = target.toString();
+            }
+          }
+        };
+
+        requestAnimationFrame(step);
+        obs.unobserve(el);
+      }
+    });
+  }, { threshold: 0.25 });
+
+  statNumbers.forEach(el => observer.observe(el));
+}
+
 // Initial Boot (Sprint 3 Full Integration)
 document.addEventListener('DOMContentLoaded', async () => {
   initMotion();
   initGlobalUI();
   initModals();
   initAdminUI();
+  initHeroVideoBackground();
+  initHomeStatsCounters();
   renderGalleryGrid();
   renderNewsGrid();
   if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
   if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
+  if (typeof renderHomeFeaturedArticles === 'function') renderHomeFeaturedArticles();
   initRouter();
 
   // Background Database Sync
@@ -7002,6 +7297,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderNewsGrid();
     if (typeof renderPublicNavigationPrograms === 'function') renderPublicNavigationPrograms();
     if (typeof renderHomeProgramCards === 'function') renderHomeProgramCards('all');
+    if (typeof renderHomeFeaturedArticles === 'function') renderHomeFeaturedArticles();
     if (state.currentView === 'akademik') renderAkademikView();
   } catch (err) {
     console.log('[Boot] Initial load ready, offline fallback active');

@@ -1255,84 +1255,91 @@ function renderAkademikView() {
 
   const activePrograms = (programsState && programsState.length) ? programsState : PROGRAMS;
   const program = activePrograms.find(p => p.id === state.activeProgramId) || activePrograms[0];
+  const isFormal = program.category === 'formal';
   const isProgramOpen = program.ppdbOpen !== false && program.is_active !== 0;
 
-  // Render Top Selector Buttons
-  const selectorContainer = document.getElementById('academicProgramSelector');
-  if (selectorContainer) {
-    selectorContainer.innerHTML = activePrograms.map(p => {
-      const open = p.ppdbOpen !== false && p.is_active !== 0;
-      return `
-        <button class="program-tab-btn ${p.id === program.id ? 'active' : ''}" data-program-id="${p.id}">
-          ${p.category === 'formal' ? '🏛️' : '📖'} ${p.shortTitle || p.name}
-          ${!open ? '<span style="font-size:0.68rem;background:#ef4444;color:#fff;padding:1px 6px;border-radius:999px;margin-left:6px;font-weight:700;">TUTUP</span>' : ''}
-        </button>
-      `;
-    }).join('');
-
-    selectorContainer.querySelectorAll('.program-tab-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = e.currentTarget.getAttribute('data-program-id');
-        state.activeProgramId = id;
-        state.activeAboutTab = 'materi';
-        navigate(`/akademik/${id}`);
-      });
-    });
-  }
-
-  // Render 10 Comprehensive Blocks
+  // Render 10 Comprehensive Blocks (Block 1 is the direct Hero Section)
   container.innerHTML = `
     <!-- BLOCK 1: Hero & Stats Counter Bar -->
     <section class="prog-hero-block">
       <div class="container">
         <div class="prog-hero-grid">
-          <div>
+          <div class="prog-hero-content">
             <div class="prog-badge-tag">
-              <span>${program.category === 'formal' ? 'Pendidikan Formal Terpadu' : 'Pendidikan Non-Formal'}</span>
+              <span>${isFormal ? 'Pendidikan Formal Terpadu' : 'Pendidikan Non-Formal'}</span>
               <span>•</span>
               <span>${program.badge || 'Program Unggulan'}</span>
               ${!isProgramOpen ? '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:999px;font-weight:700;">• Pendaftaran Ditutup</span>' : ''}
             </div>
-            <h2 class="prog-hero-title">${program.name}</h2>
-            <p class="prog-claim-text">${program.headline || ''}</p>
-            <p class="prog-summary-text">${program.summary || ''}</p>
+            <h1 class="prog-hero-title">${program.name}</h1>
             
-            <div class="prog-stats-counter-bar">
-              <div class="prog-counter-item">
-                <span class="prog-counter-label">Durasi Program</span>
-                <span class="prog-counter-val">${program.stats?.durasi || '3 Tahun'}</span>
-              </div>
-              <div class="prog-counter-item">
-                <span class="prog-counter-label">Target Hafalan</span>
-                <span class="prog-counter-val">${program.stats?.targetHafalan || '30 Juz'}</span>
-              </div>
-              <div class="prog-counter-item">
-                <span class="prog-counter-label">Rasio Asatidz</span>
-                <span class="prog-counter-val">${program.stats?.rasioUstadz || '1:10'}</span>
-              </div>
-              <div class="prog-counter-item">
-                <span class="prog-counter-label">Kelulusan & Ijazah</span>
-                <span class="prog-counter-val">${program.stats?.ijazah || 'Sanad & Formal'}</span>
-              </div>
-            </div>
+            <ul class="prog-hero-checklist">
+              <li class="prog-check-item">
+                <span class="prog-check-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span class="prog-check-content">
+                  <span class="prog-check-label">Durasi Program:</span>
+                  <strong class="prog-check-val">${program.stats?.durasi || '3 Tahun'}</strong>
+                </span>
+              </li>
+              <li class="prog-check-item">
+                <span class="prog-check-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span class="prog-check-content">
+                  <span class="prog-check-label">Target Hafalan:</span>
+                  <strong class="prog-check-val">${program.stats?.targetHafalan || '30 Juz'}</strong>
+                </span>
+              </li>
+              <li class="prog-check-item">
+                <span class="prog-check-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span class="prog-check-content">
+                  <span class="prog-check-label">Rasio Asatidz:</span>
+                  <strong class="prog-check-val">${program.stats?.rasioUstadz || '1:10'}</strong>
+                </span>
+              </li>
+              <li class="prog-check-item">
+                <span class="prog-check-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span class="prog-check-content">
+                  <span class="prog-check-label">Kelulusan & Ijazah:</span>
+                  <strong class="prog-check-val">${program.stats?.ijazah || 'Sanad & Formal'}</strong>
+                </span>
+              </li>
+            </ul>
 
             <div class="prog-hero-buttons">
               ${isProgramOpen ? `
-                <button type="button" class="btn btn-primary btn-scroll-enrollment" onclick="const target = document.getElementById('enrollmentFormSection'); if (target) { target.scrollIntoView({behavior: 'smooth'}); target.focus?.(); }">
-                  Daftar Program Ini Sekarang
+                <button type="button" class="btn btn-primary btn-scroll-enrollment" onclick="const target = document.getElementById('${isFormal ? 'ctaWhatsappInterestSection' : 'enrollmentFormSection'}'); if (target) { target.scrollIntoView({behavior: 'smooth'}); target.focus?.(); }">
+                  <span>${isFormal ? 'Daftar & Konsultasi Sekarang' : 'Daftar Program Ini Sekarang'}</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
                 </button>
               ` : `
                 <button class="btn btn-secondary" style="opacity: 0.8; cursor: not-allowed; background: #fee2e2; color: #991b1b; border: 1px solid #f87171;" disabled title="Pendaftaran untuk program ini sedang ditutup">
-                  🔒 Pendaftaran Sedang Ditutup
+                  🔒 Pendaftaran Ditutup
                 </button>
-                <a href="https://wa.me/${(INSTITUTION.whatsappPPDB || '6281234567890').replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalamu\'alaikum Admin PPDB, saya ingin tanya info gelombang berikutnya untuk program ' + program.name)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="border: 1px solid var(--primary-purple); color: var(--primary-purple); font-weight: 600;">
-                  Hubungi Panitia PPDB
-                </a>
               `}
-              <button class="btn btn-secondary" id="btnDownloadSilabus">
-                <span class="btn-icon-leading">${getIconSvg('download', 18)}</span>
-                Download PDF Silabus
-              </button>
+              <a href="https://wa.me/${(INSTITUTION.whatsappPPDB || '6281234567890').replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalamu\'alaikum Panitia PPDB, saya ingin bertanya dan konsultasi mengenai program ' + program.name)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" id="btnContactHero">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <span>Hubungi Kami</span>
+              </a>
             </div>
           </div>
 
@@ -1364,7 +1371,8 @@ function renderAkademikView() {
       </div>
     </section>
 
-    <!-- BLOCK 3: Kenapa Belajar Al-Qur'an (Problem & Solution Cards) -->
+    <!-- BLOCK 3: Kenapa Belajar Al-Qur'an (Problem & Solution Cards) - Khusus Program Non-Formal -->
+    ${!isFormal ? `
     <section class="prog-why-block">
       <div class="container">
         <div class="section-header">
@@ -1401,6 +1409,7 @@ function renderAkademikView() {
         </div>
       </div>
     </section>
+    ` : ''}
 
     <!-- BLOCK 4: Keunggulan Belajar Al-Qur'an di Al-Hikmah (4 Pilar) -->
     <section class="prog-pillars-block">
@@ -1422,51 +1431,108 @@ function renderAkademikView() {
       </div>
     </section>
 
-    <!-- BLOCK 5: Runtutan Fase Pembelajaran (Kurikulum Silabus) -->
+    <!-- BLOCK 5: Runtutan Fase Pembelajaran (Kurikulum Silabus Timeline) -->
     <section class="prog-curriculum-block">
       <div class="container">
         <div class="section-header">
-          <h3 class="section-title">Runtutan Fase Pembelajaran</h3>
-          <p class="section-description">Tahapan kurikulum sistematis dari penguatan tajwid, ziyadah, hingga tasmi' kelulusan.</p>
+          <h3 class="section-title">Fase Pembelajaran ${program.name}</h3>
+          <p class="section-description">Tahapan kurikulum sistematis dari pembinaan dasar tajwid, akselerasi hafalan ziyadah, hingga tasmi' kelulusan.</p>
         </div>
 
-        <div class="curriculum-timeline">
-          ${program.curriculumPhases.map((phase, idx) => `
-            <div class="curriculum-phase-accordion ${idx === 0 ? 'open' : ''}" data-phase="${phase.phase}">
-              <button class="phase-header-btn">
-                <div class="phase-header-left">
-                  <span class="phase-badge-num">0${phase.phase}</span>
-                  <div>
-                    <h4 class="phase-title-text">${phase.title}</h4>
-                    <p class="phase-desc-sub">${phase.desc}</p>
+        <div class="curriculum-timeline-wrapper">
+          <div class="curriculum-timeline-track">
+            ${program.curriculumPhases.map((phase, idx) => `
+              <div class="curriculum-phase-item ${idx === 0 ? 'open' : ''}" data-phase="${phase.phase}">
+                <div class="phase-timeline-marker" aria-hidden="true">
+                  <span class="phase-timeline-dot"></span>
+                  <span class="phase-timeline-line"></span>
+                </div>
+                <div class="curriculum-phase-card">
+                  <button type="button" class="phase-card-header-btn" aria-expanded="${idx === 0 ? 'true' : 'false'}">
+                    <span class="phase-card-title">${phase.title}</span>
+                    <span class="phase-card-chevron">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </span>
+                  </button>
+                  <div class="phase-card-body">
+                    <h5 class="phase-inner-heading">Kurikulum yang Dipelajari</h5>
+                    
+                    <div class="phase-sub-section">
+                      <div class="phase-sub-header">
+                        <span class="phase-sub-dot"></span>
+                        <span class="phase-sub-title">Fokus & Pendekatan Belajar</span>
+                      </div>
+                      <p class="phase-sub-desc">${phase.desc}</p>
+                    </div>
+
+                    <div class="phase-sub-section">
+                      <div class="phase-sub-header">
+                        <span class="phase-sub-dot"></span>
+                        <span class="phase-sub-title">Materi & Modul Pembelajaran</span>
+                      </div>
+                      <div class="phase-badges-grid">
+                        ${phase.topics.map(topic => `
+                          <div class="phase-topic-badge">
+                            <span class="topic-badge-icon" aria-hidden="true">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                              </svg>
+                            </span>
+                            <span class="topic-badge-text">${topic}</span>
+                          </div>
+                        `).join('')}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <span class="phase-chevron">${getIconSvg('chevron-down', 22)}</span>
-              </button>
-              <div class="phase-body-content">
-                <ul class="phase-topics-list">
-                  ${phase.topics.map(t => `
-                    <li>
-                      <span style="color: var(--mint-500)">${getIconSvg('check-circle', 16)}</span>
-                      <span>${t}</span>
-                    </li>
-                  `).join('')}
-                </ul>
               </div>
-            </div>
-          `).join('')}
-        </div>
+            `).join('')}
+          </div>
 
-        <div class="pdf-download-action-bar">
-          <button class="btn btn-secondary" id="btnDownloadSilabus2">
-            <span class="btn-icon-leading">${getIconSvg('download', 18)}</span>
-            Unduh Silabus Lengkap Program ${program.shortTitle} (PDF)
-          </button>
+          <div class="curriculum-divider"></div>
+
+          <div class="curriculum-download-footer">
+            <button type="button" class="btn btn-primary" id="btnDownloadSilabus2">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download Syllabus</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- BLOCK 6: Lokasi, Jadwal, dan Biaya Transparan -->
+    <!-- BLOCK 6: Jadwal & Biaya (Khusus Formal diganti Ajakan Konsultasi WhatsApp) -->
+    ${isFormal ? `
+    <section class="prog-cta-whatsapp-block" id="ctaWhatsappInterestSection">
+      <div class="container">
+        <div class="cta-wa-card">
+          <div class="cta-wa-badge">
+            <span class="cta-wa-badge-dot"></span>
+            <span>Penerimaan Santri Baru ${program.shortTitle}</span>
+          </div>
+          <h3 class="cta-wa-title">Tertarik Mendaftarkan Putra / Putri Anda?</h3>
+          <p class="cta-wa-desc">
+            Dapatkan informasi lengkap mengenai kurikulum, program beasiswa tahfidz, reservasi visitasi asrama pondok, serta konsultasi kesiapan santri bersama panitia PPDB kami via WhatsApp.
+          </p>
+          <div class="cta-wa-actions">
+            <a href="https://wa.me/${(INSTITUTION.whatsappPPDB || '6281234567890').replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalamu\'alaikum Panitia PPDB Rumah Tahfidz Al-Hikmah, saya tertarik mendaftarkan anak saya di program ' + program.name + '. Boleh mohon informasi pendaftaran dan konsultasi lebih lanjut?')}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-cta-wa" id="btnWhatsappInterest">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <span>Hubungi Kami via WhatsApp</span>
+            </a>
+          </div>
+          <p class="cta-wa-note">Layanan panitia aktif setiap hari kerja (08.00 - 16.00 WIB) • Bebas biaya konsultasi</p>
+        </div>
+      </div>
+    </section>
+    ` : `
     <section class="prog-schedule-fee-block">
       <div class="container">
         <div class="section-header">
@@ -1517,6 +1583,7 @@ function renderAkademikView() {
         </div>
       </div>
     </section>
+    `}
 
     <!-- BLOCK 7: Alur Pendaftaran (Visual Stepper 4 Langkah) -->
     <section class="prog-stepper-block">
@@ -1529,23 +1596,31 @@ function renderAkademikView() {
         <div class="stepper-horizontal">
           <div class="stepper-node">
             <div class="stepper-icon-circle">1</div>
-            <h5 class="step-card-title">Isi Formulir Online</h5>
-            <p class="step-card-desc">Lengkapi formulir pendaftaran langsung di bawah ini dengan data diri valid.</p>
+            <div class="stepper-node-content">
+              <h5 class="step-card-title">${isFormal ? 'Konsultasi & Registrasi' : 'Mengisi Formulir Pendaftaran'}</h5>
+              <p class="step-card-desc">${isFormal ? 'Hubungi panitia via WhatsApp atau reservasi kunjungan asrama langsung.' : 'Lengkapi formulir pendaftaran online di bawah ini dengan data santri yang valid.'}</p>
+            </div>
           </div>
           <div class="stepper-node">
             <div class="stepper-icon-circle">2</div>
-            <h5 class="step-card-title">Verifikasi & Tes Lisan</h5>
-            <p class="step-card-desc">Konfirmasi jadwal tes baca Al-Qur'an / wawancara bersama asatidz penguji.</p>
+            <div class="stepper-node-content">
+              <h5 class="step-card-title">Verifikasi & Tes Lisan</h5>
+              <p class="step-card-desc">Konfirmasi jadwal tes baca Al-Qur'an / wawancara bersama asatidz penguji.</p>
+            </div>
           </div>
           <div class="stepper-node">
             <div class="stepper-icon-circle">3</div>
-            <h5 class="step-card-title">Konfirmasi Kelulusan</h5>
-            <p class="step-card-desc">Menerima surat keputusan penerimaan santri dan penyelesaian daftar ulang.</p>
+            <div class="stepper-node-content">
+              <h5 class="step-card-title">Konfirmasi Kelulusan</h5>
+              <p class="step-card-desc">Menerima surat keputusan penerimaan santri dan penyelesaian daftar ulang.</p>
+            </div>
           </div>
           <div class="stepper-node">
             <div class="stepper-icon-circle">4</div>
-            <h5 class="step-card-title">Mulai Belajar & Talaqqi</h5>
-            <p class="step-card-desc">Orientasi santri baru dan memulai langkah mulia menghafal Al-Qur'an.</p>
+            <div class="stepper-node-content">
+              <h5 class="step-card-title">Mulai Belajar & Talaqqi</h5>
+              <p class="step-card-desc">Orientasi santri baru dan memulai langkah mulia menghafal Al-Qur'an.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -1577,7 +1652,8 @@ function renderAkademikView() {
       </div>
     </section>
 
-    <!-- BLOCK 9: Formulir Pendaftaran Langsung (Direct Enrollment Form) -->
+    <!-- BLOCK 9: Formulir Pendaftaran Langsung (Hanya untuk Non-Formal) -->
+    ${!isFormal ? `
     <section class="prog-enrollment-block" id="enrollmentFormSection">
       <div class="container">
         <div class="enrollment-form-container">
@@ -1667,20 +1743,57 @@ function renderAkademikView() {
               </div>
 
               <div class="form-group full-width">
-                <label class="form-label">Pilihan Rencana Metode Pembayaran Biaya *</label>
+                <label class="form-label" style="font-weight: 700; color: #383838; font-size: 0.95rem;">
+                  Pilihan Rencana Metode Pembayaran Biaya *
+                </label>
                 <div class="payment-method-selector">
                   <label class="payment-radio-label">
                     <input type="radio" name="paymentMethod" value="Transfer Bank BSI" checked />
-                    <span>Transfer Bank (BSI Syariah)</span>
+                    <div class="payment-radio-card">
+                      <div class="payment-radio-header">
+                        <span class="payment-radio-circle"></span>
+                        <span class="payment-radio-title">Transfer Bank BSI</span>
+                      </div>
+                      <p class="payment-radio-desc">Rekening resmi BSI Syariah Rumah Tahfidz. Bukti invoice & instruksi transfer dikirim ke email.</p>
+                      <span class="payment-radio-badge">Rekomendasi</span>
+                    </div>
                   </label>
+
                   <label class="payment-radio-label">
                     <input type="radio" name="paymentMethod" value="Virtual Account" />
-                    <span>Virtual Account Otomatis</span>
+                    <div class="payment-radio-card">
+                      <div class="payment-radio-header">
+                        <span class="payment-radio-circle"></span>
+                        <span class="payment-radio-title">Virtual Account (VA)</span>
+                      </div>
+                      <p class="payment-radio-desc">Nomor VA otomatis untuk semua bank (BCA, Mandiri, BRI, BNI). Verifikasi instan via email.</p>
+                      <span class="payment-radio-badge badge-va">Instan 24 Jam</span>
+                    </div>
                   </label>
+
                   <label class="payment-radio-label">
                     <input type="radio" name="paymentMethod" value="Cicilan Syariah Bertahap" />
-                    <span>Opsi Angsuran Bertahap</span>
+                    <div class="payment-radio-card">
+                      <div class="payment-radio-header">
+                        <span class="payment-radio-circle"></span>
+                        <span class="payment-radio-title">Angsuran / Cicilan Bertahap</span>
+                      </div>
+                      <p class="payment-radio-desc">Dapat diangsur 2–3x pembayaran tanpa riba/bunga. Skema jadwal pelunasan dikirim ke email.</p>
+                      <span class="payment-radio-badge badge-cicil">Syariah Murabahah</span>
+                    </div>
                   </label>
+                </div>
+
+                <div class="payment-method-email-note">
+                  <div class="email-note-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                      <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                  </div>
+                  <div class="email-note-text">
+                    <strong>Pemberitahuan Otomatis ke Email:</strong> Setelah formulir dikirim, sistem otomatis mengirimkan <strong>bukti registrasi resmi & dokumen invoice rincian pembayaran</strong> ke alamat email yang Anda cantumkan di atas.
+                  </div>
                 </div>
               </div>
             </div>
@@ -1698,6 +1811,7 @@ function renderAkademikView() {
         </div>
       </div>
     </section>
+    ` : ''}
 
     <!-- BLOCK 10: FAQ (Frequently Asked Questions) Accordion -->
     <section class="prog-faq-block">
@@ -1777,11 +1891,35 @@ function initAkademikInteractions(program) {
     });
   }
 
-  // Phase Accordions
-  document.querySelectorAll('.curriculum-phase-accordion .phase-header-btn').forEach(btn => {
+  // Phase Accordions with Tape Measure Spring Animation & Auto-Close Siblings
+  document.querySelectorAll('.curriculum-phase-item .phase-card-header-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const accordion = e.currentTarget.closest('.curriculum-phase-accordion');
-      accordion.classList.toggle('open');
+      const item = e.currentTarget.closest('.curriculum-phase-item');
+      if (!item) return;
+
+      const isAlreadyOpen = item.classList.contains('open');
+
+      // Close all currently open accordions with tape measure rewind animation
+      const allOpenItems = document.querySelectorAll('.curriculum-phase-item.open');
+      allOpenItems.forEach(openItem => {
+        if (openItem !== item || isAlreadyOpen) {
+          openItem.classList.remove('open');
+          openItem.classList.add('tape-retracting');
+          const headerBtn = openItem.querySelector('.phase-card-header-btn');
+          if (headerBtn) headerBtn.setAttribute('aria-expanded', 'false');
+
+          setTimeout(() => {
+            openItem.classList.remove('tape-retracting');
+          }, 340);
+        }
+      });
+
+      // If clicked item was closed, open it now (smooth & snappy pull out)
+      if (!isAlreadyOpen) {
+        item.classList.remove('tape-retracting');
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
     });
   });
 
@@ -1856,7 +1994,7 @@ function initAkademikInteractions(program) {
           else ppdbState.unshift(normLead);
           try { localStorage.setItem('rtm_cms_ppdb', JSON.stringify(ppdbState)); } catch {}
 
-          showToast(res.message || 'Alhamdulillah, pendaftaran calon santri berhasil dikirim!', 'success');
+          showToast(res.message || 'Alhamdulillah, pendaftaran berhasil! Bukti registrasi dan invoice pembayaran telah dikirim ke email Anda.', 'success');
           form.reset();
           await syncDatabaseState();
           if (typeof renderAdminPPDBTable === 'function') renderAdminPPDBTable();
@@ -1887,7 +2025,7 @@ function initAkademikInteractions(program) {
         if (typeof renderAdminOverview === 'function') renderAdminOverview();
         if (typeof updateNotificationBell === 'function') updateNotificationBell();
         openPPDBSuccessModal(localLead);
-        showToast('Alhamdulillah, formulir pendaftaran berhasil disimpan!', 'success');
+        showToast('Alhamdulillah, formulir pendaftaran berhasil disimpan! Bukti registrasi dan invoice pembayaran dikirim ke email Anda.', 'success');
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -2325,6 +2463,8 @@ export function openPPDBSuccessModal(leadData) {
   if (phoneEl) phoneEl.textContent = phone;
   if (paymentEl) paymentEl.textContent = leadData.payment_method || leadData.paymentMethod || 'Transfer Bank BSI';
   if (dateEl) dateEl.textContent = leadData.created_at || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  const emailEl = document.getElementById('receiptTargetEmail');
+  if (emailEl) emailEl.textContent = leadData.email || 'Email Anda';
   if (statusEl) {
     statusEl.textContent = 'Menunggu Verifikasi';
     statusEl.className = 'status-pill status-pending';
@@ -2586,7 +2726,7 @@ export function initPPDBModalEvents() {
           else ppdbState.unshift(normLead);
           try { localStorage.setItem('rtm_cms_ppdb', JSON.stringify(ppdbState)); } catch {}
 
-          showToast(res.message || 'Alhamdulillah, pendaftaran calon santri berhasil dikirim!', 'success');
+          showToast(res.message || 'Alhamdulillah, pendaftaran calon santri berhasil! Bukti registrasi dan invoice telah dikirim ke email Anda.', 'success');
           document.getElementById('ppdbModal')?.classList.remove('open');
           modalForm.reset();
           ppdbActiveStep = 1;
@@ -2624,7 +2764,7 @@ export function initPPDBModalEvents() {
         if (typeof renderAdminOverview === 'function') renderAdminOverview();
         if (typeof updateNotificationBell === 'function') updateNotificationBell();
         openPPDBSuccessModal(localLead);
-        showToast('Alhamdulillah, pendaftaran calon santri berhasil disimpan!', 'success');
+        showToast('Alhamdulillah, pendaftaran calon santri berhasil disimpan! Bukti registrasi dikirim ke email Anda.', 'success');
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;

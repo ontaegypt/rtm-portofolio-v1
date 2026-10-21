@@ -785,12 +785,29 @@ body.page-home .site-header.scrolled {
     line-height: 1.3;
   }
   .hero-video-actions {
-    gap: 0.65rem;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
   .hero-video-actions .btn-primary,
   .hero-video-actions .btn-video-glass {
-    padding: 0.52rem 1.05rem;
-    font-size: 0.82rem;
+    flex: 0 1 auto !important;
+    white-space: nowrap !important;
+    padding: 0.46rem 0.75rem !important;
+    font-size: 0.78rem !important;
+    letter-spacing: -0.01em !important;
+    gap: 0.35rem !important;
+  }
+  .hero-video-actions .btn-primary svg,
+  .hero-video-actions .btn-video-glass svg {
+    width: 13px !important;
+    height: 13px !important;
+    flex-shrink: 0 !important;
   }
   .hero-video-toggle-btn {
     bottom: 1rem;
@@ -3539,90 +3556,126 @@ body.page-home .site-header.scrolled {
     height: 15px !important;
   }
   .home-cta-daftar-section {
-    padding: 4rem 0;
+    padding: 3.5rem 0;
   }
   .cta-daftar-card {
     grid-template-columns: 1fr;
     text-align: center;
-    padding: 3rem 1.75rem;
-    gap: 2.75rem;
+    padding: 2.25rem 1rem;
+    gap: 1.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
   .cta-daftar-desc {
     margin-left: auto;
     margin-right: auto;
-    font-size: 0.98rem;
-    margin-bottom: 1.75rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 1.35rem;
+    max-width: 100%;
   }
   .cta-daftar-actions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-    width: 100%;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
   .cta-daftar-actions .btn,
   .cta-btn-purple,
   .cta-btn-orange,
   .cta-btn-navy {
+    flex: 0 1 auto !important;
+    white-space: nowrap !important;
     width: auto !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 0.52rem 1.05rem !important;
-    font-size: 0.82rem !important;
+    padding: 0.46rem 0.75rem !important;
+    font-size: 0.78rem !important;
     font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
     border-radius: var(--radius-full, 9999px) !important;
-    gap: 0.45rem !important;
+    gap: 0.35rem !important;
   }
   .cta-daftar-actions .btn svg,
   .cta-btn-purple svg,
   .cta-btn-orange svg,
   .cta-btn-navy svg {
-    width: 15px !important;
-    height: 15px !important;
+    width: 13px !important;
+    height: 13px !important;
+    flex-shrink: 0 !important;
   }
 
   /* Universal rule: All buttons & CTAs in #view-home on mobile match hero button sizing */
   #view-home .btn:not(.hero-video-toggle-btn) {
-    padding: 0.52rem 1.05rem !important;
-    font-size: 0.82rem !important;
+    padding: 0.46rem 0.75rem !important;
+    font-size: 0.78rem !important;
     font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
     border-radius: var(--radius-full, 9999px) !important;
-    gap: 0.45rem !important;
+    gap: 0.35rem !important;
     width: auto !important;
     max-width: 100%;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    white-space: nowrap !important;
   }
   #view-home .btn:not(.hero-video-toggle-btn) svg {
-    width: 15px !important;
-    height: 15px !important;
+    width: 13px !important;
+    height: 13px !important;
+    flex-shrink: 0 !important;
   }
   .cta-daftar-collage {
-    gap: 0.75rem;
-    max-width: 100%;
+    width: 100%;
+    max-width: 310px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
   }
   .collage-col {
-    gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .collage-col-1 {
+    flex: 1.05;
+    min-width: 0;
+  }
+  .collage-col-2 {
+    flex: 0.95;
+    min-width: 0;
+  }
+  .collage-col-3 {
+    flex: 1;
+    min-width: 0;
+  }
+  .collage-item {
+    width: 100% !important;
+    box-sizing: border-box;
+    border-radius: 16px !important;
   }
   .collage-item-left {
-    width: 110px;
-    height: 155px;
-    border-radius: 20px;
+    aspect-ratio: 105 / 150;
+    height: auto !important;
   }
   .collage-item-mid-top,
   .collage-item-mid-bottom {
-    width: 95px;
-    height: 95px;
-    border-radius: 18px;
+    aspect-ratio: 1 / 1;
+    height: auto !important;
+    border-radius: 13px !important;
   }
   .collage-item-right {
-    width: 105px;
-    height: 160px;
-    border-radius: 20px;
+    aspect-ratio: 100 / 155;
+    height: auto !important;
   }
   .achievements-section {
     padding: 4.5rem 0 3.5rem;

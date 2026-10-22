@@ -15,7 +15,8 @@ app.use('/api', api);
 const DIST_DIR = path.resolve(__dirname, '../dist');
 app.use(express.static(DIST_DIR));
 
-app.get('*', (req, res, next) => {
+// SPA fallback for frontend routes in production
+app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
     return next();
   }

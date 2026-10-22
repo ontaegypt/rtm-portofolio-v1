@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "db:seed": "node server/db.js"
+    "db:seed": "node server/db.js",
+    "db:seed:supabase": "node server/seed-supabase.js"
   },
   "keywords": [],
   "author": "",

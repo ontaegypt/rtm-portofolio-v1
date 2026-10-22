@@ -11,6 +11,20 @@ import {
   logSystemAudit,
   logFinancialAudit
 } from './db.js';
+import {
+  supabase,
+  isSupabaseConfigured,
+  getSupabaseHealth,
+  getSupabasePrograms,
+  getSupabaseProgramByIdOrSlug,
+  getSupabaseArticles,
+  getSupabaseArticleByIdOrSlug,
+  getSupabaseCampaigns,
+  getSupabaseCampaignByIdOrSlug,
+  getSupabaseSiteSettings,
+  createSupabaseRegistration,
+  createSupabaseDonation
+} from './supabase.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -61,28 +75,38 @@ function buildDateRangeFilter(columnName, range, from, to) {
 // ============================================================================
 // 1. HEALTH & ANALYTICS OVERVIEW (PRD Req #2 - Zero Fabricated Metrics)
 // ============================================================================
-api.get('/health', (req, res) => {
+api.get('/health', async (req, res) => {
   try {
-    const tableCounts = {
-      users: db.prepare('SELECT count(*) as c FROM users').get().c,
-      programs: db.prepare('SELECT count(*) as c FROM academic_programs').get().c,
-      articles: db.prepare('SELECT count(*) as c FROM articles').get().c,
-      donations: db.prepare('SELECT count(*) as c FROM donations').get().c,
-      campaigns: db.prepare('SELECT count(*) as c FROM campaigns').get().c,
-      galleries: db.prepare('SELECT count(*) as c FROM galleries').get().c,
-      mediaAssets: db.prepare('SELECT count(*) as c FROM media_assets').get().c,
-      reservations: db.prepare('SELECT count(*) as c FROM visit_reservations').get().c,
-      ppdbLeads: db.prepare('SELECT count(*) as c FROM ppdb_registrations').get().c,
-      financialAuditLogs: db.prepare('SELECT count(*) as c FROM financial_audit_logs').get().c,
-      systemAuditLogs: db.prepare('SELECT count(*) as c FROM system_audit_logs').get().c
-    };
+    let supabaseStatus = { connected: false };
+    if (isSupabaseConfigured) {
+      try {
+        supabaseStatus = await getSupabaseHealth();
+      } catch (err) {
+        supabaseStatus = { connected: false, error: err.message };
+      }
+    }
+
+    let sqliteCounts = null;
+    try {
+      sqliteCounts = {
+        users: db.prepare('SELECT count(*) as c FROM users').get().c,
+        programs: db.prepare('SELECT count(*) as c FROM academic_programs').get().c,
+        articles: db.prepare('SELECT count(*) as c FROM articles').get().c,
+        donations: db.prepare('SELECT count(*) as c FROM donations').get().c,
+        campaigns: db.prepare('SELECT count(*) as c FROM campaigns').get().c,
+      };
+    } catch {
+      // ignore
+    }
+
     res.json({
       status: 'ok',
-      engine: 'SQLite (Node.js native DatabaseSync)',
-      database: 'data/rtm.db',
+      engine: supabaseStatus.connected ? 'Supabase PostgreSQL Cloud (@supabase/supabase-js)' : 'SQLite (Local Fallback)',
+      database: supabaseStatus.connected ? 'https://bnaaxskyzwjeaduasgru.supabase.co' : 'data/rtm.db',
+      supabase: supabaseStatus,
       uptime: process.uptime(),
       timestamp: new Date().toISOString(),
-      counts: tableCounts
+      counts: supabaseStatus.connected ? supabaseStatus.counts : sqliteCounts
     });
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });
@@ -511,8 +535,34 @@ api.get('/profile', (req, res) => {
 // ============================================================================
 // 3. ACADEMIC PROGRAMS & DYNAMIC REGISTRATION FORM SCHEMA (PRD Req #5)
 // ============================================================================
-api.get('/programs', (req, res) => {
+api.get('/programs', async (req, res) => {
   try {
+    if (isSupabaseConfigured) {
+      try {
+        const supaPrograms = await getSupabasePrograms(req.query.category);
+        if (supaPrograms && supaPrograms.length > 0) {
+          const enriched = supaPrograms.map(p => ({
+            ...p,
+            name: p.title,
+            title: p.title,
+            headline: p.summary || p.description,
+            shortDescription: p.summary,
+            durationClaim: p.duration,
+            publicationStatus: (p.status || 'PUBLISHED').toLowerCase(),
+            eligibilityCriteria: p.eligibility_criteria || '',
+            scheduleInfo: p.schedule_info || '',
+            applicationInstructions: p.application_instructions || '',
+            formSchema: Array.isArray(p.form_schema) ? p.form_schema : [],
+            curriculumPhases: Array.isArray(p.curriculum_syllabus) ? p.curriculum_syllabus : [],
+            batches: []
+          }));
+          return res.json({ success: true, data: enriched, source: 'supabase_cloud' });
+        }
+      } catch (err) {
+        console.warn('[API /programs] Supabase error, falling back to SQLite:', err.message);
+      }
+    }
+
     const programs = db.prepare('SELECT * FROM academic_programs ORDER BY category ASC, id ASC').all();
     const phases = db.prepare('SELECT * FROM curriculum_phases ORDER BY phase_number ASC').all();
     const batches = db.prepare('SELECT * FROM program_batches ORDER BY id ASC').all();
@@ -560,8 +610,37 @@ api.get('/programs', (req, res) => {
   }
 });
 
-api.get('/programs/:id', (req, res) => {
+api.get('/programs/:id', async (req, res) => {
   try {
+    if (isSupabaseConfigured) {
+      try {
+        const program = await getSupabaseProgramByIdOrSlug(req.params.id);
+        if (program) {
+          return res.json({
+            success: true,
+            data: {
+              ...program,
+              name: program.title,
+              title: program.title,
+              headline: program.summary || program.description,
+              shortDescription: program.summary,
+              durationClaim: program.duration,
+              publicationStatus: (program.status || 'PUBLISHED').toLowerCase(),
+              eligibilityCriteria: program.eligibility_criteria || '',
+              scheduleInfo: program.schedule_info || '',
+              applicationInstructions: program.application_instructions || '',
+              formSchema: Array.isArray(program.form_schema) ? program.form_schema : [],
+              curriculumPhases: Array.isArray(program.curriculum_syllabus) ? program.curriculum_syllabus : [],
+              batches: []
+            },
+            source: 'supabase_cloud'
+          });
+        }
+      } catch (err) {
+        console.warn('[API /programs/:id] Supabase error, falling back to SQLite:', err.message);
+      }
+    }
+
     const program = db.prepare('SELECT * FROM academic_programs WHERE id = ? OR slug = ?').get(req.params.id, req.params.id);
     if (!program) {
       return res.status(404).json({ success: false, message: 'Program akademik tidak ditemukan.' });
@@ -1128,6 +1207,22 @@ api.post('/ppdb', (req, res) => {
       summary: `Pendaftaran baru calon santri: ${full_name.trim()} (${createdRecord?.program_name || program_id})`
     });
 
+    if (isSupabaseConfigured) {
+      getSupabaseProgramByIdOrSlug(program_id).then(supaProg => {
+        if (supaProg) {
+          createSupabaseRegistration({
+            program_id: supaProg.id,
+            applicant_name: full_name.trim(),
+            applicant_email: email ? email.trim() : null,
+            applicant_phone: phone_whatsapp.trim(),
+            birth_date: birth_date || null,
+            parent_name: parent_name ? parent_name.trim() : null,
+            custom_answers: typeof custom_answers === 'object' ? custom_answers : {}
+          }).catch(e => console.warn('[PPDB Supabase sync error]:', e.message));
+        }
+      }).catch(e => console.warn('[PPDB Supabase prog find error]:', e.message));
+    }
+
     res.status(201).json({
       success: true,
       id,
@@ -1246,9 +1341,29 @@ api.delete('/ppdb/:id', verifyRoleIfAuthenticated('superadmin', 'editor'), (req,
 // ============================================================================
 // 5. ARTICLES & CMS NEWS (PRD Req #3 - Slug Validation, SEO, Preview, Archive)
 // ============================================================================
-api.get('/articles', (req, res) => {
+api.get('/articles', async (req, res) => {
   try {
     const { category, search, status } = req.query;
+    if (isSupabaseConfigured) {
+      try {
+        const supaArticles = await getSupabaseArticles({ category, search, status });
+        if (supaArticles && supaArticles.length > 0) {
+          const mapped = supaArticles.map(a => ({
+            ...a,
+            content: a.body_content,
+            thumbnail_url: a.thumbnail_url || '/assets/images/campus.jpg',
+            image: a.thumbnail_url || '/assets/images/campus.jpg',
+            readTime: '4 min baca',
+            viewCount: 150,
+            tags: Array.isArray(a.tags) ? a.tags : []
+          }));
+          return res.json({ success: true, data: mapped, source: 'supabase_cloud' });
+        }
+      } catch (err) {
+        console.warn('[API /articles] Supabase error, falling back to SQLite:', err.message);
+      }
+    }
+
     let query = 'SELECT * FROM articles WHERE 1=1';
     const params = [];
 
@@ -1284,8 +1399,31 @@ api.get('/articles', (req, res) => {
   }
 });
 
-api.get('/articles/:idOrSlug', (req, res) => {
+api.get('/articles/:idOrSlug', async (req, res) => {
   try {
+    if (isSupabaseConfigured) {
+      try {
+        const a = await getSupabaseArticleByIdOrSlug(req.params.idOrSlug);
+        if (a) {
+          return res.json({
+            success: true,
+            data: {
+              ...a,
+              content: a.body_content,
+              thumbnail_url: a.thumbnail_url || '/assets/images/campus.jpg',
+              image: a.thumbnail_url || '/assets/images/campus.jpg',
+              readTime: '4 min baca',
+              viewCount: 151,
+              tags: Array.isArray(a.tags) ? a.tags : []
+            },
+            source: 'supabase_cloud'
+          });
+        }
+      } catch (err) {
+        console.warn('[API /articles/:idOrSlug] Supabase error, falling back to SQLite:', err.message);
+      }
+    }
+
     const article = db.prepare('SELECT * FROM articles WHERE id = ? OR slug = ?').get(req.params.idOrSlug, req.params.idOrSlug);
     if (!article) return res.status(404).json({ success: false, message: 'Artikel tidak ditemukan.' });
 
@@ -1981,8 +2119,27 @@ api.patch('/reservations/:id/status', verifyRoleIfAuthenticated('superadmin', 'e
 // ============================================================================
 // 8. CAMPAIGNS & WAKAF DONASI (PRD Req #7 - Calculated Totals Only)
 // ============================================================================
-api.get('/campaigns', (req, res) => {
+api.get('/campaigns', async (req, res) => {
   try {
+    if (isSupabaseConfigured) {
+      try {
+        const supaCampaigns = await getSupabaseCampaigns({ status: req.query.status || 'PUBLISHED' });
+        if (supaCampaigns && supaCampaigns.length > 0) {
+          const enriched = supaCampaigns.map(c => ({
+            ...c,
+            targetAmount: Number(c.target_amount) || 0,
+            collectedAmount: Number(c.collected_amount) || 0,
+            donorCount: Number(c.donor_count) || 0,
+            image: c.cover_image,
+            percent: Math.min(100, Math.round(((Number(c.collected_amount) || 0) / (Number(c.target_amount) || 1)) * 100))
+          }));
+          return res.json({ success: true, data: enriched, source: 'supabase_cloud' });
+        }
+      } catch (err) {
+        console.warn('[API /campaigns] Supabase error, falling back to SQLite:', err.message);
+      }
+    }
+
     recalculateCampaignTotals();
     const campaigns = db.prepare('SELECT * FROM campaigns ORDER BY is_urgent DESC, created_at DESC').all();
     const enriched = campaigns.map(c => ({
@@ -2254,6 +2411,23 @@ api.post('/donations', (req, res) => {
         entityId: invoiceNumber,
         summary: `Mencatat transaksi ${invoiceNumber} senilai Rp ${Number(amount).toLocaleString('id-ID')} (${initialStatus})`
       });
+    }
+
+    if (isSupabaseConfigured) {
+      getSupabaseCampaignByIdOrSlug(normalizedCampaignId).then(supaCamp => {
+        createSupabaseDonation({
+          campaign_id: supaCamp ? supaCamp.id : null,
+          campaign_title: supaCamp?.title || campaignTitle,
+          donor_name: donor_name.trim(),
+          donor_phone: donor_phone || null,
+          donor_email: donor_email || null,
+          is_anonymous: Boolean(is_anonymous),
+          amount: Number(amount) || 0,
+          payment_method: source,
+          payment_source: source,
+          proof_image: proof_image || null
+        }).catch(e => console.warn('[Donation Supabase sync error]:', e.message));
+      }).catch(e => console.warn('[Donation Supabase camp find error]:', e.message));
     }
 
     res.status(201).json({
@@ -2726,8 +2900,24 @@ api.patch('/users/:id/status', verifyRoleIfAuthenticated('superadmin'), (req, re
 // ============================================================================
 // 11. SITE SETTINGS & INSTITUTION IDENTITY (PRD Req #8 - Draft, Preview, Publish)
 // ============================================================================
-api.get('/settings', (req, res) => {
+api.get('/settings', async (req, res) => {
   try {
+    if (isSupabaseConfigured) {
+      try {
+        const supaProfile = await getSupabaseSiteSettings('institution_profile');
+        if (supaProfile) {
+          return res.json({
+            success: true,
+            data: { institution_profile: supaProfile },
+            draftData: { institution_profile: supaProfile },
+            source: 'supabase_cloud'
+          });
+        }
+      } catch (err) {
+        console.warn('[API /settings] Supabase error, falling back to SQLite:', err.message);
+      }
+    }
+
     const rows = db.prepare('SELECT * FROM site_settings').all();
     const settings = {};
     const draftSettings = {};

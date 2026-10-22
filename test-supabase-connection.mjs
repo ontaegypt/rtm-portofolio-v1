@@ -28,22 +28,31 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY || SUPABAS
 
 async function testConnection() {
   try {
-    // Try pinging or listing tables/auth
-    console.log('\nTesting Supabase REST API connection...');
-    const { data, error } = await supabase.from('institution_profile').select('*').limit(1);
-    
-    if (error) {
-      console.log('Supabase API responded with message:', error.message);
-      console.log('Error details:', error);
-      if (error.code === 'PGRST205' || error.message.includes('relation "institution_profile" does not exist') || error.code === '42P01') {
-        console.log('✅ KONEKSI BERHASIL! Supabase cloud terhubung, tetapi tabel belum dibuat di database.');
+    // Try querying created tables
+    console.log('\nTesting Supabase REST API connection against created tables...');
+    const results = await Promise.all([
+      supabase.from('academic_programs').select('*').limit(1),
+      supabase.from('articles').select('*').limit(1),
+      supabase.from('users').select('*').limit(1),
+      supabase.from('donation_campaigns').select('*').limit(1)
+    ]);
+
+    const tableNames = ['academic_programs', 'articles', 'users', 'donation_campaigns'];
+    let allSuccess = true;
+
+    results.forEach((res, idx) => {
+      if (res.error) {
+        console.log(`❌ Table ${tableNames[idx]} error:`, res.error.message);
+        allSuccess = false;
       } else {
-        console.log('Status code/hint:', error.hint || error.code);
+        console.log(`✅ Table ${tableNames[idx]} verified! Rows found:`, res.data.length);
       }
-    } else {
-      console.log('✅ KONEKSI BERHASIL & TABEL DITEMUKAN!');
-      console.log('Data sample:', data);
+    });
+
+    if (allSuccess) {
+      console.log('\n🎉 SEMUA TABEL SUPABASE CLOUD SUDAH AKTIF DAN SIAP DIGUNAKAN!');
     }
+    return;
   } catch (err) {
     console.error('❌ Connection error:', err.message);
   }

@@ -17,7 +17,12 @@ if (fs.existsSync(envPath) && typeof process.loadEnvFile === 'function') {
 }
 
 const supabaseUrl = process.env.SUPABASE_URL || 'https://bnaaxskyzwjeaduasgru.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || 'sb_publishable_d9SGt8oX-Gh4lwhnHfC_ZQ_Y8V2E83f';
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_SECRET_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_PUBLISHABLE_KEY ||
+  '';
 
 // Supabase client instance with admin/service capabilities if service role key is provided
 export const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -639,6 +644,359 @@ export async function verifySupabaseLogin(email, password) {
   supabase.from('users').update({ last_login_at: new Date().toISOString() }).eq('id', user.id).then();
 
   return user;
+}
+
+// ==============================================================================
+// CLOUD MUTATION METHODS (PUT / PATCH OPERATIONS)
+// ==============================================================================
+
+/**
+ * Update academic program in Supabase Cloud
+ */
+export async function updateSupabaseProgram(idOrSlug, data) {
+  const existing = await getSupabaseProgramByIdOrSlug(idOrSlug);
+  const targetId = existing?.id || idOrSlug;
+
+  const payload = {
+    updated_at: new Date().toISOString()
+  };
+  if (data.name || data.title) payload.title = data.name || data.title;
+  if (data.category) payload.category = data.category;
+  if (data.summary !== undefined) payload.summary = data.summary;
+  if (data.headline !== undefined && !data.summary) payload.summary = data.headline;
+  if (data.description !== undefined) payload.description = data.description;
+  if (data.eligibility_criteria !== undefined) payload.eligibility_criteria = data.eligibility_criteria;
+  if (data.duration_claim !== undefined) payload.duration = data.duration_claim;
+  if (data.duration !== undefined) payload.duration = data.duration;
+  if (data.schedule_info !== undefined) payload.schedule_info = data.schedule_info;
+  if (data.application_instructions !== undefined) payload.application_instructions = data.application_instructions;
+  if (data.quota !== undefined) payload.quota = Number(data.quota);
+  if (data.form_schema !== undefined) payload.form_schema = Array.isArray(data.form_schema) ? data.form_schema : [];
+  if (data.is_active !== undefined) payload.is_registration_open = Boolean(data.is_active);
+  if (data.publication_status) {
+    const s = String(data.publication_status).toUpperCase();
+    payload.status = s === 'PUBLISHED' ? 'PUBLISHED' : (s === 'ARCHIVED' ? 'ARCHIVED' : 'DRAFT');
+  }
+
+  let res = await supabase.from('academic_programs').update(payload).eq('id', targetId).select();
+  if ((!res.data || res.data.length === 0) && existing?.slug) {
+    res = await supabase.from('academic_programs').update(payload).eq('slug', existing.slug).select();
+  }
+  return res.data?.[0] || null;
+}
+
+/**
+ * Toggle academic program active status in Supabase Cloud
+ */
+export async function toggleSupabaseProgramStatus(idOrSlug, is_active) {
+  const existing = await getSupabaseProgramByIdOrSlug(idOrSlug);
+  const targetId = existing?.id || idOrSlug;
+  const newActive = Boolean(is_active);
+
+  let res = await supabase.from('academic_programs').update({
+    is_registration_open: newActive,
+    status: newActive ? 'PUBLISHED' : 'DRAFT',
+    updated_at: new Date().toISOString()
+  }).eq('id', targetId).select();
+
+  return res.data?.[0] || null;
+}
+
+/**
+ * Update article in Supabase Cloud
+ */
+export async function updateSupabaseArticle(idOrSlug, data) {
+  const existing = await getSupabaseArticleByIdOrSlug(idOrSlug);
+  const targetId = existing?.id || idOrSlug;
+
+  const payload = {
+    updated_at: new Date().toISOString()
+  };
+  if (data.title) payload.title = data.title;
+  if (data.slug) payload.slug = data.slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  if (data.category) payload.category = data.category;
+  if (data.excerpt !== undefined) payload.excerpt = data.excerpt;
+  if (data.content !== undefined) payload.body_content = data.content;
+  if (data.body_content !== undefined) payload.body_content = data.body_content;
+  if (data.thumbnail_url !== undefined) payload.thumbnail_url = data.thumbnail_url;
+  if (data.image !== undefined && !data.thumbnail_url) payload.thumbnail_url = data.image;
+  if (data.tags !== undefined) payload.tags = Array.isArray(data.tags) ? data.tags : String(data.tags).split(',').map(t => t.trim());
+  if (data.author_name) payload.author_name = data.author_name;
+  if (data.status) {
+    const s = String(data.status).toUpperCase();
+    payload.status = s === 'PUBLISHED' ? 'PUBLISHED' : (s === 'ARCHIVED' ? 'ARCHIVED' : 'DRAFT');
+  }
+
+  let res = await supabase.from('articles').update(payload).eq('id', targetId).select();
+  if ((!res.data || res.data.length === 0) && existing?.slug) {
+    res = await supabase.from('articles').update(payload).eq('slug', existing.slug).select();
+  }
+  return res.data?.[0] || null;
+}
+
+/**
+ * Toggle article published status in Supabase Cloud
+ */
+export async function toggleSupabaseArticleStatus(idOrSlug) {
+  const existing = await getSupabaseArticleByIdOrSlug(idOrSlug);
+  if (!existing) return null;
+  const newStatus = existing.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
+  const res = await supabase.from('articles').update({
+    status: newStatus,
+    updated_at: new Date().toISOString()
+  }).eq('id', existing.id).select();
+  return res.data?.[0] || null;
+}
+
+/**
+ * Update donation campaign in Supabase Cloud
+ */
+export async function updateSupabaseCampaign(idOrSlug, data) {
+  const existing = await getSupabaseCampaignByIdOrSlug(idOrSlug);
+  const targetId = existing?.id || idOrSlug;
+
+  const payload = {
+    updated_at: new Date().toISOString()
+  };
+  if (data.title) payload.title = data.title;
+  if (data.type) payload.type = data.type;
+  if (data.category_name) payload.category_name = data.category_name;
+  if (data.target_amount !== undefined) payload.target_amount = Number(data.target_amount);
+  if (data.cover_image !== undefined) payload.cover_image = data.cover_image;
+  if (data.description !== undefined) payload.description = data.description;
+  if (data.end_date !== undefined) payload.end_date = data.end_date || null;
+  if (data.status) {
+    const s = String(data.status).toLowerCase();
+    payload.status = (s === 'active' || s === 'published') ? 'PUBLISHED' : (s === 'closed' ? 'CLOSED' : 'DRAFT');
+  }
+
+  let res = await supabase.from('donation_campaigns').update(payload).eq('id', targetId).select();
+  if ((!res.data || res.data.length === 0) && existing?.slug) {
+    res = await supabase.from('donation_campaigns').update(payload).eq('slug', existing.slug).select();
+  }
+  return res.data?.[0] || null;
+}
+
+/**
+ * Update site settings (Identity, Accounts, Contact) in Supabase Cloud
+ */
+export async function updateSupabaseSiteSettings(key, value, mode = 'publish') {
+  const existing = await getSupabaseSiteSettings(key);
+  const mergedValue = { ...(existing || {}), ...(value || {}) };
+
+  const payload = {
+    key,
+    updated_at: new Date().toISOString()
+  };
+  if (mode === 'draft') {
+    payload.draft_value = mergedValue;
+  } else {
+    payload.value = mergedValue;
+    payload.draft_value = mergedValue;
+    payload.published_at = new Date().toISOString();
+  }
+
+  const { data, error } = await supabase
+    .from('site_settings')
+    .upsert(payload)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data?.value || mergedValue;
+}
+
+/**
+ * Update PPDB Registration status in Supabase Cloud
+ */
+export async function updateSupabaseRegistrationStatus(id, { status, notes }) {
+  const statusMap = {
+    submitted: 'SUBMITTED',
+    pending: 'SUBMITTED',
+    under_review: 'UNDER_REVIEW',
+    needs_correction: 'NEEDS_CORRECTION',
+    accepted: 'ACCEPTED',
+    verified: 'ACCEPTED',
+    rejected: 'REJECTED'
+  };
+  const supaStatus = statusMap[String(status).toLowerCase()] || 'SUBMITTED';
+
+  const payload = {
+    status: supaStatus,
+    updated_at: new Date().toISOString()
+  };
+  if (notes !== undefined) payload.admin_notes = notes;
+
+  let res = await supabase.from('program_registrations').update(payload).eq('id', id).select();
+  if (!res.data || res.data.length === 0) {
+    res = await supabase.from('program_registrations').update(payload).eq('registration_number', id).select();
+  }
+  return res.data?.[0] || null;
+}
+
+/**
+ * Update financial transaction verification in Supabase Cloud
+ */
+export async function updateSupabaseDonationStatus(id, { status, notes, verified_by }) {
+  const statusMap = {
+    success: 'VERIFIED',
+    verified: 'VERIFIED',
+    pending: 'PENDING_VERIFICATION',
+    rejected: 'REJECTED',
+    voided: 'VOIDED'
+  };
+  const supaStatus = statusMap[String(status).toLowerCase()] || 'PENDING_VERIFICATION';
+
+  const payload = {
+    payment_status: supaStatus,
+    updated_at: new Date().toISOString()
+  };
+  if (notes !== undefined) payload.notes = notes;
+  if (verified_by) {
+    payload.verified_at = new Date().toISOString();
+  }
+
+  let res = await supabase.from('financial_transactions').update(payload).eq('id', id).select();
+  if (!res.data || res.data.length === 0) {
+    res = await supabase.from('financial_transactions').update(payload).eq('invoice_number', id).select();
+  }
+  return res.data?.[0] || null;
+}
+
+/**
+ * Create an academic program in Supabase Cloud
+ */
+export async function createSupabaseProgram(data) {
+  const payload = {
+    title: data.name || data.title,
+    slug: data.slug || (data.name || data.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    category: data.category === 'formal' ? 'formal' : 'non_formal',
+    summary: data.headline || data.summary || data.description || '',
+    description: data.description || '',
+    eligibility_criteria: data.eligibility_criteria || '',
+    duration: data.duration_claim || data.duration || '3 Tahun',
+    schedule_info: data.schedule_info || '',
+    application_instructions: data.application_instructions || '',
+    quota: Number(data.quota || 30),
+    form_schema: Array.isArray(data.form_schema) ? data.form_schema : [],
+    is_registration_open: data.is_active !== undefined ? Boolean(data.is_active) : true,
+    status: data.publication_status ? String(data.publication_status).toUpperCase() : 'PUBLISHED',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+  const { data: inserted, error } = await supabase.from('academic_programs').insert(payload).select().single();
+  if (error) throw error;
+  return inserted;
+}
+
+/**
+ * Delete an academic program in Supabase Cloud
+ */
+export async function deleteSupabaseProgram(idOrSlug) {
+  const existing = await getSupabaseProgramByIdOrSlug(idOrSlug);
+  const targetId = existing?.id || idOrSlug;
+  const res = await supabase.from('academic_programs').delete().eq('id', targetId).select();
+  return res.data || null;
+}
+
+/**
+ * Create an article in Supabase Cloud
+ */
+export async function createSupabaseArticle(data) {
+  const payload = {
+    title: data.title,
+    slug: data.slug || data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    category: data.category || 'Berita',
+    excerpt: data.excerpt || '',
+    body_content: data.content || data.body_content || '',
+    thumbnail_url: data.thumbnail_url || data.image || '/assets/images/campus.jpg',
+    tags: Array.isArray(data.tags) ? data.tags : (data.tags ? String(data.tags).split(',').map(t => t.trim()) : ['Berita']),
+    author_name: data.author_name || 'Tim Media RTM',
+    seo_title: data.seo_title || data.title,
+    seo_description: data.seo_description || data.excerpt || '',
+    status: data.status ? String(data.status).toUpperCase() : 'PUBLISHED',
+    published_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+  const { data: inserted, error } = await supabase.from('articles').insert(payload).select().single();
+  if (error) throw error;
+  return inserted;
+}
+
+/**
+ * Delete an article in Supabase Cloud
+ */
+export async function deleteSupabaseArticle(idOrSlug) {
+  const existing = await getSupabaseArticleByIdOrSlug(idOrSlug);
+  const targetId = existing?.id || idOrSlug;
+  const res = await supabase.from('articles').delete().eq('id', targetId).select();
+  return res.data || null;
+}
+
+/**
+ * Create a donation campaign in Supabase Cloud
+ */
+export async function createSupabaseCampaign(data) {
+  const payload = {
+    title: data.title,
+    slug: data.slug || data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    type: data.type || 'wakaf',
+    category_name: data.category_name || 'Wakaf Sarana',
+    summary: data.description || '',
+    description: data.description || '',
+    cover_image: data.cover_image || '/assets/images/campus.jpg',
+    target_amount: Number(data.target_amount || 0),
+    collected_amount: 0,
+    donor_count: 0,
+    end_date: data.end_date || null,
+    status: (data.status === 'draft') ? 'DRAFT' : 'PUBLISHED',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+  const { data: inserted, error } = await supabase.from('donation_campaigns').insert(payload).select().single();
+  if (error) throw error;
+  return inserted;
+}
+
+/**
+ * Delete a donation campaign in Supabase Cloud
+ */
+export async function deleteSupabaseCampaign(idOrSlug) {
+  const existing = await getSupabaseCampaignByIdOrSlug(idOrSlug);
+  const targetId = existing?.id || idOrSlug;
+  const res = await supabase.from('donation_campaigns').delete().eq('id', targetId).select();
+  return res.data || null;
+}
+
+/**
+ * Delete a registration in Supabase Cloud
+ */
+export async function deleteSupabaseRegistration(id) {
+  const res = await supabase.from('program_registrations').delete().eq('id', id).select();
+  return res.data || null;
+}
+
+/**
+ * Financial transaction correction in Supabase Cloud
+ */
+export async function correctSupabaseDonation(id, { amount, notes, payment_status, reference_number, payment_source }) {
+  const payload = {
+    updated_at: new Date().toISOString()
+  };
+  if (amount !== undefined) payload.amount = Number(amount);
+  if (notes) payload.notes = notes;
+  if (reference_number) payload.reference_number = reference_number;
+  if (payment_source) payload.payment_source = payment_source;
+  if (payment_status) {
+    const s = String(payment_status).toUpperCase();
+    payload.payment_status = s === 'SUCCESS' ? 'VERIFIED' : s;
+  }
+  let res = await supabase.from('financial_transactions').update(payload).eq('id', id).select();
+  if (!res.data || res.data.length === 0) {
+    res = await supabase.from('financial_transactions').update(payload).eq('invoice_number', id).select();
+  }
+  return res.data?.[0] || null;
 }
 
 export default supabase;

@@ -22,9 +22,11 @@ app.get('*', (req, res, next) => {
   res.sendFile(path.join(DIST_DIR, 'index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 RTM Server & Database API running at http://localhost:${PORT}`);
-  console.log(`📡 API Endpoints available under http://localhost:${PORT}/api`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 RTM Server & Database API running at http://localhost:${PORT}`);
+    console.log(`📡 API Endpoints available under http://localhost:${PORT}/api`);
+  });
+}
 
 export default app;

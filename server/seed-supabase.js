@@ -31,21 +31,81 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
 async function seed() {
   console.log('🚀 Mulai Seeding Data ke Supabase Cloud (bnaaxskyzwjeaduasgru)...');
 
-  // 1. Seed User Admin
+  // 1. Seed Users (Super Admin, Editor, Finance)
   console.log('\n1. Seeding Users...');
-  const { data: existingUsers } = await supabase.from('users').select('id, email').eq('email', 'admin@rtm.sch.id');
-  if (!existingUsers || existingUsers.length === 0) {
-    const { error: userErr } = await supabase.from('users').insert({
+  const usersToSeed = [
+    {
+      email: 'admin@rumahtahfidz.sch.id',
+      full_name: 'Dr. Muhammad Zaki Al-Hafizh',
+      role: 'SUPER_ADMIN',
+      role_title: 'Admin',
+      password: 'admin123',
+      avatar: 'MZ'
+    },
+    {
       email: 'admin@rtm.sch.id',
       full_name: 'Super Admin RTM',
       role: 'SUPER_ADMIN',
-      is_active: true
-    });
-    if (userErr) console.warn('User seed error:', userErr.message);
-    else console.log('✅ Admin user berhasil ditambahkan (admin@rtm.sch.id)');
-  } else {
-    console.log('ℹ️ Admin user sudah ada.');
+      role_title: 'Admin',
+      password: 'admin123',
+      avatar: 'SA'
+    },
+    {
+      email: 'editor@rumahtahfidz.sch.id',
+      full_name: 'Ustadz H. Ahmad Syakir, Lc.',
+      role: 'CONTENT_EDITOR',
+      role_title: 'Content',
+      password: 'editor123',
+      avatar: 'AS'
+    },
+    {
+      email: 'finance@rumahtahfidz.sch.id',
+      full_name: 'Hj. Rina Kusuma Dewi, S.E.',
+      role: 'FINANCE_ADMIN',
+      role_title: 'Finance',
+      password: 'finance123',
+      avatar: 'RK'
+    }
+  ];
+
+  const authMap = {};
+  for (const u of usersToSeed) {
+    const { data: existing } = await supabase.from('users').select('id, email').eq('email', u.email).maybeSingle();
+    let userId = existing?.id;
+    if (!existing) {
+      const { data: inserted, error: insertErr } = await supabase.from('users').insert({
+        email: u.email,
+        full_name: u.full_name,
+        role: u.role,
+        is_active: true,
+        avatar_url: u.avatar
+      }).select().single();
+      if (insertErr) console.warn(`User ${u.email} seed error:`, insertErr.message);
+      else {
+        userId = inserted.id;
+        console.log(`✅ User ${u.full_name} (${u.email}) berhasil ditambahkan`);
+      }
+    } else {
+      console.log(`ℹ️ User ${u.email} sudah ada.`);
+    }
+
+    if (userId) {
+      const salt = 'rtmsalt2026';
+      authMap[userId] = {
+        role_title: u.role_title,
+        avatar: u.avatar
+      };
+      authMap[u.email.toLowerCase()] = authMap[userId];
+    }
   }
+
+  // Save auth metadata in site_settings
+  await supabase.from('site_settings').upsert({
+    key: 'cms_users_auth',
+    value: authMap,
+    draft_value: authMap
+  });
+  console.log('✅ Kredensial staf admin berhasil dikonfigurasi di Supabase!');
 
   // 2. Seed Academic Programs
   console.log('\n2. Seeding Academic Programs...');

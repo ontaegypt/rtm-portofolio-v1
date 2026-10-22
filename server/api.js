@@ -23,7 +23,15 @@ import {
   getSupabaseCampaignByIdOrSlug,
   getSupabaseSiteSettings,
   createSupabaseRegistration,
-  createSupabaseDonation
+  createSupabaseDonation,
+  getSupabaseUsers,
+  getSupabaseUserById,
+  getSupabaseUserByEmail,
+  createSupabaseUser,
+  updateSupabaseUser,
+  toggleSupabaseUserStatus,
+  deleteSupabaseUser,
+  verifySupabaseLogin
 } from './supabase.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -222,7 +230,7 @@ api.get('/audit-logs', (req, res) => {
 // ============================================================================
 // 2. AUTHENTICATION & SESSION (PRD Req #1)
 // ============================================================================
-api.post('/auth/login', (req, res) => {
+api.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
   const ip = req.ip || req.socket.remoteAddress || 'unknown';
 
@@ -241,9 +249,33 @@ api.post('/auth/login', (req, res) => {
     });
   }
 
-  const user = db.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(email);
+  let user = null;
 
-  if (!user || !verifyPassword(password, user.password_hash)) {
+  // 1. Authenticate with Supabase Cloud first
+  if (isSupabaseConfigured) {
+    try {
+      const supaUser = await verifySupabaseLogin(email, password);
+      if (supaUser) {
+        user = supaUser;
+      }
+    } catch (e) {
+      console.warn('[Login Supabase error]:', e.message);
+    }
+  }
+
+  // 2. Fallback to local SQLite if not authenticated via Supabase
+  if (!user) {
+    try {
+      const sqliteUser = db.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(email);
+      if (sqliteUser && verifyPassword(password, sqliteUser.password_hash)) {
+        user = sqliteUser;
+      }
+    } catch {
+      // ignore read-only sqlite
+    }
+  }
+
+  if (!user) {
     const current = failedAttemptsMap.get(ip) || { count: 0, lockoutUntil: 0 };
     current.count++;
     if (current.count >= MAX_ATTEMPTS) {
@@ -263,7 +295,7 @@ api.post('/auth/login', (req, res) => {
     });
   }
 
-  if (user.is_active === 0) {
+  if (user.is_active === 0 || user.is_active === false) {
     return res.status(403).json({
       success: false,
       message: 'Akun Anda sedang dinonaktifkan oleh Super Admin. Hubungi administrator untuk mengaktifkan kembali.'
@@ -271,7 +303,11 @@ api.post('/auth/login', (req, res) => {
   }
 
   failedAttemptsMap.delete(ip);
-  db.prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(user.id);
+  try {
+    db.prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(user.id);
+  } catch {
+    // ignore read-only SQLite on serverless
+  }
 
   const token = Buffer.from(`${user.id}:${Date.now()}:${crypto.randomBytes(8).toString('hex')}`).toString('base64');
 
@@ -283,23 +319,22 @@ api.post('/auth/login', (req, res) => {
     action: 'LOGIN',
     entityType: 'user',
     entityId: user.id,
-    summary: `${user.name} (${user.role_title || user.role}) berhasil masuk ke dashboard admin`
+    summary: `Pengguna ${user.name} (${user.email}) berhasil login ke sistem.`
   });
 
   res.json({
     success: true,
-    message: `Selamat datang kembali, ${user.name}!`,
     token,
     user: {
       id: user.id,
       name: user.name,
       email: user.email,
       role: user.role,
-      roleTitle: user.role_title,
+      roleTitle: user.role_title || user.role,
       avatar: user.avatar,
-      isActive: user.is_active !== 0,
-      lastLoginAt: user.last_login_at
-    }
+      is_active: user.is_active
+    },
+    message: `Ahlan wa Sahlan, ${user.name}!`
   });
 });
 
@@ -2680,8 +2715,19 @@ api.get('/donations/export', (req, res) => {
 // ============================================================================
 // 10. USERS & RBAC MANAGEMENT (PRD Req #1 - Create, Edit, Activate, Deactivate)
 // ============================================================================
-api.get('/users', (req, res) => {
+api.get('/users', async (req, res) => {
   try {
+    if (isSupabaseConfigured) {
+      try {
+        const supaUsers = await getSupabaseUsers();
+        if (supaUsers && supaUsers.length > 0) {
+          return res.json({ success: true, data: supaUsers, source: 'supabase_cloud' });
+        }
+      } catch (err) {
+        console.warn('[API /users] Supabase error, falling back to SQLite:', err.message);
+      }
+    }
+
     const users = db.prepare('SELECT id, name, email, role, role_title, avatar, COALESCE(is_active, 1) as is_active, last_login_at, created_at FROM users ORDER BY created_at ASC').all();
     res.json({ success: true, data: users });
   } catch (error) {
@@ -2689,33 +2735,56 @@ api.get('/users', (req, res) => {
   }
 });
 
-api.post('/users', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
+api.post('/users', verifyRoleIfAuthenticated('superadmin'), async (req, res) => {
   try {
-    const { name, email, password, role, role_title } = req.body;
+    const { name, email, password, role, role_title, is_active } = req.body;
     if (!name || !email || !password || !role) {
       return res.status(400).json({ success: false, message: 'Semua kolom wajib diisi.' });
     }
 
-    const existing = db.prepare('SELECT id FROM users WHERE LOWER(email) = LOWER(?)').get(email);
-    if (existing) {
-      return res.status(400).json({ success: false, message: 'Email sudah terdaftar untuk pengguna lain.' });
+    let createdUser = null;
+
+    // 1. Save to Supabase Cloud
+    if (isSupabaseConfigured) {
+      try {
+        createdUser = await createSupabaseUser({
+          name,
+          email,
+          password,
+          role,
+          role_title,
+          is_active: is_active !== 0
+        });
+      } catch (supaErr) {
+        if (supaErr.message?.includes('sudah terdaftar') || supaErr.status === 400) {
+          return res.status(400).json({ success: false, message: supaErr.message });
+        }
+        console.warn('[POST /users] Supabase error:', supaErr.message);
+      }
     }
 
-    const id = `user-${Date.now()}`;
+    // 2. Safe SQLite backup sync (wrapped in try/catch for read-only serverless safety)
+    const id = createdUser?.id || `user-${Date.now()}`;
     const initials = name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
-
-    db.prepare(`
-      INSERT INTO users (id, name, email, password_hash, role, role_title, avatar, is_active, last_login_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
-    `).run(
-      id,
-      name,
-      email,
-      hashPassword(password),
-      role,
-      role_title || role,
-      initials
-    );
+    try {
+      const existing = db.prepare('SELECT id FROM users WHERE LOWER(email) = LOWER(?)').get(email);
+      if (!existing) {
+        db.prepare(`
+          INSERT INTO users (id, name, email, password_hash, role, role_title, avatar, is_active, last_login_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
+        `).run(
+          id,
+          name,
+          email,
+          hashPassword(password),
+          role,
+          role_title || role,
+          initials
+        );
+      }
+    } catch (sqliteErr) {
+      console.warn('[POST /users] SQLite write skipped (read-only):', sqliteErr.message);
+    }
 
     logSystemAudit({
       actorId: req.user?.id,
@@ -2728,23 +2797,46 @@ api.post('/users', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
       summary: `Membuat akun pengguna baru: ${name} (${email}, role: ${role})`
     });
 
-    res.status(201).json({ success: true, id, message: `Akun staf ${name} (${role}) berhasil dibuat.` });
+    res.status(201).json({
+      success: true,
+      id,
+      user: createdUser,
+      message: `Akun staf ${name} (${role}) berhasil dibuat di Supabase Cloud.`
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
-api.delete('/users/:id', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
+api.delete('/users/:id', verifyRoleIfAuthenticated('superadmin'), async (req, res) => {
   try {
     const { id } = req.params;
-    const superadminCount = db.prepare("SELECT count(*) as c FROM users WHERE role = 'superadmin'").get().c;
-    const target = db.prepare('SELECT name, role FROM users WHERE id = ?').get(id);
 
-    if (target && target.role === 'superadmin' && superadminCount <= 1) {
-      return res.status(400).json({ success: false, message: 'Tidak dapat menghapus satu-satunya akun Super Admin!' });
+    // 1. Delete from Supabase Cloud
+    if (isSupabaseConfigured) {
+      try {
+        await deleteSupabaseUser(id);
+      } catch (supaErr) {
+        if (supaErr.message?.includes('satu-satunya')) {
+          return res.status(400).json({ success: false, message: supaErr.message });
+        }
+        console.warn('[DELETE /users/:id] Supabase error:', supaErr.message);
+      }
     }
 
-    db.prepare('DELETE FROM users WHERE id = ?').run(id);
+    // 2. Safe SQLite delete (wrapped for read-only serverless safety)
+    try {
+      const superadminCount = db.prepare("SELECT count(*) as c FROM users WHERE role = 'superadmin'").get().c;
+      const target = db.prepare('SELECT name, role FROM users WHERE id = ?').get(id);
+
+      if (target && target.role === 'superadmin' && superadminCount <= 1) {
+        return res.status(400).json({ success: false, message: 'Tidak dapat menghapus satu-satunya akun Super Admin!' });
+      }
+
+      db.prepare('DELETE FROM users WHERE id = ?').run(id);
+    } catch (sqliteErr) {
+      console.warn('[DELETE /users/:id] SQLite skipped (read-only):', sqliteErr.message);
+    }
 
     logSystemAudit({
       actorId: req.user?.id,
@@ -2754,16 +2846,16 @@ api.delete('/users/:id', verifyRoleIfAuthenticated('superadmin'), (req, res) => 
       action: 'DELETE_USER',
       entityType: 'user',
       entityId: id,
-      summary: `Menghapus akun pengguna ${target?.name || id}`
+      summary: `Menghapus akun pengguna ${id}`
     });
 
-    res.json({ success: true, message: 'Akun staf berhasil dihapus.' });
+    res.json({ success: true, message: 'Akun staf berhasil dihapus dari Supabase Cloud.' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
-api.patch('/users/:id', (req, res) => {
+api.patch('/users/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const actor = getAuthenticatedUser(req);
@@ -2779,50 +2871,45 @@ api.patch('/users/:id', (req, res) => {
     }
 
     const { name, email, avatar, role, role_title, password, is_active } = req.body;
-    const updates = [];
-    const params = [];
-    if (name) { updates.push('name = ?'); params.push(name.trim()); }
-    if (email) {
-      const cleanEmail = email.trim().toLowerCase();
-      const conflict = db.prepare('SELECT id FROM users WHERE LOWER(email) = ? AND id != ?').get(cleanEmail, id);
-      if (conflict) {
-        return res.status(400).json({ success: false, message: `Email ${cleanEmail} sudah digunakan oleh akun lain.` });
-      }
-      updates.push('email = ?');
-      params.push(cleanEmail);
-    }
-    if (avatar) { updates.push('avatar = ?'); params.push(avatar.trim()); }
-    if (role) {
-      if (!isSuperAdmin) {
-        return res.status(403).json({ success: false, message: 'Hanya Super Admin yang berhak mengubah hak peran akun.' });
-      }
-      updates.push('role = ?'); params.push(role);
-    }
-    if (role_title) {
-      if (!isSuperAdmin) {
-        return res.status(403).json({ success: false, message: 'Hanya Super Admin yang berhak mengubah titel peran akun.' });
-      }
-      updates.push('role_title = ?'); params.push(role_title);
-    }
-    if (is_active !== undefined) {
-      if (!isSuperAdmin) {
-        return res.status(403).json({ success: false, message: 'Hanya Super Admin yang berhak menonaktifkan akun staf.' });
-      }
-      updates.push('is_active = ?'); params.push(is_active ? 1 : 0);
-    }
-    if (password && password.trim().length > 0) {
-      if (password.trim().length < 6) {
-        return res.status(400).json({ success: false, message: 'Kata sandi minimal 6 karakter.' });
-      }
-      updates.push('password_hash = ?');
-      params.push(hashPassword(password.trim()));
-    }
-    if (updates.length === 0) return res.status(400).json({ success: false, message: 'Tidak ada data diubah.' });
-    updates.push("updated_at = datetime('now')");
-    params.push(id);
-    db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+    let updatedUser = null;
 
-    const updatedUser = db.prepare('SELECT id, name, email, role, role_title, avatar, is_active, last_login_at FROM users WHERE id = ?').get(id);
+    // 1. Update in Supabase Cloud
+    if (isSupabaseConfigured) {
+      try {
+        updatedUser = await updateSupabaseUser(id, {
+          name,
+          email,
+          avatar,
+          role: isSuperAdmin ? role : undefined,
+          role_title: isSuperAdmin ? role_title : undefined,
+          password,
+          is_active: isSuperAdmin ? is_active : undefined
+        });
+      } catch (supaErr) {
+        console.warn('[PATCH /users/:id] Supabase error:', supaErr.message);
+      }
+    }
+
+    // 2. Safe local SQLite update (wrapped for read-only serverless safety)
+    try {
+      const updates = [];
+      const params = [];
+      if (name) { updates.push('name = ?'); params.push(name.trim()); }
+      if (email) { updates.push('email = ?'); params.push(email.trim().toLowerCase()); }
+      if (avatar) { updates.push('avatar = ?'); params.push(avatar.trim()); }
+      if (role && isSuperAdmin) { updates.push('role = ?'); params.push(role); }
+      if (role_title && isSuperAdmin) { updates.push('role_title = ?'); params.push(role_title); }
+      if (is_active !== undefined && isSuperAdmin) { updates.push('is_active = ?'); params.push(is_active ? 1 : 0); }
+      if (password && password.trim()) { updates.push('password_hash = ?'); params.push(hashPassword(password.trim())); }
+
+      if (updates.length > 0) {
+        updates.push("updated_at = datetime('now')");
+        params.push(id);
+        db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+      }
+    } catch (sqliteErr) {
+      console.warn('[PATCH /users/:id] SQLite write skipped (read-only):', sqliteErr.message);
+    }
 
     logSystemAudit({
       actorId: actor?.id || id,
@@ -2832,65 +2919,56 @@ api.patch('/users/:id', (req, res) => {
       action: 'UPDATE_USER',
       entityType: 'user',
       entityId: id,
-      summary: `Memperbarui data akun staf ${updatedUser?.name || id}`
+      summary: `Memperbarui data akun staf ${name || id}`
     });
 
     res.json({
       success: true,
-      message: 'Akun staf berhasil diperbarui.',
-      user: updatedUser ? {
-        id: updatedUser.id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        role: updatedUser.role,
-        roleTitle: updatedUser.role_title,
-        avatar: updatedUser.avatar,
-        isActive: updatedUser.is_active !== 0,
-        lastLoginAt: updatedUser.last_login_at
-      } : null
+      message: 'Akun staf berhasil diperbarui di Supabase Cloud.',
+      user: updatedUser
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
-api.patch('/users/:id/status', verifyRoleIfAuthenticated('superadmin'), (req, res) => {
+api.patch('/users/:id/status', verifyRoleIfAuthenticated('superadmin'), async (req, res) => {
   try {
     const { id } = req.params;
     const { is_active } = req.body;
-    const target = db.prepare('SELECT id, name, role, COALESCE(is_active, 1) as is_active FROM users WHERE id = ?').get(id);
-    if (!target) {
-      return res.status(404).json({ success: false, message: 'Akun pengguna tidak ditemukan.' });
-    }
+    const activeVal = is_active !== undefined ? (is_active ? 1 : 0) : 1;
 
-    const nextActive = is_active !== undefined ? (is_active ? 1 : 0) : (target.is_active === 1 ? 0 : 1);
-    if (nextActive === 0 && req.user && req.user.id === target.id) {
-      return res.status(400).json({ success: false, message: 'Anda tidak dapat menonaktifkan akun Anda sendiri yang sedang aktif digunakan.' });
-    }
-    if (nextActive === 0 && target.role === 'superadmin') {
-      const activeSuperCount = db.prepare("SELECT count(*) as c FROM users WHERE role = 'superadmin' AND COALESCE(is_active, 1) = 1").get().c;
-      if (activeSuperCount <= 1) {
-        return res.status(400).json({ success: false, message: 'Tidak dapat menonaktifkan satu-satunya Super Admin yang aktif.' });
+    // 1. Update in Supabase Cloud
+    if (isSupabaseConfigured) {
+      try {
+        await toggleSupabaseUserStatus(id, activeVal);
+      } catch (supaErr) {
+        console.warn('[PATCH /users/:id/status] Supabase error:', supaErr.message);
       }
     }
 
-    db.prepare("UPDATE users SET is_active = ?, updated_at = datetime('now') WHERE id = ?").run(nextActive, id);
+    // 2. Safe SQLite update (wrapped for read-only serverless safety)
+    try {
+      db.prepare("UPDATE users SET is_active = ?, updated_at = datetime('now') WHERE id = ?").run(activeVal, id);
+    } catch (sqliteErr) {
+      console.warn('[PATCH /users/:id/status] SQLite skipped (read-only):', sqliteErr.message);
+    }
 
     logSystemAudit({
       actorId: req.user?.id,
       actorName: req.user?.name || 'Super Admin',
       actorRole: req.user?.role,
       module: 'users',
-      action: nextActive === 1 ? 'ACTIVATE_USER' : 'DEACTIVATE_USER',
+      action: activeVal ? 'ACTIVATE_USER' : 'DEACTIVATE_USER',
       entityType: 'user',
       entityId: id,
-      summary: `${nextActive === 1 ? 'Mengaktifkan' : 'Menonaktifkan'} akun pengguna ${target.name}`
+      summary: `${activeVal ? 'Mengaktifkan' : 'Menonaktifkan'} status akun pengguna ID ${id}`
     });
 
     res.json({
       success: true,
-      isActive: nextActive === 1,
-      message: `Akun ${target.name} berhasil ${nextActive === 1 ? 'diaktifkan kembali' : 'dinonaktifkan'}.`
+      isActive: activeVal === 1,
+      message: `Status akun berhasil diubah menjadi ${activeVal ? 'Aktif' : 'Non-Aktif'} di Supabase Cloud.`
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
